@@ -12,8 +12,9 @@ public enum SqlManager {
 	private static final String sqlConn = "jdbc:h2:file:".concat(Drive.dbPath);
 	private static Connection connection;
 	
+	//die nächsten beiden Zeilen sind anzupassen
 	private static final String tabelle = "idTable";
-	private static final String columns = "( id VARCHAR(10), found DATE )";
+	private static final String columns = "( id VARCHAR(14), found DATE, PRIMARY KEY (id) )";
 	
 	static {
 		try {
