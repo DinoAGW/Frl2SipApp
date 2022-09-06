@@ -47,7 +47,7 @@ public class ApiManager {
 			System.err.println("ID beginnt nicht mit 'frl:'. ID = " + id);
 			throw new Exception();
 		}
-		System.out.println("ID = " + id);
+		//System.out.println("" + num + ") ID = '" + id + "'");
 
 		String apiAntwortDatei = Drive.apiAntwort(id);
 		File apiAntwortFile = new File(apiAntwortDatei);
@@ -58,6 +58,7 @@ public class ApiManager {
 
 		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM idTable WHERE id = '" + id + "';");
 		if (resultSet.next()) {
+			System.out.println("" + num + ") ID = '" + id + "' war schon drin");
 			SqlManager.INSTANCE.executeUpdate("UPDATE idTable SET found  = CURRENT_DATE() WHERE id = '" + id + "';");
 		} else {
 			SqlManager.INSTANCE.executeUpdate("INSERT INTO idTable (id, found) VALUES ('" + id + "', CURRENT_DATE());");
