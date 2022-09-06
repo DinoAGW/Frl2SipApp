@@ -49,6 +49,10 @@ public class ApiManager {
 		}
 		//System.out.println("" + num + ") ID = '" + id + "'");
 
+		File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
+		if (!apiAntwortOrdner.exists()) {
+			apiAntwortOrdner.mkdirs();
+		}
 		String apiAntwortDatei = Drive.apiAntwort(id);
 		File apiAntwortFile = new File(apiAntwortDatei);
 		if (apiAntwortFile.exists()) {
