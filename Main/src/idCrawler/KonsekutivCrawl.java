@@ -22,16 +22,18 @@ public class KonsekutivCrawl {
 			JSONObject obj = new JSONObject("{\"array\": " + apiAntwortJson + "}");
 			JSONArray arr = obj.getJSONArray("array");
 			if (arr.length()>=9999) {
-				System.err.println("Suchanfrage hat das limit überschritten für dateMask = '" + dateMask + "'");
+				System.err.println("Suchanfrage hat das limit Ã¼berschritten fÃ¼r dateMask = '" + dateMask + "'");
 				throw new Exception();
+			} else {
+				System.out.println("Die Suchanfrage zur dateMask = '" + dateMask + "' ergab " + arr.length() + " Ergebnisse");
 			}
 			for (int i = 0; i < arr.length(); ++i) {
 				JSONObject innerObj = arr.getJSONObject(i);
 				String innerApiAntwortJson = innerObj.toString(2);
 				String id = ApiManager.json2id(innerApiAntwortJson);
 				Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
-				if (!Database.insertIdIntoDatabase(id)) {
-					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
+				if (Database.insertIdIntoDatabase(id)) {
+					System.out.println("" + i + ") ID = '" + id + "' war noch nicht drin");
 				}
 			}
 		} catch (JSONException e) {
