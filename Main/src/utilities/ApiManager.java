@@ -17,7 +17,7 @@ public class ApiManager {
 	public static String json2id(String apiAntwortJson) throws Exception {
 		String id = null;
 		try {
-			JSONObject obj = new JSONObject(apiAntwortJson.substring(1, apiAntwortJson.length() - 1));
+			JSONObject obj = new JSONObject(apiAntwortJson);
 			// siehe hier:
 			// https://stackoverflow.com/questions/2591098/how-to-parse-json-in-java
 //			String pageName = obj.getJSONObject("pageInfo").getString("pageName");

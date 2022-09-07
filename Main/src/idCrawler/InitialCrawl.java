@@ -27,6 +27,7 @@ public class InitialCrawl {
 			System.out.println("Nichts gefunden unter der Nummer = " + num);
 			return false;
 		}
+		apiAntwortJson = apiAntwortJson.substring(1, apiAntwortJson.length() - 1);
 		String id = ApiManager.json2id(apiAntwortJson);
 		
 		//System.out.println("" + num + ") ID = '" + id + "'");
@@ -34,16 +35,14 @@ public class InitialCrawl {
 		Drive.geheSicherDassOrdnerExistiert(Drive.apiAntwortPfad);
 		
 		try {
-			JSONObject obj = new JSONObject(apiAntwortJson.substring(1, apiAntwortJson.length() - 1));
+			JSONObject obj = new JSONObject(apiAntwortJson);
 			apiAntwortJson = obj.toString(2);
 		} catch (JSONException e) {
 			System.out.println("JSON Fehler bei '" + apiAntwortJson + "'");
 			throw e;
 		}
 		
-		String apiAntwortDatei = Drive.apiAntwort(id);
-		Drive.loescheFallsExistiert(apiAntwortDatei);
-		Drive.saveStringToFile(apiAntwortJson, apiAntwortDatei);
+		Drive.saveStringToFile(apiAntwortJson, Drive.apiAntwort(id));
 
 		if (!Database.insertIdIntoDatabase(id)) {
 			System.out.println("" + num + ") ID = '" + id + "' war schon drin");

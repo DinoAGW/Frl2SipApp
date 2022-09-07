@@ -1,9 +1,12 @@
 package idCrawler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import utilities.ApiManager;
+import utilities.Database;
+import utilities.Drive;
 import utilities.Url;
 
 public class KonsekutivCrawl {
@@ -17,23 +20,24 @@ public class KonsekutivCrawl {
 		}
 		try {
 			JSONObject obj = new JSONObject("{\"array\": " + apiAntwortJson + "}");
-			// siehe hier:
-			// https://stackoverflow.com/questions/2591098/how-to-parse-json-in-java
-//			String pageName = obj.getJSONObject("pageInfo").getString("pageName");
-//			JSONArray arr = obj.getJSONArray("posts"); // notice that `"posts": [...]`
-//			for (int i = 0; i < arr.length(); i++)
-//			{
-//			    String post_id = arr.getJSONObject(i).getString("post_id");
-//			    ......
-//			}
-//			id = obj.getString("@id");
-			System.out.println(obj.getJSONArray("array").length());
+			JSONArray arr = obj.getJSONArray("array");
+			if (arr.length()>=9999) {
+				System.err.println("Suchanfrage hat das limit überschritten für dateMask = '" + dateMask + "'");
+				throw new Exception();
+			}
+			for (int i = 0; i < arr.length(); ++i) {
+				JSONObject innerObj = arr.getJSONObject(i);
+				String innerApiAntwortJson = innerObj.toString(2);
+				String id = ApiManager.json2id(innerApiAntwortJson);
+				Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
+				if (!Database.insertIdIntoDatabase(id)) {
+					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
+				}
+			}
 		} catch (JSONException e) {
 			System.out.println("JSON Fehler bei '" + apiAntwortJson + "'");
 			throw e;
 		}
-//		System.out.println(apiAntwortJson);
-		
 		return true;
 	}
 
