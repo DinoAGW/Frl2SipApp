@@ -8,7 +8,7 @@ public class InitialCrawl {
 
 	public static void main(String[] args) throws Exception {
 		int anz = 0;
-		for ( int i = 0; i < 1000000; ++i) {
+		for ( int i = 30000; i < 40000; ++i) {
 			if (ApiManager.findAny(i)) {
 				++anz;
 			}
