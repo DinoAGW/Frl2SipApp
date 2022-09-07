@@ -12,7 +12,7 @@ import utilities.Url;
 public class KonsekutivCrawl {
 	
 	private static boolean checkMoreForDate(String dateMask) throws Exception {
-		final String url = "https://frl.publisso.de/find?q=created:" + dateMask + "&format=json&from=0&until=10000";
+		final String url = "https://frl.publisso.de/find?q=modified:" + dateMask + "&format=json&from=0&until=10000";
 		String apiAntwortJson = Url.getText(url);
 		if (apiAntwortJson.length() == 2) {
 			System.out.println("Nichts gefunden unter der Maske = '" + dateMask + "'");
@@ -44,7 +44,7 @@ public class KonsekutivCrawl {
 	}
 
 	public static void main(String[] args) throws Exception {
-		checkMoreForDate("2020-*");
+		checkMoreForDate("2022-09*");
 		System.out.println("Anzahl IDs in der Datenbank = " + Database.countEntries());
 		System.out.println("KonsekutivCrawl Ende");
 	}
