@@ -44,7 +44,7 @@ public class KonsekutivCrawl {
 	}
 
 	public static void main(String[] args) throws Exception {
-		checkMoreForDate("2022-09-*");
+		checkMoreForDate("2020-*");
 		System.out.println("Anzahl IDs in der Datenbank = " + Database.countEntries());
 		System.out.println("KonsekutivCrawl Ende");
 	}
