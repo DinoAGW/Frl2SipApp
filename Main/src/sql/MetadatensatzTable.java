@@ -3,11 +3,11 @@ package sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class IdTable {
+public class MetadatensatzTable {
 	
 	//die nächsten beiden Zeilen sind anzupassen
-	private static final String tabelle = "idTable";
-	private static final String columns = "( id VARCHAR(14), found DATE, PRIMARY KEY (id) )";
+	private static final String tabelle = "metadatensatzTable";
+	private static final String columns = "( id VARCHAR(14), found DATE, isRoot BOOLEAN, PRIMARY KEY (id) )";
 	
 	public static void makeExistent() {
 		try {
@@ -17,7 +17,7 @@ public class IdTable {
 		}
 	}
 	
-	public void leereTabelle() {
+	public static void leereTabelle() {
 		System.out.println("Lösche Datenbank...");
 		try {
 			SqlManager.INSTANCE.executeUpdate("DROP TABLE IF EXISTS " + tabelle);
@@ -33,7 +33,7 @@ public class IdTable {
 
 	public static int countEntries() throws SQLException {
 		int anz = 0;
-		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM idTable;");
+		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM " + tabelle + ";");
 		while (resultSet.next()) {
 			++anz;
 		}
@@ -41,16 +41,16 @@ public class IdTable {
 	}
 	
 	public static boolean checkIfEntryIsInDatabase(String key, String value) throws SQLException {
-		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM idTable WHERE " + key + " = '" + value + "';");
+		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM " + tabelle + " WHERE " + key + " = '" + value + "';");
 		return resultSet.next();
 	}
 	
 	public static boolean insertIdIntoDatabase(String id) throws SQLException {
 		if (checkIfEntryIsInDatabase("id", id)) {
-			SqlManager.INSTANCE.executeUpdate("UPDATE idTable SET found  = CURRENT_DATE() WHERE id = '" + id + "';");
+			SqlManager.INSTANCE.executeUpdate("UPDATE " + tabelle + " SET found  = CURRENT_DATE() WHERE id = '" + id + "';");
 			return false;
 		} else {
-			SqlManager.INSTANCE.executeUpdate("INSERT INTO idTable (id, found) VALUES ('" + id + "', CURRENT_DATE());");
+			SqlManager.INSTANCE.executeUpdate("INSERT INTO " + tabelle + " (id, found) VALUES ('" + id + "', CURRENT_DATE());");
 			return true;
 		}
 	}

@@ -1,19 +1,14 @@
 package idCrawler;
 
-import java.sql.ResultSet;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sql.IdTable;
-import sql.SqlManager;
+import sql.MetadatensatzTable;
 import utilities.ApiManager;
 import utilities.Drive;
 import utilities.Url;
 
 public class InitialCrawl {
-	private static final String fs = System.getProperty("file.separator");
-	
 	/*
 	 * fragt die API nach einem beliebigen Metadatensatz Nummer num, legt die
 	 * Antwort ab und merkt sich die ID in der Datenbank. Return: wurde etwas gefunden?
@@ -44,7 +39,7 @@ public class InitialCrawl {
 		
 		Drive.saveStringToFile(apiAntwortJson, Drive.apiAntwort(id));
 
-		if (!IdTable.insertIdIntoDatabase(id)) {
+		if (!MetadatensatzTable.insertIdIntoDatabase(id)) {
 			System.out.println("" + num + ") ID = '" + id + "' war schon drin");
 		}
 
@@ -59,7 +54,7 @@ public class InitialCrawl {
 			}
 		}
 		System.out.println("Anzahl = " + anz);
-		System.out.println("Anzahl = " + IdTable.countEntries());
+		System.out.println("Anzahl = " + MetadatensatzTable.countEntries());
 		
 		System.out.println("InitialCrawl Ende");
 	}

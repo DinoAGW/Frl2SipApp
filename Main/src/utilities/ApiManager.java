@@ -1,19 +1,9 @@
 package utilities;
 
-import java.io.File;
-import java.sql.ResultSet;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import idCrawler.InitialCrawl;
-
 public class ApiManager {
-	private static final String fs = System.getProperty("file.separator");
-
-	
-	
 	public static String json2id(String apiAntwortJson) throws Exception {
 		String id = null;
 		try {

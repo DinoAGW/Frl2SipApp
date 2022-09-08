@@ -1,19 +1,17 @@
 package idCrawler;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sql.IdTable;
+import sql.MetadatensatzTable;
 import utilities.ApiManager;
 import utilities.Drive;
 import utilities.Url;
 
 public class KonsekutivCrawl {
-	
 	/*
 	 * Schaut, ob zu der Datenmaske irgendwelche Modifizierungen vorliegen.
 	 * Gibt zurück ob irgendwas Neues dabei war.
@@ -40,7 +38,7 @@ public class KonsekutivCrawl {
 				String innerApiAntwortJson = innerObj.toString(2);
 				String id = ApiManager.json2id(innerApiAntwortJson);
 				Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
-				if (IdTable.insertIdIntoDatabase(id)) {
+				if (MetadatensatzTable.insertIdIntoDatabase(id)) {
 					System.out.println("" + i + ") ID = '" + id + "' war noch nicht drin");
 					ret = true;
 				}
@@ -95,7 +93,7 @@ public class KonsekutivCrawl {
 		if (makeUpToDate()) {
 			System.out.println("Es wurden neue Metadatensätze gefunden");
 		}
-		System.out.println("Anzahl IDs in der Datenbank = " + IdTable.countEntries());
+		System.out.println("Anzahl IDs in der Datenbank = " + MetadatensatzTable.countEntries());
 		System.out.println("KonsekutivCrawl Ende");
 	}
 
