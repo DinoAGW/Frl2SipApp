@@ -5,10 +5,10 @@ import java.sql.ResultSet;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import sql.IdTable;
+import sql.SqlManager;
 import utilities.ApiManager;
-import utilities.Database;
 import utilities.Drive;
-import utilities.SqlManager;
 import utilities.Url;
 
 public class InitialCrawl {
@@ -44,7 +44,7 @@ public class InitialCrawl {
 		
 		Drive.saveStringToFile(apiAntwortJson, Drive.apiAntwort(id));
 
-		if (!Database.insertIdIntoDatabase(id)) {
+		if (!IdTable.insertIdIntoDatabase(id)) {
 			System.out.println("" + num + ") ID = '" + id + "' war schon drin");
 		}
 
@@ -59,7 +59,7 @@ public class InitialCrawl {
 			}
 		}
 		System.out.println("Anzahl = " + anz);
-		System.out.println("Anzahl = " + Database.countEntries());
+		System.out.println("Anzahl = " + IdTable.countEntries());
 		
 		System.out.println("InitialCrawl Ende");
 	}

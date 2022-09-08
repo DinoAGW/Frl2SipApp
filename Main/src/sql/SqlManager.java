@@ -1,4 +1,4 @@
-package utilities;
+package sql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -6,40 +6,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import utilities.Drive;
+
 public enum SqlManager {
 	INSTANCE;
 	
 	private static final String sqlConn = "jdbc:h2:file:".concat(Drive.dbPath);
 	private static Connection connection;
 	
-	//die nächsten beiden Zeilen sind anzupassen
-	private static final String tabelle = "idTable";
-	private static final String columns = "( id VARCHAR(14), found DATE, PRIMARY KEY (id) )";
-	
 	static {
 		try {
-			connection = DriverManager.getConnection(sqlConn);
+			SqlManager.connection = DriverManager.getConnection(sqlConn);
 		} catch (SQLException e) {
 			throw new IllegalStateException("Failed to initiate SQL connection", e);
-		}
-		try {
-			INSTANCE.executeUpdate("CREATE TABLE IF NOT EXISTS " + tabelle + columns + ";");
-		} catch (SQLException e) {
-			throw new IllegalStateException("Failed to create Tables", e);
-		}
-	}
-	
-	public void loescheTabelle() {
-		System.out.println("Lösche Datenbank...");
-		try {
-			INSTANCE.executeUpdate("DROP TABLE IF EXISTS " + tabelle);
-		} catch (SQLException e) {
-			throw new IllegalStateException("Failed to delete Tables", e);
-		}
-		try {
-			INSTANCE.executeUpdate("CREATE TABLE " + tabelle + columns + ";");
-		} catch (SQLException e) {
-			throw new IllegalStateException("Failed to create Tables", e);
 		}
 	}
 
