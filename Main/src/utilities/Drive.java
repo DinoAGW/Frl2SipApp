@@ -14,6 +14,7 @@ public class Drive {
 	public static final String dbPath = home.concat(fs).concat(".databases").concat(fs).concat("Frl2SipApp");
 	public static final String apiAntwortPfad = home.concat(fs).concat("workspace").concat(fs).concat("Frl2SipApp")
 			.concat(fs).concat("apiAntworten");
+	public static final String propertyDateiPfad = home.concat(fs).concat("FRL_Properties.txt");
 
 	public static String apiAntwort(String id) {
 		return apiAntwortPfad.concat(fs).concat(id).concat(".json");
