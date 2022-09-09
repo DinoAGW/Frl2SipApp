@@ -9,7 +9,7 @@ import sql.IeTable;
 import sql.SqlManager;
 import utilities.Drive;
 
-public class IdIdentifier {
+public class IeIdentifier {
 	public static boolean scanForIes() throws Exception {
 		idCrawler.KonsekutivCrawl.makeUpToDate();
 		boolean ret = false;

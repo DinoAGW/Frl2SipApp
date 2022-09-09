@@ -41,6 +41,8 @@ public class KonsekutivCrawl {
 				if (MetadatensatzTable.insertIdIntoDatabase(id)) {
 					System.out.println("" + i + ") ID = '" + id + "' war noch nicht drin");
 					ret = true;
+				} else {
+					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
 				}
 			}
 		} catch (JSONException e) {
@@ -90,6 +92,7 @@ public class KonsekutivCrawl {
 	}
 
 	public static void main(String[] args) throws Exception {
+		checkMoreForDate("2022-09-08*");
 		if (makeUpToDate()) {
 			System.out.println("Es wurden neue Metadatensätze gefunden");
 		}
