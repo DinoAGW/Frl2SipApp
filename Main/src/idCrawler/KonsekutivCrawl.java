@@ -17,7 +17,8 @@ public class KonsekutivCrawl {
 	 * Gibt zurück ob irgendwas Neues dabei war.
 	 */
 	private static boolean checkMoreForDate(String dateMask) throws Exception {
-		final String url = "https://frl.publisso.de/find?q=modified:" + dateMask + "&format=json&from=0&until=10000";
+		final String url = "https://frl.publisso.de/find?q=isDescribedBy.modified:" + dateMask + "*&format=json&from=0&until=10000";
+		Thread.sleep(1000);
 		String apiAntwortJson = Url.getText(url);
 		if (apiAntwortJson.length() == 2) {
 			System.out.println("Nichts gefunden unter der Maske = '" + dateMask + "'");
@@ -42,7 +43,7 @@ public class KonsekutivCrawl {
 					System.out.println("" + i + ") ID = '" + id + "' war noch nicht drin");
 					ret = true;
 				} else {
-					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
+//					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
 				}
 			}
 		} catch (JSONException e) {
@@ -56,18 +57,33 @@ public class KonsekutivCrawl {
 	 * aktualisiert die Metadatensätze bis gestern
 	 */
 	public static boolean makeUpToDate() throws Exception {
+		boolean ret = false;
 		String heute = LocalDateTime.now().toString().substring(0, 10);
+		
+		utilities.PropertiesManager prop = new utilities.PropertiesManager(Drive.propertyDateiPfad);
+		String lastMakeUpToDate = prop.readStringFromProperty("lastMakeUpToDate");
+		
+		if (heute.contentEquals(lastMakeUpToDate)) {
+			return ret;
+		}
+		
 		int heuteJahr = Integer.parseInt(heute.substring(0, 4));
 		int heuteMonat = Integer.parseInt(heute.substring(5, 7));
 		int heuteTag = Integer.parseInt(heute.substring(8));
 		
-		utilities.PropertiesManager prop = new utilities.PropertiesManager(Drive.propertyDateiPfad);
-		int jahr = Integer.parseInt(prop.readStringFromProperty("jahr"));
-		int monat = Integer.parseInt(prop.readStringFromProperty("monat"));
-		int tag = Integer.parseInt(prop.readStringFromProperty("tag"));
+		int jahr = Integer.parseInt(lastMakeUpToDate.substring(0, 4));
+		int monat = Integer.parseInt(lastMakeUpToDate.substring(5, 7));
+		int tag = Integer.parseInt(lastMakeUpToDate.substring(8));
 		
-		boolean ret = false;
 		while (true) {
+			String formated = String.format("%04d-%02d-%02d", jahr, monat, tag);
+			if (checkMoreForDate(formated.concat("*"))) {
+				ret = true;
+			}
+			prop.saveStringToProperty("lastMakeUpToDate", formated);
+			if ((tag==heuteTag) && (monat==heuteMonat) && (jahr==heuteJahr)) {
+				break;
+			}
 			++tag;
 			if (tag==32) {
 				tag = 0;
@@ -77,22 +93,11 @@ public class KonsekutivCrawl {
 				monat = 0;
 				++jahr;
 			}
-			if ((tag==heuteTag) && (monat==heuteMonat) && (jahr==heuteJahr)) {
-				break;
-			}
-			String formated = String.format("%04d-%02d-%02d*", jahr, monat, tag);
-			if (checkMoreForDate(formated)) {
-				ret = true;
-			}
-			prop.saveStringToProperty("jahr", Integer.toString(jahr));
-			prop.saveStringToProperty("monat", Integer.toString(monat));
-			prop.saveStringToProperty("tag", Integer.toString(tag));
 		}
 		return ret;
 	}
 
 	public static void main(String[] args) throws Exception {
-		checkMoreForDate("2022-09-08*");
 		if (makeUpToDate()) {
 			System.out.println("Es wurden neue Metadatensätze gefunden");
 		}

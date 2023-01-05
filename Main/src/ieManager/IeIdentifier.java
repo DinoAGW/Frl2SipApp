@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import org.json.JSONObject;
 
 import sql.IeTable;
+import sql.MetadatensatzTable;
 import sql.SqlManager;
 import utilities.Drive;
 
@@ -14,6 +15,7 @@ public class IeIdentifier {
 		idCrawler.KonsekutivCrawl.makeUpToDate();
 		boolean ret = false;
 		ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM metadatensatzTable WHERE isRoot IS NULL");
+		int insg = 0;
 		while (res.next()) {
 			String id = res.getString("id");
 			String apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
@@ -25,15 +27,20 @@ public class IeIdentifier {
 				}
 			}
 			SqlManager.INSTANCE.executeUpdate("UPDATE metadatensatzTable SET isRoot=" + isRoot + " WHERE id='" + id + "';");
+			++insg;
 		}
+		System.out.println("Metadatensätze kontrolliert = " + insg);
 		return ret;
 	}
 
 	public static void main(String[] args) throws Exception {
+		System.out.println("Anzahl Metadatensätze vorher = " + MetadatensatzTable.countEntries());
+		System.out.println("Anzahl IEs vorher = " + IeTable.countEntries());
 		if (scanForIes()) {
 			System.out.println("Es wurden neue IEs identifiziert");
 		}
-		System.out.println("Anzahl = " + IeTable.countEntries());
+		System.out.println("Anzahl Metadatensätze nachher = " + MetadatensatzTable.countEntries());
+		System.out.println("Anzahl IEs nachher = " + IeTable.countEntries());
 		System.out.println("IdIdentifier Ende");
 	}
 
