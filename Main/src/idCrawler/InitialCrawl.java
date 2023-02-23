@@ -40,7 +40,7 @@ public class InitialCrawl {
 		Drive.saveStringToFile(apiAntwortJson, Drive.apiAntwort(id));
 
 		if (!MetadatensatzTable.insertIdIntoDatabase(id)) {
-			System.out.println("" + num + ") ID = '" + id + "' war schon drin");
+//			System.out.println("" + num + ") ID = '" + id + "' war schon drin");
 		}
 
 		return true;

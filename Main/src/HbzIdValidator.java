@@ -1,4 +1,4 @@
-package json;
+
 
 import java.io.File;
 
@@ -11,43 +11,57 @@ import com.jayway.jsonpath.Option;
 
 import utilities.Drive;
 
-public class LicenseIdScanner {
+public class HbzIdValidator {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
-
+	
 	public static void scanContent(String pfad) throws Exception {
 		int max_work = 0;
+		int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
-//				System.err.println("versteckte Datei entdeckt");
 				continue;
 			}
 			String apiAntwortJson = Drive.loadFileToString(file);
 			JSONObject obj = new JSONObject(apiAntwortJson);
-			if (obj.getString("contentType").contentEquals("file") || obj.getString("contentType").contentEquals("part")) {
-//				System.err.println(obj.getString("contentType") + " entdeckt: " + file.getPath());
+			if (obj.has("parentPid")) {
 				continue;
 			}
 			DocumentContext json = JsonPath.parse(file, Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS, Option.ALWAYS_RETURN_LIST));
 			net.minidev.json.JSONArray arr = json.read(pfad);
-
 			if (arr.size() == 0) {
 				continue;
 			}
+//			System.out.println(json.read(pfad).toString());
 			
-			if (arr.size()>1) {
-				System.out.println("https://frl.publisso.de/resource/frl:" + file.getName() + "2 hat " + arr.size() + " Lizenztext-IDs");
-				
-				--max_work;
-				if (max_work == 0) {
-					break;
-				}
+			String str = (String) arr.get(0);
+			if (!str.startsWith("HT0")) {
+				System.err.println("hbzId beginnt nicht mit HT0: '" + str + "' in " + file.getName());
+				throw new Exception();
+			}
+			int num = Integer.parseInt(str.substring(2));
+			if (!str.contentEquals("HT0" + num)) {
+				System.err.println("hbzId hat nicht die Form HT0<nummer>: '" + str + "' in " + file.getName());
+				throw new Exception();
+			}
+			if (num < min) {
+				min = num;
+			}
+			if (num > max) {
+				max = num;
+			}
+
+			--max_work;
+			if (max_work == 0) {
+				break;
 			}
 		}
+		System.out.println("Die Spanne geht von " + min + " bis " + max);
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		scanContent("$.license[*].@id");
-		System.out.println("LicenseIdScanner Ende");
+		//scanContent("$.license[*].note");
+		scanContent("$.hbzId[*]");
+		System.out.println("HbzIdValidator Ende");
 	}
 
 }

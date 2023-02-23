@@ -20,7 +20,8 @@ public class IeIdentifier {
 			String id = res.getString("id");
 			String apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
 			JSONObject obj = new JSONObject(apiAntwortJson);
-			boolean isRoot = !obj.has("parentPid"); 
+			boolean isRoot = !(obj.getString("contentType").contentEquals("file")
+					|| obj.getString("contentType").contentEquals("part"));
 			if (isRoot) {
 				if (IeTable.insertIdIntoDatabase(id)) {
 					ret = true;

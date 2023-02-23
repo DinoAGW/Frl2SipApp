@@ -47,7 +47,7 @@ public class MetadatensatzTable {
 	
 	public static boolean insertIdIntoDatabase(String id) throws SQLException {
 		if (checkIfEntryIsInDatabase("id", id)) {
-			SqlManager.INSTANCE.executeUpdate("UPDATE " + tabelle + " SET found  = CURRENT_DATE() WHERE id = '" + id + "';");
+			SqlManager.INSTANCE.executeUpdate("UPDATE " + tabelle + " SET found = CURRENT_DATE() WHERE id = '" + id + "';");
 			return false;
 		} else {
 			SqlManager.INSTANCE.executeUpdate("INSERT INTO " + tabelle + " (id, found) VALUES ('" + id + "', CURRENT_DATE());");
@@ -55,8 +55,13 @@ public class MetadatensatzTable {
 		}
 	}
 	
+	public static void clearIsRoot() throws SQLException {
+		SqlManager.INSTANCE.executeUpdate("UPDATE " + tabelle + " SET isRoot = NULL;");
+	}
+	
 	public static void main(String[] args) throws SQLException {
 		makeExistent();
+//		clearIsRoot();
 		System.out.println("Anzahl = " + countEntries());
 	}
 

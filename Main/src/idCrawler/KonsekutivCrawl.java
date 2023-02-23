@@ -12,12 +12,14 @@ import utilities.Drive;
 import utilities.Url;
 
 public class KonsekutivCrawl {
+	private static final int max = 5000;
+	
 	/*
 	 * Schaut, ob zu der Datenmaske irgendwelche Modifizierungen vorliegen.
 	 * Gibt zurück ob irgendwas Neues dabei war.
 	 */
 	private static boolean checkMoreForDate(String dateMask) throws Exception {
-		final String url = "https://frl.publisso.de/find?q=isDescribedBy.modified:" + dateMask + "*&format=json&from=0&until=10000";
+		final String url = "https://frl.publisso.de/find?q=isDescribedBy.modified:" + dateMask + "&format=json&from=0&until=" + max + "";
 		Thread.sleep(1000);
 		String apiAntwortJson = Url.getText(url);
 		if (apiAntwortJson.length() == 2) {
@@ -28,7 +30,7 @@ public class KonsekutivCrawl {
 		try {
 			JSONObject obj = new JSONObject("{\"array\": " + apiAntwortJson + "}");
 			JSONArray arr = obj.getJSONArray("array");
-			if (arr.length()>=9999) {
+			if (arr.length() == max) {
 				System.err.println("Suchanfrage hat das limit überschritten für dateMask = '" + dateMask + "'");
 				throw new Exception();
 			} else {
@@ -86,11 +88,11 @@ public class KonsekutivCrawl {
 			}
 			++tag;
 			if (tag==32) {
-				tag = 0;
+				tag = 1;
 				++monat;
 			}
 			if (monat==13) {
-				monat = 0;
+				monat = 1;
 				++jahr;
 			}
 		}

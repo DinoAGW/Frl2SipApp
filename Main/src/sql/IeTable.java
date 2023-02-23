@@ -66,6 +66,7 @@ public class IeTable {
 	public static void main(String[] args) throws SQLException {
 //		leereTabelle();
 		makeExistent();
+		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 		System.out.println("IeTable Ende");
 	}
 }
