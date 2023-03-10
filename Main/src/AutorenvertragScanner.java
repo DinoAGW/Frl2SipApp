@@ -23,7 +23,7 @@ public class AutorenvertragScanner {
 			}
 			String apiAntwortJson = Drive.loadFileToString(file);
 			JSONObject obj = new JSONObject(apiAntwortJson);
-			if (!obj.getString("contentType").contentEquals("part")) {
+			if (!obj.getString("contentType").contentEquals("file")) {
 				continue;
 			}
 			--max;
