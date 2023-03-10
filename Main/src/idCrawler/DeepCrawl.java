@@ -10,7 +10,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 
 import sql.MetadatensatzTable;
-import utilities.ApiManager;
 import utilities.Drive;
 import utilities.Url;
 
