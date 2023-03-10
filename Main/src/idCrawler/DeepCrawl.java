@@ -20,7 +20,7 @@ public class DeepCrawl {
 	
 	public static boolean deepCrawl(String pfad) throws Exception {
 		int insg = 0;
-		int max = 0;
+		int max = 80;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
 				continue;
@@ -53,8 +53,10 @@ public class DeepCrawl {
 					++insg;
 					System.out.println(insg + ") " + file.getName() + " #" + (i+1) + " ID = '" + id + "' war noch nicht drin");
 					String url = "https://frl.publisso.de/resource/".concat(str).concat(".json2");
-					String innerApiAntwortJson = Url.getText(url);
-					Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
+//					System.out.println(url);
+					String stringApiAntwortJson = Url.getText(url);
+					JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
+					Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 					Thread.sleep(1000);
 				} else {
 //					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
