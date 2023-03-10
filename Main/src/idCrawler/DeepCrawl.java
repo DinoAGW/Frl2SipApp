@@ -16,8 +16,11 @@ import utilities.Url;
 public class DeepCrawl {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	
-	public static void deepCrawl(String pfad) throws Exception {
-		int max = 30;
+	static int insginsg = 0;
+	
+	public static boolean deepCrawl(String pfad) throws Exception {
+		int insg = 0;
+		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
 				continue;
@@ -41,11 +44,12 @@ public class DeepCrawl {
 					throw new Exception();
 				}
 				if (MetadatensatzTable.insertIdIntoDatabase(id)) {
-					System.out.println(file.getName() + " #" + i + ") ID = '" + id + "' war noch nicht drin");
+					++insg;
+					System.out.println(insg + ") " + file.getName() + " #" + (i+1) + " ID = '" + id + "' war noch nicht drin");
 					String url = "https://frl.publisso.de/resource/".concat(str).concat(".json2");
-					Thread.sleep(1000);
 					String innerApiAntwortJson = Url.getText(url);
 					Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
+					Thread.sleep(1000);
 				} else {
 //					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
 				}
@@ -56,10 +60,20 @@ public class DeepCrawl {
 				break;
 			}
 		}
+		insginsg += insg;
+		return (insg > 0);
+	}
+	
+	public static void deeperCrawl(String pfad) throws Exception {
+		boolean nochmal = true;
+		while (nochmal) {
+			nochmal = deepCrawl(pfad);
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		deepCrawl("$.hasPart[*].@id");
+		deeperCrawl("$.hasPart[*].@id");
+		System.out.println("Gefunden = " + insginsg);
 		System.out.println("DeepCrawl Ende");
 	}
 
