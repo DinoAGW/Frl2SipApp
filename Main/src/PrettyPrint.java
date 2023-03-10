@@ -24,15 +24,6 @@ public class PrettyPrint {
 				System.err.println("Fehler bei Datei " + file.getName());
 				throw e;
 			}
-<<<<<<< HEAD
-//			if (apiAntwortJson.length() == obj.toString(2).length() + 2) {
-				System.out.println(apiAntwortJson.contentEquals(obj.toString(2) + "\r\n"));
-				System.out.println((apiAntwortJson.charAt(apiAntwortJson.length()-1)+0) + " " + apiAntwortJson.length());
-				System.out.println("[" + apiAntwortJson.substring(apiAntwortJson.length()-3) + "]");
-				System.out.println((obj.toString(2).charAt(obj.toString(2).length()-1)+0) + " " + obj.toString(2).length());
-				System.out.println("[" + obj.toString(2).substring(apiAntwortJson.length()-3) + "]");
-//			}
-=======
 			String id = ApiManager.json2id(apiAntwortJson);
 			if (!file.getName().contentEquals(id + ".json")) {
 				System.err.println("Unterschied entdeckt: " + file.getName() + " und " + id + ".json");
@@ -43,7 +34,6 @@ public class PrettyPrint {
 				++insg;
 				System.out.println(insg + ") " + file.getName() + " geändert");
 			}
->>>>>>> dc1e96edc0e19bc9973a40ef7eab05bed09b4d9b
 
 			--max;
 			if (max == 0) {
