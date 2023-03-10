@@ -16,13 +16,26 @@ public class PrettyPrint {
 			if (file.getName().startsWith(".")) {
 				continue;
 			}
+			if (file.getName().contentEquals("6408915.json")) {
+				continue;
+			}
+			if (file.getName().contentEquals("6408895.json")) {
+				continue;
+			}
+			if (file.getName().contentEquals("6439776.json")) {
+				continue;
+			}
+			if (file.getName().contentEquals("6412706.json")) {
+				continue;
+			}
 			String apiAntwortJson = Drive.loadFileToString(file);
 			JSONObject obj = null;
 			try {
 				obj = new JSONObject(apiAntwortJson);
 			} catch (Exception e) {
 				System.err.println("Fehler bei Datei " + file.getName());
-				throw e;
+				continue;
+//				throw e;
 			}
 			String id = ApiManager.json2id(apiAntwortJson);
 			if (!file.getName().contentEquals(id + ".json")) {
