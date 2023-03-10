@@ -26,7 +26,13 @@ public class DeepCrawl {
 				continue;
 			}
 			String apiAntwortJson = Drive.loadFileToString(file);
-			JSONObject obj = new JSONObject(apiAntwortJson);
+			JSONObject obj = null;
+			try {
+				obj = new JSONObject(apiAntwortJson);
+			} catch (Exception e) {
+				System.err.println("Fehler bei Datei " + file.getName());
+				throw e;
+			}
 			if (obj.getString("contentType").contentEquals("file") || obj.getString("contentType").contentEquals("part")) {
 				continue;
 			}
