@@ -53,7 +53,6 @@ public class DeepCrawl {
 					++insg;
 					System.out.println(insg + ") " + file.getName() + " #" + (i+1) + " ID = '" + id + "' war noch nicht drin");
 					String url = "https://frl.publisso.de/resource/".concat(str).concat(".json2");
-//					System.out.println(url);
 					String stringApiAntwortJson = Url.getText(url);
 					JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
 					Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
