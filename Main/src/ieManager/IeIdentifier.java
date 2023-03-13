@@ -18,7 +18,13 @@ public class IeIdentifier {
 		int insg = 0;
 		while (res.next()) {
 			String id = res.getString("id");
-			String apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
+			String apiAntwortJson = null;
+			try {
+				apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
+			} catch (Exception e) {
+				System.err.println("Datensatz fehlt auf der Festplatte: " + id);
+				continue;
+			}
 			JSONObject obj = new JSONObject(apiAntwortJson);
 			boolean isRoot = !(obj.getString("contentType").contentEquals("file")
 					|| obj.getString("contentType").contentEquals("part"));

@@ -37,7 +37,7 @@ public class DeepCrawl {
 				System.err.println("Datei " + file.getName() + " hat keinen contentType");
 				continue;
 			}
-			if (obj.getString("contentType").contentEquals("file") || obj.getString("contentType").contentEquals("part")) {
+			if (obj.getString("contentType").contentEquals("file") ) {
 				continue;
 			}
 
@@ -58,9 +58,15 @@ public class DeepCrawl {
 					System.out.println(insg + ") " + file.getName() + " #" + (i+1) + " ID = '" + id + "' war noch nicht drin");
 					String url = "https://frl.publisso.de/resource/".concat(str).concat(".json2");
 					String stringApiAntwortJson = Url.getText(url);
-					JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
-					Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 					Thread.sleep(1000);
+					JSONObject innerApiAntwortJson = null;
+					try {
+						innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
+					} catch (Exception e) {
+						System.err.println("Fehler beim Verarbeiten von id '" + str + "'. Antwort wird nicht gespeichert.");
+						continue;
+					}
+					Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 				} else {
 //					System.out.println("" + i + ") ID = '" + id + "' war schon drin");
 				}

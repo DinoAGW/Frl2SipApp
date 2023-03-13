@@ -102,8 +102,8 @@ public class AutorenvertragScanner {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println("Scan PMDs...");
-		scanPMDs();
+//		System.out.println("Scan PMDs...");
+//		scanPMDs();
 		System.out.println("Scan Parts...");
 		scanParts();
 //		System.out.println("Scan Files...");
