@@ -10,19 +10,6 @@ public class PrettyPrint {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	static String newline = System.getProperty("line.separator");
 	
-	static void saveId2File(String id) throws Exception {
-		String url = "https://frl.publisso.de/resource/frl:".concat(id).concat(".json2");
-		String stringApiAntwortJson = null;
-		try {
-			stringApiAntwortJson = Url.getText(url);
-		} catch (Exception e) {
-			System.err.println("Fehler beim Laden der URL '" + url + "'");
-			throw new Exception();
-		}
-		JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
-		Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
-	}
-
 	static void makePretty() throws Exception {
 		int insg = 0;
 		int max = 0;
@@ -36,8 +23,12 @@ public class PrettyPrint {
 				obj = new JSONObject(apiAntwortJson);
 			} catch (Exception e) {
 				System.err.println("Fehler bei Datei " + file.getName());
-				saveId2File(file.getName().substring(0, file.getName().indexOf('.')));
+				ApiManager.saveId2File(file.getName().substring(0, file.getName().indexOf('.')));
 				continue;
+			}
+			if (!obj.has("contentType")) {
+				System.err.println("Hat kein ContentType: " + file.getName());
+				ApiManager.saveId2File(file.getName().substring(0, file.getName().indexOf('.')));
 			}
 			String id = ApiManager.json2id(apiAntwortJson);
 			if (!file.getName().contentEquals(id + ".json")) {

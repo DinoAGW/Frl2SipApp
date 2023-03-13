@@ -20,7 +20,7 @@ public class DeepCrawl {
 	
 	public static boolean deepCrawl(String pfad) throws Exception {
 		int insg = 0;
-		int max = 80;
+		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
 				continue;
@@ -32,6 +32,10 @@ public class DeepCrawl {
 			} catch (Exception e) {
 				System.err.println("Fehler bei Datei " + file.getName());
 				throw e;
+			}
+			if (!obj.has("contentType")) {
+				System.err.println("Datei " + file.getName() + " hat keinen contentType");
+				continue;
 			}
 			if (obj.getString("contentType").contentEquals("file") || obj.getString("contentType").contentEquals("part")) {
 				continue;

@@ -30,8 +30,22 @@ public class ApiManager {
 		}
 		return id;
 	}
+	
+	public static void saveId2File(String id) throws Exception {
+		String url = "https://frl.publisso.de/resource/frl:".concat(id).concat(".json2");
+		String stringApiAntwortJson = null;
+		try {
+			stringApiAntwortJson = Url.getText(url);
+		} catch (Exception e) {
+			System.err.println("Fehler beim Laden der URL '" + url + "'");
+			throw new Exception();
+		}
+		JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
+		Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
+	}
 
 	public static void main(String[] args) throws Exception {
+//		saveId2File("6402311");
 		System.out.println("ApiManager Ende");
 	}
 
