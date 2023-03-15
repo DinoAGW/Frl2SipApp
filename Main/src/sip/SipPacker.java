@@ -68,11 +68,11 @@ public class SipPacker {
 					throw new Exception();
 				}
 				if (obj.getString("contentType").contentEquals("part")) {
-					if (!innerObj.has("title")) {
-						System.err.println("Ein Part ohne title: " + innerId + ".");
+					if (!obj.has("title")) {
+						System.err.println("Ein Part ohne title: " + id + ".");
 						throw new Exception();
 					}
-					String title = innerObj.getString("title");
+					String title = obj.getString("title");
 					traverseIe(innerId.substring(4), title.concat(fs), id);
 				} else if (obj.getString("contentType").contentEquals("file")) {
 					System.err.println("File-Datensatz sollte kein Part haben: " + id + ".");
@@ -91,7 +91,7 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		generateOneSip("6408000");
+		generateOneSip("6407998");
 	}
 
 }
