@@ -27,6 +27,13 @@ public class SipPacker {
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
 		JSONObject obj = new JSONObject(apiAntwortJson);
+		if (obj.has("notification")) {
+			if(!obj.getString("notification").contains("Dieses Objekt wurde gelöscht")) {
+				throw new Exception("Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
+			}
+			System.out.println("Objekt wurde gelöscht: " + id + ".");
+			return;
+		}
 		if (!obj.has("contentType")) {
 			System.err.println("Datensatz ohne contentType: " + id + ".");
 			throw new Exception();
@@ -72,8 +79,9 @@ public class SipPacker {
 						System.err.println("Ein Part ohne title: " + id + ".");
 						throw new Exception();
 					}
-					String title = obj.getString("title");
-					traverseIe(innerId.substring(4), title.concat(fs), id);
+//					String title = obj.getString("title");
+//					traverseIe(innerId.substring(4), title.concat(fs), id);
+					traverseIe(innerId.substring(4), id.concat(fs), id);
 				} else if (obj.getString("contentType").contentEquals("file")) {
 					System.err.println("File-Datensatz sollte kein Part haben: " + id + ".");
 					throw new Exception();
@@ -86,6 +94,9 @@ public class SipPacker {
 				}
 			}
 		} else {
+			if (!obj.has("hasData")) {
+				throw new Exception("File ohne hasData: " + id + ".");
+			}
 			System.out.println("File: " + pfad + obj.getJSONObject("hasData").getString("fileLabel"));
 		}
 	}
