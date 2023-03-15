@@ -26,7 +26,10 @@ public class Drive {
 		}
 	}
 
-	public static String loadFileToString(File file) throws IOException {
+	public static String loadFileToString(File file) throws Exception {
+		if(!file.exists()) {
+			throw new Exception("Datei " + file.getAbsolutePath() + " existiert nicht.");
+		}
 		Charset encoding = Charset.defaultCharset();
 		byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
 		return new String(encoded, encoding);

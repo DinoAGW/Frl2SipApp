@@ -1,7 +1,6 @@
 
 
 import java.io.File;
-import java.io.IOException;
 
 import org.json.JSONObject;
 
@@ -15,7 +14,7 @@ import com.jayway.jsonpath.Option;
 public class AutorenvertragScanner {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	
-	public static void scanFiles() throws IOException {
+	public static void scanFiles() throws Exception {
 		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
@@ -44,7 +43,7 @@ public class AutorenvertragScanner {
 		}
 	}
 	
-	public static void scanPMDs() throws IOException {
+	public static void scanPMDs() throws Exception {
 		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
@@ -72,7 +71,7 @@ public class AutorenvertragScanner {
 		}
 	}
 	
-	public static void scanParts() throws IOException {
+	public static void scanParts() throws Exception {
 		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
@@ -101,7 +100,7 @@ public class AutorenvertragScanner {
 		System.out.println("Parts durchsucht: " + (-1*max));
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 //		System.out.println("Scan PMDs...");
 //		scanPMDs();
 		System.out.println("Scan Parts...");

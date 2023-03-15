@@ -1,7 +1,6 @@
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 
 import org.json.JSONObject;
@@ -16,7 +15,7 @@ import com.jayway.jsonpath.Option;
 public class MetadataContentScanner_Files {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 
-	public static LinkedList<String> scanContent(String pfad) throws IOException {
+	public static LinkedList<String> scanContent(String pfad) throws Exception {
 		System.out.println("MetadatenContenScan für '" + pfad + "'");
 		LinkedList<String> ret = new LinkedList<String>();
 		int max = 0;
@@ -52,7 +51,7 @@ public class MetadataContentScanner_Files {
 		return ret;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		LinkedList<String> ret = scanContent("$.hasData.format");
 		System.out.println("MetadataContentScanner Ende...");
 	}

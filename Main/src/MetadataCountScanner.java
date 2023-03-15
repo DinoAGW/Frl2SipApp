@@ -16,7 +16,7 @@ import utilities.Drive;
 public class MetadataCountScanner {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	
-	public static LinkedList<String> scanCount(String pfad, int count) throws IOException {
+	public static LinkedList<String> scanCount(String pfad, int count) throws Exception {
 		LinkedList<String> ret = new LinkedList<String>();
 		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
@@ -64,7 +64,7 @@ public class MetadataCountScanner {
 		return ret;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		LinkedList<String> ret = scanCount("$.bibo:doi[*]", 2);
 		System.out.println(ret.toString());
 		System.out.println("MetadataCountScanner Ende...");

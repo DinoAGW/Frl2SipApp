@@ -1,7 +1,6 @@
 package werkstatt;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +9,7 @@ import utilities.Drive;
 
 public class AendereApiAntwort {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 		for(File file: apiAntwortOrdner.listFiles()) {
 			String content = Drive.loadFileToString(file);
