@@ -1,5 +1,6 @@
 import java.io.File;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import utilities.Drive;
@@ -16,6 +17,21 @@ public class publicationPublishedByScanner {
 			}
 			String apiAntwortJson = Drive.loadFileToString(file);
 			JSONObject obj = new JSONObject(apiAntwortJson);
+			if (obj.getString("contentType").contentEquals("file") || obj.getString("contentType").contentEquals("part")) {
+				continue;
+			}
+			JSONArray jarr = obj.optJSONArray("publication");
+			if (jarr == null) {
+				continue;
+			}
+			obj = jarr.getJSONObject(0);
+			jarr = obj.optJSONArray("publishedBy");
+			if (jarr == null) {
+				continue;
+			}
+			if (jarr.length()>2) {
+				System.out.println("PMD " + file.getName() + " hat " + jarr.length() + " $.publication[]{}.publishedBy[].");
+			}
 			if (--max == 0) {
 				break;
 			}
