@@ -41,6 +41,7 @@ public class IeIdentifier {
 	}
 
 	public static void main(String[] args) throws Exception {
+		IeTable.makeExistent();
 		System.out.println("Anzahl Metadatensätze vorher = " + MetadatensatzTable.countEntries());
 		System.out.println("Anzahl IEs vorher = " + IeTable.countEntries());
 		if (scanForIes()) {

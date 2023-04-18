@@ -19,6 +19,13 @@
 		</plugins>
 	</build>
 	<dependencies>
+<!-- 		<dependency> -->
+<!-- 			<groupId>de.zbmed</groupId> -->
+<!-- 			<artifactId>MetsSipCreator</artifactId> -->
+<!-- 			<version>0.2.3-SNAPSHOT</version> -->
+<!-- 			<scope>system</scope> -->
+<!-- 			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.3-SNAPSHOT.jar</systemPath> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -52,6 +59,13 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.19.0</version>
+		</dependency>
+		<!-- für org.apache.commons.io.FileUtils -->
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
 		</dependency>
 	</dependencies>
 </project>
