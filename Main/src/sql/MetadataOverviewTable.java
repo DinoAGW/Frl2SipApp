@@ -121,9 +121,9 @@ public class MetadataOverviewTable {
 	}
 
 	public static void main(String[] args) {
+		makeExistent();
 		leereTabelle1();
 		leereTabelle2();
-//		makeExistent();
 		System.out.println("MetadataOverviewTable Ende");
 	}
 
