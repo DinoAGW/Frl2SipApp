@@ -99,6 +99,9 @@ public class KonsekutivCrawl {
 		return ret;
 	}
 
+	/*
+	 * holt sich seit dem letzten Crawl alle neuen Datensätze, dabei kommen aber aus irgendeinen Grund nicht alle Part und nicht alle File Datensätze mit. Darum brauchts danach einen DeepCrawl
+	 */
 	public static void main(String[] args) throws Exception {
 		if (makeUpToDate()) {
 			System.out.println("Es wurden neue Metadatensätze gefunden");

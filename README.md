@@ -8,6 +8,7 @@
   * dort mal maven clean package install
   * dann hier maven build
 * Setup ausführen
+* in FRL_Properties im Home-Ordner noch username und Passwort für FRL API Account ergänzen
 * idCrawler->KonsekutivCrawl ausführen um Datensätze auf die Festplatte zu laden
 * ieManager->IeIdentifier ausführen um anhand der Datensätzen von der Festplatte die Datenbank mit IEs aufzubauen
 * idCrawler->DeepCrawlausführen um weitere Datensätze auf der Festplatte nachzuladen

@@ -1,3 +1,5 @@
 #erste Vorlage zu speichern im persönlichen Ordner
 #Tue Apr 04 09:26:38 CEST 2023
 lastMakeUpToDate=2017-12-04
+user=
+passwort=

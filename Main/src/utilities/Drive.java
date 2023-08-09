@@ -16,7 +16,11 @@ public class Drive {
 			.concat(fs).concat("apiAntworten");
 	public static final String propertyDateiPfad = home.concat(fs).concat("FRL_Properties.txt");
 
-	public static String apiAntwort(String id) {
+	
+	public static String apiAntwort(String id) throws Exception {
+		if (id.startsWith("frl:")) {
+			throw new Exception("Es wird die ID ohne das Präfix \"frl:\" erwartet");
+		}
 		return apiAntwortPfad.concat(fs).concat(id).concat(".json");
 	}
 

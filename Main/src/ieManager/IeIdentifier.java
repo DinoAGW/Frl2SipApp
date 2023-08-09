@@ -22,7 +22,7 @@ public class IeIdentifier {
 			try {
 				apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
 			} catch (Exception e) {
-				System.err.println("Datensatz fehlt auf der Festplatte: " + id);
+				System.err.println("Datensatz fehlt auf der Festplatte: " + id + ". Empfehle PrivateLoader.allPrivateMetadataLoader() auszuführen.");
 				continue;
 			}
 			JSONObject obj = new JSONObject(apiAntwortJson);
