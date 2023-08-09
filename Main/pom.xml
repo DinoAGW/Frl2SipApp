@@ -19,13 +19,13 @@
 		</plugins>
 	</build>
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 			<groupId>de.zbmed</groupId> -->
-<!-- 			<artifactId>MetsSipCreator</artifactId> -->
-<!-- 			<version>0.2.3-SNAPSHOT</version> -->
+ 		<dependency> 
+ 			<groupId>de.zbmed</groupId> 
+ 			<artifactId>MetsSipCreator</artifactId> 
+ 			<version>0.2.6-SNAPSHOT</version> 
 <!-- 			<scope>system</scope> -->
-<!-- 			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.3-SNAPSHOT.jar</systemPath> -->
-<!-- 		</dependency> -->
+<!-- 			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.6-SNAPSHOT.jar</systemPath> -->
+ 		</dependency> 
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
