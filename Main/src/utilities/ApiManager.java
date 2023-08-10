@@ -4,6 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ApiManager {
+	public static final String fs = System.getProperty("file.separator");
+	
 	public static String json2id(String apiAntwortJson) throws Exception {
 		String id = null;
 		try {
@@ -43,9 +45,20 @@ public class ApiManager {
 		JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
 		Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 	}
+	
+	public static void saveDataOfId2File(String id, String file) throws Exception {
+		PropertiesManager prop = new PropertiesManager(Drive.propertyDateiPfad);
+		String user = prop.readStringFromProperty("user");
+		String passwort = prop.readStringFromProperty("passwort");
+		
+		String command = "curl -u " + user + ":" + passwort + " https://frl.publisso.de/resource/frl:" + id + "/data --output " + file;
+		ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+		Process process = processBuilder.start();
+	}
 
 	public static void main(String[] args) throws Exception {
 //		saveId2File("6407998");
+		saveDataOfId2File("6408009", "bin" + fs + "HK_image.jpg");
 		System.out.println("ApiManager Ende");
 	}
 
