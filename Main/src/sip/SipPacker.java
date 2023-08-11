@@ -7,8 +7,10 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import metsSipCreator.FILE;
 import metsSipCreator.REP;
 import metsSipCreator.SIP;
+import utilities.ApiManager;
 import utilities.Drive;
 
 public class SipPacker {
@@ -17,12 +19,17 @@ public class SipPacker {
 	static SIP sip1;
 	static REP rep1;
 	private static boolean everythingPublic;
+	private static int tempFileName;
 
 	public static void generateOneSip(String id) throws Exception {
 		File sip = new File("bin" + fs + id);
+		File temp = new File("bin" + fs + "temp");
+		if (!temp.exists())
+			temp.mkdirs();
 		if (sip.exists()) {
 			FileUtils.deleteDirectory(sip);
 		}
+		tempFileName = 0;
 		sip1 = new SIP();
 		rep1 = sip1.newREP(null);
 		everythingPublic = true;
@@ -30,6 +37,7 @@ public class SipPacker {
 		System.out.println("everythingPublic = " + everythingPublic);
 		addMetadata(id);
 		sip1.deploy("bin" + fs + id);
+		FileUtils.deleteDirectory(temp);
 	}
 
 	private static void addMetadata(String id) throws Exception {
@@ -272,9 +280,9 @@ public class SipPacker {
 							+ " and copied for your personal and scholarly purposes. You may not copy it for public or commercial purposes,"
 							+ " exhibit, perform, distribute or otherwise use the document in public.");
 		}
-		
+
 		tempStr = getString(tempObj, "hbzId");
-		if (tempStr.size()>1) {
+		if (tempStr.size() > 1) {
 			throw new Exception("PMD (" + id + ") hat zu viele hbzIds");
 		} else if (tempStr.size() == 1) {
 			sip1.setCMS("HBZ01", tempStr.get(0));
@@ -398,7 +406,7 @@ public class SipPacker {
 		}
 //		System.out.println("Füge File " + id + " unter '" + pfad + "' hinzu");
 		// Füge json-Datei hinzu
-		rep1.newFile(Drive.apiAntwort(id), pfad, null);
+		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs));
 
 		if (obj.has("hasPart")) {
 			if (obj.getString("contentType").contentEquals("file")) {
@@ -426,10 +434,16 @@ public class SipPacker {
 				throw new Exception("File ohne hasData: " + id + ".");
 			}
 //			System.out.println("File: " + letzterPfad + obj.getJSONObject("hasData").getString("fileLabel"));
-			//TODO: Datei herunterladen + hinzufügen
+//			System.out.println(pfad);
+			ApiManager.saveDataOfId2File(id,
+					"bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)));
+			FILE tempFile = rep1.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
+					pfad.concat(obj.getJSONObject("hasData").getString("fileLabel")))
+					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
+			++tempFileName;
 
 			if (accessScheme.contentEquals("private")) {
-				//TODO: accessRightsPolicy ZB MED Staff Only
+				tempFile.setARPolicy("433120", "ZB MED_STAFF only");
 				everythingPublic = false;
 				boolean istZuMappen = true;
 				JSONArray arr = obj.optJSONArray("note");

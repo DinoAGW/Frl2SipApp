@@ -1,5 +1,7 @@
 package utilities;
 
+import java.io.InputStream;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,6 +56,21 @@ public class ApiManager {
 		String command = "curl -u " + user + ":" + passwort + " https://frl.publisso.de/resource/frl:" + id + "/data --output " + file;
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
 		Process process = processBuilder.start();
+		int size = 0;
+		byte[] buffer = new byte[1024];
+		InputStream inputStream;
+//		System.out.println("Process ErrorStream:");
+//		inputStream = process.getErrorStream();
+//		System.out.println("Process OutputStream:");
+//		inputStream = process.getInputStream();
+//		while((size = inputStream.read(buffer)) != -1) {
+//			System.out.write(buffer, 0, size);
+//		}
+		process.waitFor();
+		int exitCode;
+		if ((exitCode = process.exitValue())!=0) {
+			System.err.println("CURL endete mit exitCode = " + exitCode);
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
