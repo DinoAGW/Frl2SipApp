@@ -22,6 +22,7 @@ public class SipPacker {
 	private static int tempFileName;
 
 	public static void generateOneSip(String id) throws Exception {
+		System.out.println("Verarbeite id " + id + " ...");
 		File sip = new File("bin" + fs + id);
 		File temp = new File("bin" + fs + "temp");
 		if (!temp.exists())
@@ -44,7 +45,8 @@ public class SipPacker {
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
 		ArrayList<JSONObject> objList = new ArrayList<>();
-		objList.add(new JSONObject(apiAntwortJson));
+		JSONObject mainObj = new JSONObject(apiAntwortJson); 
+		objList.add(mainObj);
 		ArrayList<JSONObject> tempObj;
 		ArrayList<String> tempStr;
 
@@ -121,12 +123,55 @@ public class SipPacker {
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:subject", tempStr, false, false, id);
 
-		// Zeile 17-20
-//		//insgesamt 1 soll gelten
-//		int count = 0;
-//		
-//		//bibo->doi
-//		tempStr = getString(objList, "bibo:doi");
+		// Zeile 15-18
+		//insgesamt 1 soll gelten
+		int count = 0;
+		
+		//doi vorgezogen, weil entscheidend für andere Einträge
+		tempStr = getString(objList, "doi");
+		if (tempStr.size()>0) {
+			++count;
+			if (tempStr.size()>1) {
+				throw new Exception("PMD (" + id + ") hat an einer Stelle zu viele Elemente");
+			} else {
+				String doi = tempStr.get(0);
+				if (doi==null || !doi.startsWith("10.")) {
+					throw new Exception("PMD.doi beginnt falsch: " + doi);
+				}
+				sip1.addMetadata("dcterms:URI", doi);
+			}
+		} else { //nur, falls doi nicht vorhanden ist
+			//$.bibo:doi[]:
+			tempStr = getString(objList, "bibo:doi");
+			if (tempStr.size()>0 && !tempStr.get(0).startsWith("10.")) {
+				throw new Exception("PMD.bibo:doi beginnt falsch: " + tempStr.get(0));
+			}
+			count += tempStr.size();
+			addMetadata("dcterms:URI", tempStr, false, true, id);
+
+			//$.publisherVersion[]{}.prefLabel:
+			tempObj = getObject(objList, "publisherVersion");
+			tempStr = getString(tempObj, "prefLabel");
+			for (String test : tempStr) {
+				if (test.contains("doi.org/10.")) {
+					++count;
+					sip1.addMetadata("dcterms:isVersionOf", test);
+				}
+			}
+			
+			//$.isLike[]{}.@id:
+			tempObj = getObject(objList, "isLike");
+			tempStr = getString(tempObj, "@id");
+			for (String test : tempStr) {
+				if (test.contains("doi.org/10.")) {
+					++count;
+					sip1.addMetadata("dcterms:isVersionOf", test);
+				}
+			}
+		}
+		if (count!=1) {
+			throw new Exception("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
+		}
 
 		tempObj = getObject(objList, "editor");
 		tempStr = getString(tempObj, "prefLabel");
@@ -170,7 +215,9 @@ public class SipPacker {
 		tempStr = getString(objList, "publicationYear");
 		addMetadata("dcterms:Issued", tempStr, false, true, id);
 
-		// Zeile 36/37
+		tempObj = getObject(objList, "publication");
+		tempStr = getString(tempObj, "publishedBy");
+		addMetadata("dc:publisher", tempStr, false, false, id);
 
 		tempObj = getObject(objList, "language");
 		tempStr = getString(tempObj, "prefLabel");
@@ -258,15 +305,27 @@ public class SipPacker {
 		addMetadata("dcterms:DateCopyrighted", tempStr, false, true, id);
 
 		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
-
-		boolean istZuMappen = everythingPublic;
-		tempObj = getObject(objList, "rdfType");
-		tempStr = getString(tempObj, "prefLabel");
-		for (String str : tempStr) {
-			if (str.contains("Abschlussarbeit")) {
-				istZuMappen = false;
+		
+		boolean istZuMappen = false;
+		JSONArray arr = mainObj.optJSONArray("note");
+		if (arr != null) {
+			for (int i = 0; i < arr.length(); ++i) {
+				String str = arr.optString(i);
+				if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+					istZuMappen = true;
+				}
+			}
+		} else {
+			String str = mainObj.optString("note", null);
+			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+				istZuMappen = true;
 			}
 		}
+		if (istZuMappen) {
+			sip1.addMetadata("dcterms:accessRights", "Retraction");
+		}
+
+		istZuMappen = everythingPublic;
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "@id");
 		if (tempStr.size() > 0) {
@@ -441,6 +500,19 @@ public class SipPacker {
 					pfad.concat(obj.getJSONObject("hasData").getString("fileLabel")))
 					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
 			++tempFileName;
+			
+			String atId = obj.optString("@id");
+			if (atId == null) {
+				throw new Exception("Datei " + id + " hat keine @id");
+			}
+			tempFile.addMetadata("dc:identifier", atId);
+			
+			JSONArray jarr = obj.optJSONArray("title");
+			if (jarr.length() != 1) {
+				throw new Exception("Datei " + id + " hat ungleich 1 title: " + jarr.length());
+			}
+			String title = jarr.getString(0);
+			tempFile.addMetadata("dc:title", title);
 
 			if (accessScheme.contentEquals("private")) {
 				tempFile.setARPolicy("433120", "ZB MED_STAFF only");
@@ -481,9 +553,7 @@ public class SipPacker {
 				if (istZuMappen) {
 					sip1.addMetadata("dc:rights", "Datei_Nutzungsvereinbarung " + id);
 				}
-				System.out.println(id + " " + istZuMappen);
 			}
-
 		}
 	}
 
