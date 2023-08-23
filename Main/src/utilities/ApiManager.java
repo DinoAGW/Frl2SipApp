@@ -59,13 +59,18 @@ public class ApiManager {
 		int size = 0;
 		byte[] buffer = new byte[1024];
 		InputStream inputStream;
+		
 //		System.out.println("Process ErrorStream:");
-//		inputStream = process.getErrorStream();
-//		System.out.println("Process OutputStream:");
-//		inputStream = process.getInputStream();
-//		while((size = inputStream.read(buffer)) != -1) {
+		inputStream = process.getErrorStream();
+		while((size = inputStream.read(buffer)) != -1) {
 //			System.out.write(buffer, 0, size);
-//		}
+		}
+//		System.out.println("Process OutputStream:");
+		inputStream = process.getInputStream();
+		while((size = inputStream.read(buffer)) != -1) {
+//			System.out.write(buffer, 0, size);
+		}
+		
 		process.waitFor();
 		int exitCode;
 		if ((exitCode = process.exitValue())!=0) {

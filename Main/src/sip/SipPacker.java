@@ -45,7 +45,7 @@ public class SipPacker {
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
 		ArrayList<JSONObject> objList = new ArrayList<>();
-		JSONObject mainObj = new JSONObject(apiAntwortJson); 
+		JSONObject mainObj = new JSONObject(apiAntwortJson);
 		objList.add(mainObj);
 		ArrayList<JSONObject> tempObj;
 		ArrayList<String> tempStr;
@@ -124,32 +124,32 @@ public class SipPacker {
 		addMetadata("dc:subject", tempStr, false, false, id);
 
 		// Zeile 15-18
-		//insgesamt 1 soll gelten
+		// insgesamt 1 soll gelten
 		int count = 0;
-		
-		//doi vorgezogen, weil entscheidend für andere Einträge
+
+		// doi vorgezogen, weil entscheidend für andere Einträge
 		tempStr = getString(objList, "doi");
-		if (tempStr.size()>0) {
+		if (tempStr.size() > 0) {
 			++count;
-			if (tempStr.size()>1) {
+			if (tempStr.size() > 1) {
 				throw new Exception("PMD (" + id + ") hat an einer Stelle zu viele Elemente");
 			} else {
 				String doi = tempStr.get(0);
-				if (doi==null || !doi.startsWith("10.")) {
+				if (doi == null || !doi.startsWith("10.")) {
 					throw new Exception("PMD.doi beginnt falsch: " + doi);
 				}
 				sip1.addMetadata("dcterms:URI", doi);
 			}
-		} else { //nur, falls doi nicht vorhanden ist
-			//$.bibo:doi[]:
+		} else { // nur, falls doi nicht vorhanden ist
+			// $.bibo:doi[]:
 			tempStr = getString(objList, "bibo:doi");
-			if (tempStr.size()>0 && !tempStr.get(0).startsWith("10.")) {
+			if (tempStr.size() > 0 && !tempStr.get(0).startsWith("10.")) {
 				throw new Exception("PMD.bibo:doi beginnt falsch: " + tempStr.get(0));
 			}
 			count += tempStr.size();
 			addMetadata("dcterms:URI", tempStr, false, true, id);
 
-			//$.publisherVersion[]{}.prefLabel:
+			// $.publisherVersion[]{}.prefLabel:
 			tempObj = getObject(objList, "publisherVersion");
 			tempStr = getString(tempObj, "prefLabel");
 			for (String test : tempStr) {
@@ -158,8 +158,8 @@ public class SipPacker {
 					sip1.addMetadata("dcterms:isVersionOf", test);
 				}
 			}
-			
-			//$.isLike[]{}.@id:
+
+			// $.isLike[]{}.@id:
 			tempObj = getObject(objList, "isLike");
 			tempStr = getString(tempObj, "@id");
 			for (String test : tempStr) {
@@ -169,7 +169,7 @@ public class SipPacker {
 				}
 			}
 		}
-		if (count!=1) {
+		if (count != 1) {
 			throw new Exception("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
 		}
 
@@ -225,7 +225,7 @@ public class SipPacker {
 
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "@id");
-		addMetadata("dcterms:accessRights", tempStr, true, false, id);
+		addMetadata("dcterms:accessRights", tempStr, false, false, id);
 
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "note");
@@ -305,7 +305,7 @@ public class SipPacker {
 		addMetadata("dcterms:DateCopyrighted", tempStr, false, true, id);
 
 		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
-		
+
 		boolean istZuMappen = false;
 		JSONArray arr = mainObj.optJSONArray("note");
 		if (arr != null) {
@@ -340,7 +340,7 @@ public class SipPacker {
 							+ " exhibit, perform, distribute or otherwise use the document in public.");
 		}
 
-		tempStr = getString(tempObj, "hbzId");
+		tempStr = getString(objList, "hbzId");
 		if (tempStr.size() > 1) {
 			throw new Exception("PMD (" + id + ") hat zu viele hbzIds");
 		} else if (tempStr.size() == 1) {
@@ -351,13 +351,13 @@ public class SipPacker {
 	private static void addMetadata(String xPathKey, ArrayList<String> tempStr, boolean minOne, boolean maxOne,
 			String id) throws Exception {
 		if (minOne && tempStr.size() < 1) {
-			throw new Exception("PMD (" + id + ") hat an einer Stelle zu wenig Elemente");
+			throw new Exception("PMD (" + id + ") hat an einer Stelle zu wenig Elemente. xPathKey = " + xPathKey);
 		}
 		if (maxOne && tempStr.size() > 1) {
 			for (String str : tempStr) {
 				System.err.println(str);
 			}
-			throw new Exception("PMD (" + id + ") hat an einer Stelle zu viele Elemente");
+			throw new Exception("PMD (" + id + ") hat an einer Stelle zu viele Elemente. xPathKey = " + xPathKey);
 		}
 		for (String str : tempStr) {
 			sip1.addMetadata(xPathKey, str);
@@ -496,18 +496,22 @@ public class SipPacker {
 //			System.out.println(pfad);
 			ApiManager.saveDataOfId2File(id,
 					"bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)));
-			FILE tempFile = rep1.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
-					pfad.concat(obj.getJSONObject("hasData").getString("fileLabel")))
+			FILE tempFile = rep1
+					.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
+							pfad.concat(obj.getJSONObject("hasData").getString("fileLabel")))
 					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
 			++tempFileName;
-			
+
 			String atId = obj.optString("@id");
 			if (atId == null) {
 				throw new Exception("Datei " + id + " hat keine @id");
 			}
 			tempFile.addMetadata("dc:identifier", atId);
-			
+
 			JSONArray jarr = obj.optJSONArray("title");
+			if (jarr == null) {
+				throw new Exception("Datei " + id + " hat kein title Array");
+			}
 			if (jarr.length() != 1) {
 				throw new Exception("Datei " + id + " hat ungleich 1 title: " + jarr.length());
 			}
@@ -558,7 +562,18 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		generateOneSip("6407998");
+//		generateOneSip("6407998");
+//		generateOneSip("5670012");
+//		generateOneSip("6422475");
+//		generateOneSip("6413012");
+//		generateOneSip("6421582");
+//		generateOneSip("6405195");
+//		generateOneSip("6415350");
+//		generateOneSip("6428346");
+//		generateOneSip("6400295");
+//		generateOneSip("6401771");
+//		generateOneSip("3222678");
+		generateOneSip("3222678");
 		System.out.println("SipPacker Ende");
 	}
 
