@@ -411,6 +411,13 @@ public class SipPacker {
 		Thread.sleep(1000);
 		String url = "https://frl.publisso.de/resource/frl:".concat(id).concat(".json2");
 		String apiAntwortJson = Url.getText(url);
+		JSONObject innerApiAntwortJson = null;
+		try {//speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz private ist.
+			innerApiAntwortJson = new JSONObject(apiAntwortJson);
+		} catch (Exception e) {
+			throw new Exception("Fehler beim Verarbeiten von id '" + id + "'. Antwort wird nicht gespeichert.");
+		}
+		Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 		// Lade die json-Datei zu der ID von der Festplatte
 //		File file = new File(Drive.apiAntwort(id));
 //		String apiAntwortJson = Drive.loadFileToString(file);
@@ -570,9 +577,9 @@ public class SipPacker {
 //		generateOneSip("6413012");
 //		generateOneSip("6421582");
 //		generateOneSip("6405195");
-//		generateOneSip("6415350");
+		generateOneSip("6415350");
 //		generateOneSip("6428346");
-		generateOneSip("6400295");
+//		generateOneSip("6400295");
 //		generateOneSip("6401771");
 //		generateOneSip("3222678");
 		System.out.println("SipPacker Ende");
