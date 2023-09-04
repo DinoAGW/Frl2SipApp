@@ -78,7 +78,7 @@ public class SipPacker {
 
 		tempObj = getObject(objList, "collectionTwo");
 		tempStr = getString(tempObj, "prefLabel");
-		addMetadata("dcterms:IsPartOf", tempStr, false, false, id);
+		addMetadata("dcterms:isPartOf", tempStr, false, false, id);
 
 		tempObj = getObject(objList, "natureOfContent");
 		tempStr = getString(tempObj, "prefLabel");
@@ -186,7 +186,7 @@ public class SipPacker {
 		addMetadata("dcterms:alternative", tempStr, false, true, id);
 
 		tempStr = getString(objList, "extent");
-		addMetadata("dc:extent", tempStr, false, true, id);
+		addMetadata("dcterms:extent", tempStr, false, true, id);
 
 		tempObj = getObject(objList, "hasVersion");
 		tempStr = getString(tempObj, "prefLabel");
@@ -208,7 +208,7 @@ public class SipPacker {
 
 		tempObj = getObject(objList, "isDescribedBy");
 		tempStr = getString(tempObj, "modified");
-		addMetadata("dc:modified", tempStr, true, true, id);
+		addMetadata("dcterms:modified", tempStr, true, true, id);
 
 		tempStr = getString(objList, "issued");
 		addMetadata("dcterms:Issued", tempStr, false, true, id);
@@ -303,7 +303,7 @@ public class SipPacker {
 		addMetadata("dc:identifier", tempStr, false, false, id);
 
 		tempStr = getString(objList, "yearOfCopyright");
-		addMetadata("dcterms:DateCopyrighted", tempStr, false, true, id);
+		addMetadata("dcterms:dateCopyrighted", tempStr, false, true, id);
 
 		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
 
