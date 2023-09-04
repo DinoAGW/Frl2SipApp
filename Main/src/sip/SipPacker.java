@@ -577,11 +577,14 @@ public class SipPacker {
 //		generateOneSip("6413012");
 //		generateOneSip("6421582");
 //		generateOneSip("6405195");
-		generateOneSip("6415350");
+//		generateOneSip("6415350");
 //		generateOneSip("6428346");
 //		generateOneSip("6400295");
 //		generateOneSip("6401771");
 //		generateOneSip("3222678");
+//		generateOneSip("6434372");//Embargo
+//		generateOneSip("5085526");//zurückgezogen
+		generateOneSip("6422445");//bibo:doi
 		System.out.println("SipPacker Ende");
 	}
 
