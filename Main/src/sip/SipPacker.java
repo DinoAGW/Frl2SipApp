@@ -1,6 +1,8 @@
 package sip;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
@@ -24,7 +26,8 @@ public class SipPacker {
 
 	public static void generateOneSip(String id) throws Exception {
 		System.out.println("Verarbeite id " + id + " ...");
-		File sip = new File("bin" + fs + id);
+		String heute = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_"));
+		File sip = new File("bin" + fs + heute + id);
 		File temp = new File("bin" + fs + "temp");
 		if (!temp.exists())
 			temp.mkdirs();
@@ -38,7 +41,7 @@ public class SipPacker {
 		traverseIe(id, null, null);
 		System.out.println("everythingPublic = " + everythingPublic);
 		addMetadata(id);
-		sip1.deploy("bin" + fs + id);
+		sip1.deploy("bin" + fs + heute + id);
 		FileUtils.deleteDirectory(temp);
 	}
 
@@ -171,7 +174,8 @@ public class SipPacker {
 			}
 		}
 		if (count != 1) {
-			throw new Exception("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
+//			throw new Exception("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
+			System.err.println("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
 		}
 
 		tempObj = getObject(objList, "editor");
@@ -266,12 +270,17 @@ public class SipPacker {
 
 			// ermittle TeilB
 			tempStr = getString(lv_isPartOfElement, "numbering");
-			if (tempStr.size() != 1) {
-				throw new Exception("PMD (" + id + ") hat ungleich 1 Kandidaten für TeilB in lv:isPartOf");
+			if (tempStr.size() > 1) {
+				throw new Exception("PMD (" + id + ") hat mehr als 1 Kandidaten für TeilB in lv:isPartOf");
+			} else if (tempStr.size() == 1) {
+				TeilB = tempStr.get(0);
 			}
-			TeilB = tempStr.get(0);
 
-			sip1.addMetadata("dcterms:isPartOf", TeilA + ", " + TeilB);
+			if (TeilB == null) {
+				sip1.addMetadata("dcterms:isPartOf", TeilA);
+			} else {
+				sip1.addMetadata("dcterms:isPartOf", TeilA + ", " + TeilB);
+			}
 		}
 
 		tempObj = getObject(objList, "medium");
@@ -412,7 +421,8 @@ public class SipPacker {
 		String url = "https://frl.publisso.de/resource/frl:".concat(id).concat(".json2");
 		String apiAntwortJson = Url.getText(url);
 		JSONObject innerApiAntwortJson = null;
-		try {//speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz private ist.
+		try {// speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz
+				// private ist.
 			innerApiAntwortJson = new JSONObject(apiAntwortJson);
 		} catch (Exception e) {
 			throw new Exception("Fehler beim Verarbeiten von id '" + id + "'. Antwort wird nicht gespeichert.");
@@ -584,7 +594,9 @@ public class SipPacker {
 //		generateOneSip("3222678");
 //		generateOneSip("6434372");//Embargo
 //		generateOneSip("5085526");//zurückgezogen
-		generateOneSip("6422445");//bibo:doi
+//		generateOneSip("6422445");//bibo:doi
+//		generateOneSip("6410749");
+		generateOneSip("6424992"); 
 		System.out.println("SipPacker Ende");
 	}
 
