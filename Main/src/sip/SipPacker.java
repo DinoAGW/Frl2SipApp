@@ -1,9 +1,11 @@
 package sip;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -39,7 +41,7 @@ public class SipPacker {
 		rep1 = sip1.newREP(null);
 		everythingPublic = true;
 		traverseIe(id, null, null);
-		System.out.println("everythingPublic = " + everythingPublic);
+//		System.out.println("everythingPublic = " + everythingPublic);
 		addMetadata(id);
 		sip1.deploy("bin" + fs + heute + id);
 		FileUtils.deleteDirectory(temp);
@@ -580,6 +582,40 @@ public class SipPacker {
 		}
 	}
 
+	public static boolean isNumeric(String strNum) {
+		if (strNum == null) {
+			return false;
+		}
+		try {
+			double d = Double.parseDouble(strNum);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
+	}
+
+	private static void generateSipsFromCsv(String csv) throws Exception {
+		File csvFile = new File(csv);
+		if (!csvFile.exists()) {
+			throw new Exception("CSV-Datei nicht gefunden");
+		}
+		List<String> lines = Files.readAllLines(csvFile.toPath());
+		for (int index = 0; index < lines.size(); ++index) {
+			String line = lines.get(index);
+			if (isNumeric(line)) {
+				try {
+					generateOneSip(line);
+				} catch (Exception e) {
+					lines.set(index, line + "Fehler");
+					Files.write(csvFile.toPath(), lines);
+					throw e;
+				}
+				lines.set(index, line + "fertig");
+			}
+		}
+		Files.write(csvFile.toPath(), lines);
+	}
+
 	public static void main(String[] args) throws Exception {
 //		generateOneSip("6407998");
 //		generateOneSip("5670012");
@@ -596,7 +632,8 @@ public class SipPacker {
 //		generateOneSip("5085526");//zurückgezogen
 //		generateOneSip("6422445");//bibo:doi
 //		generateOneSip("6410749");
-		generateOneSip("6424992"); 
+//		generateOneSip("6424992");
+		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		System.out.println("SipPacker Ende");
 	}
 
