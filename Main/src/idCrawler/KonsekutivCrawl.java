@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ieManager.IeIdentifier;
 import sql.MetadatensatzTable;
 import utilities.ApiManager;
 import utilities.Drive;
@@ -96,6 +97,12 @@ public class KonsekutivCrawl {
 				++jahr;
 			}
 		}
+		if (ret) {
+			System.out.println("Es wurden neue Metadatensätze gefunden");
+			IeIdentifier.scanForIes();
+			DeepCrawl.deeperCrawl();
+			PrivateLoader.allPrivateMetadataLoader();
+		}
 		return ret;
 	}
 
@@ -103,9 +110,7 @@ public class KonsekutivCrawl {
 	 * holt sich seit dem letzten Crawl alle neuen Datensätze, dabei kommen aber aus irgendeinen Grund nicht alle Part und nicht alle File Datensätze mit. Darum brauchts danach einen DeepCrawl
 	 */
 	public static void main(String[] args) throws Exception {
-		if (makeUpToDate()) {
-			System.out.println("Es wurden neue Metadatensätze gefunden");
-		}
+		makeUpToDate();
 		System.out.println("Anzahl IDs in der Datenbank = " + MetadatensatzTable.countEntries());
 		System.out.println("KonsekutivCrawl Ende");
 	}

@@ -19,20 +19,28 @@ public class PrivateLoader {
 		Process process = processBuilder.start();
 		int size = 0;
 		byte[] buffer = new byte[1024];
-		System.out.println("Process OutputStream:");
-		InputStream inputStream = process.getInputStream();
-		while((size = inputStream.read(buffer)) != -1) {
-			System.out.write(buffer, 0, size);
-		}
-		System.out.println("Process ErrorStream:");
+		InputStream inputStream;
+		
+//		System.out.println("Process ErrorStream:");
 		inputStream = process.getErrorStream();
 		while((size = inputStream.read(buffer)) != -1) {
-			System.out.write(buffer, 0, size);
+//			System.out.write(buffer, 0, size);
 		}
-		System.out.println("Exit code = " + process.exitValue());
+//		System.out.println("Process OutputStream:");
+		inputStream = process.getInputStream();
+		while((size = inputStream.read(buffer)) != -1) {
+//			System.out.write(buffer, 0, size);
+		}
+		
+		process.waitFor();
+		int exitCode;
+		if ((exitCode = process.exitValue())!=0) {
+			System.err.println("CURL endete mit exitCode = " + exitCode);
+		}
 	}
 	
 	public static void allPrivateMetadataLoader() throws Exception {
+		System.out.println("allPrivateMetadataLoader wird ausgeführt...");
 		ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM metadatensatzTable");
 		while (res.next()) {
 			String id = res.getString("id");

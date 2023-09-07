@@ -18,7 +18,9 @@ public class DeepCrawl {
 	
 	static int insginsg = 0;
 	
-	public static boolean deepCrawl(String pfad) throws Exception {
+	public static boolean deepCrawl() throws Exception {
+		System.out.println("deepCrawl-ing...");
+		String pfad = "$.hasPart[*].@id";
 		int insg = 0;
 		int max = 0;
 		for(File file: apiAntwortOrdner.listFiles()) {
@@ -80,20 +82,23 @@ public class DeepCrawl {
 			}
 		}
 		insginsg += insg;
+		if (insg>0) {
+			PrivateLoader.allPrivateMetadataLoader();
+		}
 		return (insg > 0);
 	}
 	
-	public static void deeperCrawl(String pfad) throws Exception {
+	public static void deeperCrawl() throws Exception {
 		boolean nochmal = true;
 		while (nochmal) {
-			nochmal = deepCrawl(pfad);
+			nochmal = deepCrawl();
 		}
+		System.out.println("Gefunden = " + insginsg);
 	}
 
 	
 	public static void main(String[] args) throws Exception {
-		deeperCrawl("$.hasPart[*].@id");
-		System.out.println("Gefunden = " + insginsg);
+		deeperCrawl();
 		System.out.println("DeepCrawl Ende");
 	}
 

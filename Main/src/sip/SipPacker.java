@@ -419,20 +419,9 @@ public class SipPacker {
 	}
 
 	private static void traverseIe(String id, String letzterPfad, String parent) throws Exception {
-		Thread.sleep(1000);
-		String url = "https://frl.publisso.de/resource/frl:".concat(id).concat(".json2");
-		String apiAntwortJson = Url.getText(url);
-		JSONObject innerApiAntwortJson = null;
-		try {// speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz
-				// private ist.
-			innerApiAntwortJson = new JSONObject(apiAntwortJson);
-		} catch (Exception e) {
-			throw new Exception("Fehler beim Verarbeiten von id '" + id + "'. Antwort wird nicht gespeichert.");
-		}
-		Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 		// Lade die json-Datei zu der ID von der Festplatte
-//		File file = new File(Drive.apiAntwort(id));
-//		String apiAntwortJson = Drive.loadFileToString(file);
+		File file = new File(Drive.apiAntwort(id));
+		String apiAntwortJson = Drive.loadFileToString(file);
 		JSONObject obj = new JSONObject(apiAntwortJson);
 		if (obj.has("notification")) {
 			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
