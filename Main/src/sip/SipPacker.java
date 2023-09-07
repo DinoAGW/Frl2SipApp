@@ -56,7 +56,7 @@ public class SipPacker {
 		ArrayList<JSONObject> tempObj;
 		ArrayList<String> tempStr;
 
-		sip1.setUserDefined("A", id);
+		sip1.setUserDefined("A", "FRL_" + id);
 
 		tempObj = getObject(objList, "isDescribedBy");
 		tempStr = getString(tempObj, "modified");
