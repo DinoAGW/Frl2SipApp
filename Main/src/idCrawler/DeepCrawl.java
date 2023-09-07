@@ -82,9 +82,6 @@ public class DeepCrawl {
 			}
 		}
 		insginsg += insg;
-		if (insg>0) {
-			PrivateLoader.allPrivateMetadataLoader();
-		}
 		return (insg > 0);
 	}
 	
@@ -94,6 +91,9 @@ public class DeepCrawl {
 			nochmal = deepCrawl();
 		}
 		System.out.println("Gefunden = " + insginsg);
+		if (insginsg>0) {
+			PrivateLoader.allPrivateMetadataLoader();
+		}
 	}
 
 	
