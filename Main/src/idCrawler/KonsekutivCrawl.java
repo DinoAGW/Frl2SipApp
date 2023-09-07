@@ -41,7 +41,9 @@ public class KonsekutivCrawl {
 				JSONObject innerObj = arr.getJSONObject(i);
 				String innerApiAntwortJson = innerObj.toString(2);
 				String id = ApiManager.json2id(innerApiAntwortJson);
-				Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
+				if (!innerObj.getString("contentType").contentEquals("file") && !innerObj.getString("contentType").contentEquals("part")) {
+					Drive.saveStringToFile(innerApiAntwortJson, Drive.apiAntwort(id));
+				}
 				if (MetadatensatzTable.insertIdIntoDatabase(id)) {
 					System.out.println("" + i + ") ID = '" + id + "' war noch nicht drin");
 					ret = true;
