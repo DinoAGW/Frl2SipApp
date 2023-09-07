@@ -463,7 +463,7 @@ public class SipPacker {
 				throw new Exception();
 			}
 			String title = obj.getJSONArray("title").getString(0);
-			pfad = id.concat("_").concat(title).concat(fs);
+			pfad = title.concat(fs);
 		} else if (obj.getString("contentType").contentEquals("file")) {
 			pfad = letzterPfad;
 		} else {
@@ -475,7 +475,7 @@ public class SipPacker {
 		}
 //		System.out.println("Füge File " + id + " unter '" + pfad + "' hinzu");
 		// Füge json-Datei hinzu
-		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs));
+		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs).concat(pfad));
 
 		if (obj.has("hasPart")) {
 			if (obj.getString("contentType").contentEquals("file")) {
