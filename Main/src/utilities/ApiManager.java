@@ -74,7 +74,7 @@ public class ApiManager {
 		process.waitFor();
 		int exitCode;
 		if ((exitCode = process.exitValue())!=0) {
-			System.err.println("CURL endete mit exitCode = " + exitCode);
+			throw new Exception("CURL endete mit exitCode = " + exitCode);
 		}
 	}
 

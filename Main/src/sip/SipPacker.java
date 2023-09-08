@@ -463,7 +463,7 @@ public class SipPacker {
 				throw new Exception();
 			}
 			String title = obj.getJSONArray("title").getString(0);
-			pfad = title.concat(fs);
+			pfad = letzterPfad.concat(title).concat(fs);
 		} else if (obj.getString("contentType").contentEquals("file")) {
 			pfad = letzterPfad;
 		} else {
@@ -600,7 +600,27 @@ public class SipPacker {
 					throw e;
 				}
 				lines.set(index, line + "fertig");
+				Files.write(csvFile.toPath(), lines);
 			}
+		}
+	}
+	
+	private static void clearCsv(String csv) throws Exception {
+		File csvFile = new File(csv);
+		if (!csvFile.exists()) {
+			throw new Exception("CSV-Datei nicht gefunden");
+		}
+		List<String> lines = Files.readAllLines(csvFile.toPath());
+		for (int index = 0; index < lines.size(); ++index) {
+			String line = lines.get(index);
+			if (isNumeric(line)) {
+				continue;
+			}
+			if (!line.endsWith("fertig")) {
+				throw new Exception("Nicht implementiert");
+			}
+			line = line.substring(0, line.length()-6);
+			lines.set(index, line);
 		}
 		Files.write(csvFile.toPath(), lines);
 	}
@@ -622,6 +642,7 @@ public class SipPacker {
 //		generateOneSip("6422445");//bibo:doi
 //		generateOneSip("6410749");
 //		generateOneSip("6424992");
+//		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		System.out.println("SipPacker Ende");
 	}
