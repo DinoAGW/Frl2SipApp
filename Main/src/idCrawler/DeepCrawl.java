@@ -53,8 +53,7 @@ public class DeepCrawl {
 				if (id.startsWith("frl:")) {
 					id = id.substring(4);
 				} else {
-					System.err.println("ID beginnt nicht mit 'frl:'. ID = " + id);
-					throw new Exception();
+					throw new Exception("ID beginnt nicht mit 'frl:'. ID = " + id);
 				}
 				//fügt alle IDs, die in irgendwelchen Dateien im Pfad gefunden wurden zur MetadatensatzTabelle hinzu
 				if (MetadatensatzTable.insertIdIntoDatabase(id)) {

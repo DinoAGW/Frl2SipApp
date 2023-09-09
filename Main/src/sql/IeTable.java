@@ -15,6 +15,10 @@ public class IeTable {
 	
 	static {
 		status.put("Gefunden", 10);
+		status.put("NichtPubPubPmd", 12);
+		status.put("Embargo", 14);
+		status.put("Kinderlos", 16);
+		status.put("BereitZumBuilden", 30);
 //		status.put()
 	}
 	
