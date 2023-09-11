@@ -510,6 +510,7 @@ public class SipPacker {
 					.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
 							pfad.concat(obj.getJSONObject("hasData").getString("fileLabel")))
 					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
+//					.setLabel(id.concat("_").concat(obj.getJSONArray("title").getString(0)));
 			++tempFileName;
 
 			String atId = obj.optString("@id");
@@ -644,7 +645,7 @@ public class SipPacker {
 //		generateOneSip("6424992");
 		generateOneSip("6423454");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
-		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
+//		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		System.out.println("SipPacker Ende");
 	}
 
