@@ -1,7 +1,7 @@
+package tools;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 
 import org.json.JSONObject;
@@ -13,10 +13,10 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 
-public class MetadataContentScanner {
+public class MetadataContentScanner_Files {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 
-	public static LinkedList<String> scanContent(String pfad) throws IOException {
+	public static LinkedList<String> scanContent(String pfad) throws Exception {
 		System.out.println("MetadatenContenScan für '" + pfad + "'");
 		LinkedList<String> ret = new LinkedList<String>();
 		int max = 0;
@@ -28,19 +28,16 @@ public class MetadataContentScanner {
 			if (file.getName().startsWith(".")) {
 				continue;
 			}
-//			String apiAntwortJson = Drive.loadFileToString(file);
-//			JSONObject obj = new JSONObject(apiAntwortJson);
-//			if (obj.getString("contentType").contentEquals("file")
-//					|| obj.getString("contentType").contentEquals("part")) {
-//				continue;
-//			}
+			String apiAntwortJson = Drive.loadFileToString(file);
+			JSONObject obj = new JSONObject(apiAntwortJson);
+			if (!obj.getString("contentType").contentEquals("file")
+					|| obj.getString("contentType").contentEquals("part")) {
+				continue;
+			}
 			DocumentContext json = JsonPath.parse(file, Configuration.defaultConfiguration()
 					.addOptions(Option.SUPPRESS_EXCEPTIONS, Option.ALWAYS_RETURN_LIST));
 //			System.out.println(json.read(pfad).toString());
 			net.minidev.json.JSONArray arr = json.read(pfad);
-//			if (arr. .containsKey("parentPid")) {
-//				continue;
-//			}
 			for (int i = 0; i < arr.size(); ++i) {
 				String str = (String) arr.get(i);
 				if (!ret.contains(str)) {
@@ -55,15 +52,8 @@ public class MetadataContentScanner {
 		return ret;
 	}
 
-	public static void main(String[] args) throws IOException {
-//		LinkedList<String> ret = scanContent("$.contribution[*].role[*].label");
-//		LinkedList<String> ret = scanContent("$.license[*].@id");
-//		LinkedList<String> ret = scanContent("$.license[*].note");
-//		LinkedList<String> ret = scanContent("$.accessScheme");
-//		LinkedList<String> ret = scanContent("$.publishScheme");
-//		LinkedList<String> ret = scanContent("$.hasData");
-		LinkedList<String> ret = scanContent("$.contentType");
-//		System.out.println(ret.toString()); nicht nötig, wird bereits ausgegeben.
+	public static void main(String[] args) throws Exception {
+		LinkedList<String> ret = scanContent("$.hasData.format");
 		System.out.println("MetadataContentScanner Ende...");
 	}
 
