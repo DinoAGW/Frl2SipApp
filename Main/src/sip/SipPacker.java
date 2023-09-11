@@ -642,6 +642,7 @@ public class SipPacker {
 //		generateOneSip("6422445");//bibo:doi
 //		generateOneSip("6410749");
 //		generateOneSip("6424992");
+		generateOneSip("6423454");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		System.out.println("SipPacker Ende");

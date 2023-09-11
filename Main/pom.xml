@@ -22,7 +22,7 @@
  		<dependency> 
  			<groupId>de.zbmed</groupId> 
  			<artifactId>MetsSipCreator</artifactId> 
- 			<version>0.2.7</version> 
+ 			<version>0.2.8</version> 
 <!-- 			<scope>system</scope> -->
 <!-- 			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.6-SNAPSHOT.jar</systemPath> -->
  		</dependency> 
