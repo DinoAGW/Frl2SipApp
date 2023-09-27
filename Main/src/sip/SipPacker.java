@@ -40,18 +40,18 @@ public class SipPacker {
 		sip1 = new SIP();
 		rep1 = sip1.newREP(null);
 		everythingPublic = true;
-		traverseIe(id, null, null);
+		File file = new File(Drive.apiAntwort(id));
+		String apiAntwortJson = Drive.loadFileToString(file);
+		JSONObject mainObj = new JSONObject(apiAntwortJson);
+		traverseIe(id, null, null, mainObj);
 //		System.out.println("everythingPublic = " + everythingPublic);
-		addMetadata(id);
+		addMetadata(id, mainObj);
 		sip1.deploy("bin" + fs + heute + id);
 		FileUtils.deleteDirectory(temp);
 	}
 
-	private static void addMetadata(String id) throws Exception {
-		File file = new File(Drive.apiAntwort(id));
-		String apiAntwortJson = Drive.loadFileToString(file);
+	private static void addMetadata(String id, JSONObject mainObj) throws Exception {
 		ArrayList<JSONObject> objList = new ArrayList<>();
-		JSONObject mainObj = new JSONObject(apiAntwortJson);
 		objList.add(mainObj);
 		ArrayList<JSONObject> tempObj;
 		ArrayList<String> tempStr;
@@ -144,7 +144,7 @@ public class SipPacker {
 				if (doi == null || !doi.startsWith("10.")) {
 					throw new Exception("PMD.doi beginnt falsch: " + doi);
 				}
-				sip1.addMetadata("dcterms:URI", doi);
+				sip1.addMetadata("dc:identifier@dcterms:URI", doi);
 			}
 		} else { // nur, falls doi nicht vorhanden ist
 			// $.bibo:doi[]:
@@ -153,7 +153,7 @@ public class SipPacker {
 				throw new Exception("PMD.bibo:doi beginnt falsch: " + tempStr.get(0));
 			}
 			count += tempStr.size();
-			addMetadata("dcterms:URI", tempStr, false, true, id);
+			addMetadata("dc:identifier@dcterms:URI", tempStr, false, true, id);
 
 			// $.publisherVersion[]{}.prefLabel:
 			tempObj = getObject(objList, "publisherVersion");
@@ -217,10 +217,10 @@ public class SipPacker {
 		addMetadata("dcterms:modified", tempStr, true, true, id);
 
 		tempStr = getString(objList, "issued");
-		addMetadata("dcterms:Issued", tempStr, false, true, id);
+		addMetadata("dcterms:issued", tempStr, false, true, id);
 
 		tempStr = getString(objList, "publicationYear");
-		addMetadata("dcterms:Issued", tempStr, false, true, id);
+		addMetadata("dcterms:issued", tempStr, false, true, id);
 
 		tempObj = getObject(objList, "publication");
 		tempStr = getString(tempObj, "publishedBy");
@@ -250,20 +250,16 @@ public class SipPacker {
 			tempStr = getString(tempObj, "label");
 			for (String str : tempStr) {
 				if (!str.contains("lobid")) {
-					if (TeilA != null) {
-						throw new Exception("PMD (" + id + ") hat zu viele Kandidaten für TeilA in lv:isPartOf");
-					}
 					TeilA = str;
 				}
 			}
-			tempObj = getObject(lv_isPartOfElement, "hasSuperordinate");
-			tempStr = getString(tempObj, "prefLabel");
-			for (String str : tempStr) {
-				if (!str.contains("lobid")) {
-					if (TeilA != null) {
-						throw new Exception("PMD (" + id + ") hat zu viele Kandidaten für TeilA in lv:isPartOf");
+			if (TeilA == null) {
+				tempObj = getObject(lv_isPartOfElement, "hasSuperordinate");
+				tempStr = getString(tempObj, "prefLabel");
+				for (String str : tempStr) {
+					if (!str.contains("lobid")) {
+						TeilA = str;
 					}
-					TeilA = str;
 				}
 			}
 			if (TeilA == null) {
@@ -295,6 +291,13 @@ public class SipPacker {
 		tempObj = getObject(objList, "subject");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:subject", tempStr, false, false, id);
+		
+		//Zeile 38b.0
+		tempObj = getObject(objList, "subject");
+		tempStr = getString(tempObj, "notation");
+		for (String str : tempStr) {
+			sip1.addMetadata("dc:subject", "ddc:" + str);
+		}
 
 		tempStr = getString(objList, "title");
 		if (tempStr.size() != 1) {
@@ -418,7 +421,7 @@ public class SipPacker {
 		return ret;
 	}
 
-	private static void traverseIe(String id, String letzterPfad, String parent) throws Exception {
+	private static void traverseIe(String id, String letzterPfad, String parent, JSONObject mainObj) throws Exception {
 		// Lade die json-Datei zu der ID von der Festplatte
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
@@ -496,7 +499,7 @@ public class SipPacker {
 					throw new Exception();
 				}
 
-				traverseIe(innerId.substring(4), pfad, id);
+				traverseIe(innerId.substring(4), pfad, id, mainObj);
 			}
 		} else {
 			if (!obj.has("hasData")) {
@@ -533,7 +536,7 @@ public class SipPacker {
 				tempFile.setARPolicy("433120", "ZB MED_STAFF only");
 				everythingPublic = false;
 				boolean istZuMappen = true;
-				JSONArray arr = obj.optJSONArray("note");
+				JSONArray arr = mainObj.optJSONArray("note");
 				if (arr != null) {
 					for (int i = 0; i < arr.length(); ++i) {
 						String str = arr.optString(i);
@@ -542,7 +545,7 @@ public class SipPacker {
 						}
 					}
 				} else {
-					String str = obj.optString("note", null);
+					String str = mainObj.optString("note", null);
 					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
 						istZuMappen = false;
 					}
@@ -551,6 +554,7 @@ public class SipPacker {
 					sip1.addMetadata("dc:rights", "Datei_Rechtsgrundlage für die Veröffentlichung " + id);
 				}
 
+				istZuMappen = true;
 				arr = obj.optJSONArray("title");
 				if (arr != null) {
 					for (int i = 0; i < arr.length(); ++i) {
@@ -643,9 +647,9 @@ public class SipPacker {
 //		generateOneSip("6422445");//bibo:doi
 //		generateOneSip("6410749");
 //		generateOneSip("6424992");
-		generateOneSip("6423454");
-//		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
-//		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
+//		generateOneSip("6423454");
+		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
+		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		System.out.println("SipPacker Ende");
 	}
 

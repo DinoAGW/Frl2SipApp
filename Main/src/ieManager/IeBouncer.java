@@ -36,7 +36,7 @@ public class IeBouncer {
 				throw new Exception("accessScheme nicht definiert bei PMD = " + id);
 			}
 			if (!tempStr.contentEquals("public")) {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("NichtPubPubPmd")
+				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("NichtArchivierungswürdig")
 						+ " WHERE id='" + id + "';");
 				System.err.println("PMD = " + id + " ist eine NichtPubPubPmd");
 				continue;
@@ -46,13 +46,13 @@ public class IeBouncer {
 				throw new Exception("publishScheme nicht definiert bei PMD = " + id);
 			}
 			if (!tempStr.contentEquals("public")) {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("NichtPubPubPmd")
+				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("NichtArchivierungswürdig")
 						+ " WHERE id='" + id + "';");
 				System.err.println("PMD = " + id + " ist eine NichtPubPubPmd");
 				continue;
 			}
 			
-			// Falls Embargo läuft
+			// Falls Embargo läuft (heute < embargoTime)
 			if (obj.has("embargoTime")) {
 				tempArr = obj.optJSONArray("embargoTime");
 				if (tempArr == null) {
@@ -75,7 +75,7 @@ public class IeBouncer {
 			// Falls Kinderlos
 			if (kinderlos(obj, id)) {
 				SqlManager.INSTANCE.executeUpdate(
-						"UPDATE ieTable SET status=" + IeTable.status.get("Kinderlos") + " WHERE id='" + id + "';");
+						"UPDATE ieTable SET status=" + IeTable.status.get("NichtArchivierungswürdig") + " WHERE id='" + id + "';");
 				System.err.println("PMD = " + id + " ist Kinderlos");
 				continue;
 			}
@@ -107,7 +107,11 @@ public class IeBouncer {
 			throw new Exception("Ein Datensatz unter PMD = " + id + " hat keinen contentType");
 		}
 		if (tempStr.contentEquals("file")) {
-			return false;
+			if (obj.has("hasData")) {
+				return false;
+			} else {
+//				System.err.println("Ein Datensatz unter PMD = " + id + " hat ein file-Datensatz ohne hasData");
+			}
 		}
 
 		// ansonsten geht es nach den hasParts
@@ -138,6 +142,9 @@ public class IeBouncer {
 		return true;
 	}
 
+	/*
+	 * Falls heute > embargoTime, läuft der Embargo noch
+	 */
 	private static boolean embargoLaeuft(String embargoTime, String id) throws Exception {
 		if (embargoTime.length() != 10) {
 			throw new Exception(
@@ -168,7 +175,7 @@ public class IeBouncer {
 			if (monat > heuteMonat) {
 				return true;
 			} else if (monat == heuteMonat) {
-				if (tag >= heuteTag) {
+				if (tag > heuteTag) {
 					return true;
 				}
 			}
@@ -176,7 +183,12 @@ public class IeBouncer {
 		return false;
 	}
 
+	public static void clearStatus() throws Exception {
+		SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("Gefunden") + ";");
+	}
+	
 	public static void main(String[] args) throws Exception {
+		clearStatus();
 		bounce();
 		System.out.println("IeBouncer Ende");
 	}

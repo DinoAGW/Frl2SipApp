@@ -18,6 +18,7 @@ public class KonsekutivCrawl {
 	/*
 	 * Schaut, ob zu der Datenmaske irgendwelche Modifizierungen vorliegen.
 	 * Gibt zurück ob irgendwas Neues dabei war.
+	 * Beipiel dateMask='2023-09-26*'
 	 */
 	private static boolean checkMoreForDate(String dateMask) throws Exception {
 		final String url = "https://frl.publisso.de/find?q=isDescribedBy.modified:" + dateMask + "&format=json&from=0&until=" + max + "";
