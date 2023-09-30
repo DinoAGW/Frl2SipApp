@@ -14,7 +14,7 @@ import utilities.Drive;
 public class IeBouncer {
 	public static void bounce() throws Exception {
 		ResultSet res = sql.SqlManager.INSTANCE
-				.executeQuery("SELECT * FROM ieTable WHERE status=" + IeTable.status.get("Gefunden"));
+				.executeQuery("SELECT * FROM ieTable WHERE status=" + IeTable.status.get("Gefunden") + ";");
 		int max = 0; // zum Testen
 		while (res.next()) {
 			String id = res.getString("id");

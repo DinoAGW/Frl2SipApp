@@ -17,7 +17,9 @@ public class IeTable {
 		status.put("Gefunden", 10);
 		status.put("NichtArchivierungswürdig", 12);
 		status.put("Embargo", 14);
-		status.put("BereitZumBuilden", 30);
+//		status.put("BereitZumBuilden", 30); wird nicht mehr benötigt
+		status.put("Gebuildet", 60);
+		status.put("OutOfDate", 80);
 //		status.put()
 	}
 	

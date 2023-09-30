@@ -17,6 +17,7 @@ public class Setup {
 		if (!prop.exists()) {
 			File defaultFile = new File("..".concat(fs).concat("Material").concat(fs).concat("FRL_Properties.txt"));
 			Files.copy(defaultFile.toPath(), prop.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			System.out.println("Sie müssen aber noch Username und Passwort selbst eintragen");
 		}
 		System.out.println("Lege Unterordner workspace\\Frl2SipApp\\apiAntworten\\ im HomePfad an...");
 		File apiAntworten = new File(Drive.apiAntwortPfad);

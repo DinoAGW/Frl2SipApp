@@ -10,6 +10,7 @@ import sql.MetadatensatzTable;
 import sql.SqlManager;
 import utilities.Drive;
 
+@Deprecated
 public class IeIdentifier {
 	public static boolean scanForIes() throws Exception {
 		idCrawler.KonsekutivCrawl.makeUpToDate();

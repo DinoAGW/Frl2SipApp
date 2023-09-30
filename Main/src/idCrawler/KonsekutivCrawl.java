@@ -12,6 +12,7 @@ import utilities.ApiManager;
 import utilities.Drive;
 import utilities.Url;
 
+@Deprecated
 public class KonsekutivCrawl {
 	private static final int max = 5000;
 	

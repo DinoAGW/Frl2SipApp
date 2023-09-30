@@ -3,6 +3,7 @@ package sql;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Deprecated
 public class MetadatensatzTable {
 	
 	//die nächsten beiden Zeilen sind anzupassen

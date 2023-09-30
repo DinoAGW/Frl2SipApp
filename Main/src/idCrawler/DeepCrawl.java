@@ -13,6 +13,7 @@ import sql.MetadatensatzTable;
 import utilities.Drive;
 import utilities.Url;
 
+@Deprecated
 public class DeepCrawl {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	

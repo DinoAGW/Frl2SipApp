@@ -12,15 +12,6 @@ public class ApiManager {
 		String id = null;
 		try {
 			JSONObject obj = new JSONObject(apiAntwortJson);
-			// siehe hier:
-			// https://stackoverflow.com/questions/2591098/how-to-parse-json-in-java
-//			String pageName = obj.getJSONObject("pageInfo").getString("pageName");
-//			JSONArray arr = obj.getJSONArray("posts"); // notice that `"posts": [...]`
-//			for (int i = 0; i < arr.length(); i++)
-//			{
-//			    String post_id = arr.getJSONObject(i).getString("post_id");
-//			    ......
-//			}
 			id = obj.getString("@id");
 		} catch (JSONException e) {
 			System.out.println("JSON Fehler bei '" + apiAntwortJson + "'");

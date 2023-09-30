@@ -38,7 +38,8 @@ public class PrivateLoader {
 			System.err.println("CURL endete mit exitCode = " + exitCode);
 		}
 	}
-	
+
+	@Deprecated
 	public static void allPrivateMetadataLoader() throws Exception {
 		System.out.println("allPrivateMetadataLoader wird ausgeführt...");
 		ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM metadatensatzTable");
