@@ -130,54 +130,53 @@ public class SipPacker {
 		addMetadata("dc:subject", tempStr, false, false, id);
 
 		// Zeile 15-18
-		// insgesamt 1 soll gelten
+		// insgesamt mindestens 1 soll gelten
 		int count = 0;
 
-		// doi vorgezogen, weil entscheidend für andere Einträge
-		tempStr = getString(objList, "doi");
-		if (tempStr.size() > 0) {
-			++count;
-			if (tempStr.size() > 1) {
-				throw new Exception("PMD (" + id + ") hat an einer Stelle zu viele Elemente");
+		// 15.2
+		tempStr = getString(objList, "bibo:doi");
+		for (String test : tempStr) {
+			if (test.startsWith("10.")) {
+				++count;
+				sip1.addMetadata("dc:identifier@dcterms:URI", test);
 			} else {
-				String doi = tempStr.get(0);
-				if (doi == null || !doi.startsWith("10.")) {
-					throw new Exception("PMD.doi beginnt falsch: " + doi);
-				}
-				sip1.addMetadata("dc:identifier@dcterms:URI", doi);
-			}
-		} else { // nur, falls doi nicht vorhanden ist
-			// $.bibo:doi[]:
-			tempStr = getString(objList, "bibo:doi");
-			if (tempStr.size() > 0 && !tempStr.get(0).startsWith("10.")) {
 				throw new Exception("PMD.bibo:doi beginnt falsch: " + tempStr.get(0));
 			}
-			count += tempStr.size();
-			addMetadata("dc:identifier@dcterms:URI", tempStr, false, true, id);
+		}
 
-			// $.publisherVersion[]{}.prefLabel:
-			tempObj = getObject(objList, "publisherVersion");
-			tempStr = getString(tempObj, "prefLabel");
-			for (String test : tempStr) {
-				if (test.contains("doi.org/10.")) {
-					++count;
-					sip1.addMetadata("dcterms:isVersionOf", test);
-				}
-			}
-
-			// $.isLike[]{}.@id:
-			tempObj = getObject(objList, "isLike");
-			tempStr = getString(tempObj, "@id");
-			for (String test : tempStr) {
-				if (test.contains("doi.org/10.")) {
-					++count;
-					sip1.addMetadata("dcterms:isVersionOf", test);
-				}
+		// 16.2
+		tempStr = getString(objList, "doi");
+		for (String test : tempStr) {
+			if (test.startsWith("10.")) {
+				++count;
+				sip1.addMetadata("dc:identifier@dcterms:URI", test);
+			} else {
+				throw new Exception("PMD.doi beginnt falsch: " + tempStr.get(0));
 			}
 		}
-		if (count != 1) {
-//			throw new Exception("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
-			System.err.println("bei PMD sind ungleich 1 DOIs gefunden worden: " + count);
+
+		// 17.1
+		tempObj = getObject(objList, "publisherVersion");
+		tempStr = getString(tempObj, "prefLabel");
+		for (String test : tempStr) {
+			if (test.contains("doi.org/10.")) {
+				++count;
+				sip1.addMetadata("dcterms:isVersionOf", test);
+			}
+		}
+
+		// 18.1
+		tempObj = getObject(objList, "isLike");
+		tempStr = getString(tempObj, "@id");
+		for (String test : tempStr) {
+			if (test.contains("doi.org/10.")) {
+				++count;
+				sip1.addMetadata("dcterms:isVersionOf", test);
+			}
+		}
+
+		if (count == 0) {
+			throw new Exception("bei PMD ist keine DOI gefunden worden: " + id);
 		}
 
 		tempObj = getObject(objList, "editor");
@@ -291,8 +290,8 @@ public class SipPacker {
 		tempObj = getObject(objList, "subject");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:subject", tempStr, false, false, id);
-		
-		//Zeile 38b.0
+
+		// Zeile 38b.0
 		tempObj = getObject(objList, "subject");
 		tempStr = getString(tempObj, "notation");
 		for (String str : tempStr) {
@@ -318,6 +317,11 @@ public class SipPacker {
 
 		tempStr = getString(objList, "yearOfCopyright");
 		addMetadata("dcterms:dateCopyrighted", tempStr, false, true, id);
+
+		// 41b.0
+		tempObj = getObject(objList, "fundingId");
+		tempStr = getString(tempObj, "prefLabel");
+		addMetadata("dc:contributor", tempStr, false, false, id);
 
 		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
 
@@ -426,14 +430,8 @@ public class SipPacker {
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
 		JSONObject obj = new JSONObject(apiAntwortJson);
-		if (obj.has("notification")) {
-			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
-				throw new Exception(
-						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
-			}
-//			System.out.println("Objekt wurde gelöscht: " + id + ".");
-			return;
-		}
+
+		// Ein paar Erwartungsprüfungen
 		if (!obj.has("contentType")) {
 			System.err.println("Datensatz ohne contentType: " + id + ".");
 			throw new Exception();
@@ -459,6 +457,7 @@ public class SipPacker {
 			}
 		}
 
+		// berechne Pfad
 		String pfad = null;
 		if (obj.getString("contentType").contentEquals("part")) {
 			if (!obj.has("title")) {
@@ -466,6 +465,9 @@ public class SipPacker {
 				throw new Exception();
 			}
 			String title = obj.getJSONArray("title").getString(0);
+			if ((pfad.length() == 0) && title.contentEquals("SourceMD")) {
+				throw new Exception("Konflikt mit einer \"SourceMD\" Part und dem gleichnamigem Ordner: " + id + ".");
+			}
 			pfad = letzterPfad.concat(title).concat(fs);
 		} else if (obj.getString("contentType").contentEquals("file")) {
 			pfad = letzterPfad;
@@ -476,27 +478,44 @@ public class SipPacker {
 			}
 			pfad = "";
 		}
-//		System.out.println("Füge File " + id + " unter '" + pfad + "' hinzu");
+
 		// Füge json-Datei hinzu
 		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs).concat(pfad));
 
+		if (obj.has("notification")) {
+			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
+				throw new Exception(
+						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
+			}
+			// prüfe noch, ob Kinder dran hängen
+			if (obj.has("hasPart")) {
+				JSONArray jarr = obj.getJSONArray("hasPart");
+				if (jarr.length() > 0) {
+					throw new Exception("Gelöschte Datensätze sollten keine Kinder haben: " + id + ".");
+				}
+			}
+			return;
+		}
+
 		if (obj.has("hasPart")) {
-			if (obj.getString("contentType").contentEquals("file")) {
-				System.err.println("File-Datensatz sollte kein Part haben: " + id + ".");
-				throw new Exception();
+			if (!obj.getString("contentType").contentEquals("part")) {
+				throw new Exception("File-Datensatz sollte kein Part haben: " + id + ".");
 			}
 
 			JSONArray jarr = obj.getJSONArray("hasPart");
 			for (int i = 0; i < jarr.length(); ++i) {
+				// private Ordner sollten keine Kinder haben?
+				if (accessScheme.contentEquals("private")) {
+					throw new Exception("Ich sollte melden, falls private Ordner Kinder haben: " + id + ".");
+				}
+
 				JSONObject innerObj = jarr.getJSONObject(i);
 				if (!innerObj.has("@id")) {
-					System.err.println("hasPart ohne @id im Datensatz " + id + ".");
-					throw new Exception();
+					throw new Exception("hasPart ohne @id im Datensatz " + id + ".");
 				}
 				String innerId = innerObj.getString("@id");
 				if (!innerId.startsWith("frl:")) {
-					System.err.println("Frl ID in " + id + " beginnt nicht mit 'frl:' " + innerId + ".");
-					throw new Exception();
+					throw new Exception("Frl ID in " + id + " beginnt nicht mit 'frl:' " + innerId + ".");
 				}
 
 				traverseIe(innerId.substring(4), pfad, id, mainObj);
@@ -509,11 +528,15 @@ public class SipPacker {
 //			System.out.println(pfad);
 			ApiManager.saveDataOfId2File(id,
 					"bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)));
+			String Dateiname = obj.getJSONObject("hasData").getString("fileLabel");
+			//Nur um sicher zu gehen
+			if ((pfad.length() == 0) && Dateiname.contentEquals("SourceMD")) {
+				throw new Exception("Konflikt mit einer \"SourceMD\" Datei und dem gleichnamigem Ordner: " + id + ".");
+			}
 			FILE tempFile = rep1
 					.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
-							pfad.concat(obj.getJSONObject("hasData").getString("fileLabel")))
+							pfad.concat(Dateiname))
 					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
-//					.setLabel(id.concat("_").concat(obj.getJSONArray("title").getString(0)));
 			++tempFileName;
 
 			String atId = obj.optString("@id");
@@ -609,7 +632,7 @@ public class SipPacker {
 			}
 		}
 	}
-	
+
 	private static void clearCsv(String csv) throws Exception {
 		File csvFile = new File(csv);
 		if (!csvFile.exists()) {
@@ -624,7 +647,7 @@ public class SipPacker {
 			if (!line.endsWith("fertig")) {
 				throw new Exception("Nicht implementiert");
 			}
-			line = line.substring(0, line.length()-6);
+			line = line.substring(0, line.length() - 6);
 			lines.set(index, line);
 		}
 		Files.write(csvFile.toPath(), lines);
