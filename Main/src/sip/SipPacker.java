@@ -1,6 +1,7 @@
 package sip;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +17,6 @@ import metsSipCreator.REP;
 import metsSipCreator.SIP;
 import utilities.ApiManager;
 import utilities.Drive;
-import utilities.Url;
 
 public class SipPacker {
 	private static final String fs = System.getProperty("file.separator");
@@ -465,7 +465,7 @@ public class SipPacker {
 				throw new Exception();
 			}
 			String title = obj.getJSONArray("title").getString(0);
-			if ((pfad.length() == 0) && title.contentEquals("SourceMD")) {
+			if ((letzterPfad.length() == 0) && title.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Part und dem gleichnamigem Ordner: " + id + ".");
 			}
 			pfad = letzterPfad.concat(title).concat(fs);
@@ -503,12 +503,12 @@ public class SipPacker {
 			}
 
 			JSONArray jarr = obj.getJSONArray("hasPart");
-			for (int i = 0; i < jarr.length(); ++i) {
-				// private Ordner sollten keine Kinder haben?
-				if (accessScheme.contentEquals("private")) {
-					throw new Exception("Ich sollte melden, falls private Ordner Kinder haben: " + id + ".");
-				}
+			// private Ordner sollten keine Kinder haben?
+			if (accessScheme.contentEquals("private") && (jarr.length() > 0)) {
+				throw new Exception("Ich sollte melden, falls private Ordner Kinder haben: " + id + ".");
+			}
 
+			for (int i = 0; i < jarr.length(); ++i) {
 				JSONObject innerObj = jarr.getJSONObject(i);
 				if (!innerObj.has("@id")) {
 					throw new Exception("hasPart ohne @id im Datensatz " + id + ".");
@@ -529,9 +529,15 @@ public class SipPacker {
 			ApiManager.saveDataOfId2File(id,
 					"bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)));
 			String Dateiname = obj.getJSONObject("hasData").getString("fileLabel");
-			//Nur um sicher zu gehen
+			// Nur um sicher zu gehen
 			if ((pfad.length() == 0) && Dateiname.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Datei und dem gleichnamigem Ordner: " + id + ".");
+			}
+			// reporte json Dateien
+			if (Dateiname.endsWith(".json") || Dateiname.endsWith(".json2")) {
+				FileWriter fr = new FileWriter(new File("bin" + fs + "JSONs.txt"), true);
+				fr.append(id + "\n");
+				fr.close();
 			}
 			FILE tempFile = rep1
 					.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
@@ -604,6 +610,7 @@ public class SipPacker {
 			return false;
 		}
 		try {
+			@SuppressWarnings("unused")
 			double d = Double.parseDouble(strNum);
 		} catch (NumberFormatException nfe) {
 			return false;
