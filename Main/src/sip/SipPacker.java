@@ -498,7 +498,7 @@ public class SipPacker {
 		}
 
 		if (obj.has("hasPart")) {
-			if (!obj.getString("contentType").contentEquals("part")) {
+			if (obj.getString("contentType").contentEquals("file")) {
 				throw new Exception("File-Datensatz sollte kein Part haben: " + id + ".");
 			}
 
@@ -661,7 +661,7 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		generateOneSip("6407998");
+		generateOneSip("6407998");
 //		generateOneSip("5670012");
 //		generateOneSip("6422475");
 //		generateOneSip("6413012");
@@ -678,8 +678,8 @@ public class SipPacker {
 //		generateOneSip("6410749");
 //		generateOneSip("6424992");
 //		generateOneSip("6423454");
-		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
-		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
+//		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
+//		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 		System.out.println("SipPacker Ende");
 	}
 
