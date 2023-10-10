@@ -487,13 +487,6 @@ public class SipPacker {
 				throw new Exception(
 						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
 			}
-			// prüfe noch, ob Kinder dran hängen
-			if (obj.has("hasPart")) {
-				JSONArray jarr = obj.getJSONArray("hasPart");
-				if (jarr.length() > 0) {
-					throw new Exception("Gelöschte Datensätze sollten keine Kinder haben: " + id + ".");
-				}
-			}
 			return;
 		}
 
@@ -503,10 +496,6 @@ public class SipPacker {
 			}
 
 			JSONArray jarr = obj.getJSONArray("hasPart");
-			// private Ordner sollten keine Kinder haben?
-			if (accessScheme.contentEquals("private") && (jarr.length() > 0)) {
-				throw new Exception("Ich sollte melden, falls private Ordner Kinder haben: " + id + ".");
-			}
 
 			for (int i = 0; i < jarr.length(); ++i) {
 				JSONObject innerObj = jarr.getJSONObject(i);
