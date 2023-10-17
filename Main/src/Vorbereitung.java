@@ -14,7 +14,15 @@ import utilities.PropertiesManager;
 import utilities.Url;
 
 public class Vorbereitung {
-	private static final int max = 5000;
+	/*
+	 * Programm erkennt, wenn Limit zu klein ist.
+	 * gibt dann Fehlermeldung aus, dass das Limit überschritten wurde
+	 * Programm erkennt auch, wenn das Limit zu groß ist
+	 * gibt dann eine Fehlermeldung aus, dass Server eine 500 HTTP response zurück gab
+	 * 5000 hat sehr lange keine Probleme gemacht, war nur am 12.12.2023 zu klein
+	 * probiere mal 10000...
+	 */
+	private static final int max = 10000;
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 
 	public static void setzeZurueck() throws Exception {
