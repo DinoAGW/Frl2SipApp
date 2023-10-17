@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import ieManager.IeBouncer;
+import sip.SipPacker;
 import sql.IeTable;
 import sql.SqlManager;
 import utilities.Drive;
@@ -65,9 +66,9 @@ public class SipBuilding {
 
 			System.out.println("SIP kann gebildet werden: " + id);
 			try {
-//				SipPacker.generateOneSip(id);
-//				SqlManager.INSTANCE.executeUpdate(
-//						"UPDATE ieTable SET status=" + IeTable.status.get("Gebuildet") + " WHERE id='" + id + "';");
+				SipPacker.generateOneSip(id);
+				SqlManager.INSTANCE.executeUpdate(
+						"UPDATE ieTable SET status=" + IeTable.status.get("Gebuildet") + " WHERE id='" + id + "';");
 				fr.append(id + "\n");
 			} catch (Exception e) {
 				System.err.println("Fehler bei SIP " + id);

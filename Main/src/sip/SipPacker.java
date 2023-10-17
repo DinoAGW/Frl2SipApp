@@ -650,7 +650,7 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		generateOneSip("6407998");
+//		generateOneSip("6407998");
 //		generateOneSip("5670012");
 //		generateOneSip("6422475");
 //		generateOneSip("6413012");
@@ -669,6 +669,7 @@ public class SipPacker {
 //		generateOneSip("6423454");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
+		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
 		System.out.println("SipPacker Ende");
 	}
 
