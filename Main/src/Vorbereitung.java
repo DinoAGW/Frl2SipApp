@@ -2,7 +2,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -33,6 +33,7 @@ public class Vorbereitung {
 		apiAntwortOrdner.mkdirs();
 		PropertiesManager prop = new PropertiesManager(Drive.propertyDateiPfad);
 		prop.saveStringToProperty("lastMakeUpToDate", "2017-12-04");
+		IeTable.leereTabelle();
 	}
 
 	private static void scan() throws Exception {
@@ -161,7 +162,7 @@ public class Vorbereitung {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		setzeZurueck();
+		setzeZurueck();
 		scan();
 		System.out.println("Vorbereitung Ende");
 	}
