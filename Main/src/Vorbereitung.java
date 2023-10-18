@@ -15,12 +15,11 @@ import utilities.Url;
 
 public class Vorbereitung {
 	/*
-	 * Programm erkennt, wenn Limit zu klein ist.
-	 * gibt dann Fehlermeldung aus, dass das Limit überschritten wurde
-	 * Programm erkennt auch, wenn das Limit zu groß ist
-	 * gibt dann eine Fehlermeldung aus, dass Server eine 500 HTTP response zurück gab
-	 * 5000 hat sehr lange keine Probleme gemacht, war nur am 12.12.2023 zu klein
-	 * probiere mal 10000...
+	 * Programm erkennt, wenn Limit zu klein ist. gibt dann Fehlermeldung aus, dass
+	 * das Limit überschritten wurde Programm erkennt auch, wenn das Limit zu groß
+	 * ist gibt dann eine Fehlermeldung aus, dass Server eine 500 HTTP response
+	 * zurück gab 5000 hat sehr lange keine Probleme gemacht, war nur am 12.12.2023
+	 * zu klein probiere mal 10000...
 	 */
 	private static final int max = 10000;
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
@@ -104,7 +103,7 @@ public class Vorbereitung {
 				throw e;
 			}
 			verwalteDBbeiAktualisierterPMD(id);
-			if (i % 1000 == 0) {
+			if ((i % 1000 == 0) && (i > 0)) {
 				System.out.println(i + " Ergebnisse abgearbeitet.");
 			}
 		}
@@ -133,10 +132,12 @@ public class Vorbereitung {
 					String datensatz = Url.getText(url);
 					Thread.sleep(1000);
 					JSONObject child = null;
-					try {//speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz private ist.
+					try {// speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz
+							// private ist.
 						child = new JSONObject(datensatz);
 					} catch (Exception e) {
-						System.err.println("Fehler beim Verarbeiten des hasPart Datensatzes '" + hasPartId + "'. Versuche API Account");
+						System.err.println("Fehler beim Verarbeiten des hasPart Datensatzes '" + hasPartId
+								+ "'. Versuche API Account");
 						PrivateLoader.privateMetadataLoader(hasPartId);
 						child = new JSONObject(Drive.loadFileToString(new File(Drive.apiAntwort(hasPartId))));
 					}
@@ -157,7 +158,8 @@ public class Vorbereitung {
 				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("OutOfDate") + ";");
 			}
 		} else {
-			SqlManager.INSTANCE.executeUpdate("INSERT INTO ieTable (id, status) VALUES ('" + id + "', " + IeTable.status.get("Gefunden") + ");");
+			SqlManager.INSTANCE.executeUpdate(
+					"INSERT INTO ieTable (id, status) VALUES ('" + id + "', " + IeTable.status.get("Gefunden") + ");");
 		}
 	}
 
