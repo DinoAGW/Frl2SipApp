@@ -67,7 +67,7 @@ public class Vorbereitung {
 	}
 
 	private static void findModifiedPMDsForDate(String dateMask) throws Exception {
-		final String url = "https://frl.publisso.de/find?q=isDescribedBy.modified:" + dateMask
+		final String url = "https://frl.publisso.de/find?q=NOT%20contentType:file%20AND%20NOT%20contentType:part%20AND%20isDescribedBy.modified:" + dateMask
 				+ "&format=json&from=0&until=" + max + "";
 		Thread.sleep(1000);
 		String apiAntwortJson = Url.getText(url);
