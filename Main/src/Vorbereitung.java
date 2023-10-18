@@ -20,8 +20,10 @@ public class Vorbereitung {
 	 * ist gibt dann eine Fehlermeldung aus, dass Server eine 500 HTTP response
 	 * zurück gab 5000 hat sehr lange keine Probleme gemacht, war nur am 12.12.2023
 	 * zu klein probiere mal 10000...
+	 * 10000 war zu viel am 24.5.2022
+	 * probiere 6000
 	 */
-	private static final int max = 10000;
+	private static final int max = 6000;
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 
 	public static void setzeZurueck() throws Exception {
