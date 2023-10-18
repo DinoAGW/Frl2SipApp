@@ -162,7 +162,7 @@ public class Vorbereitung {
 	}
 
 	public static void main(String[] args) throws Exception {
-		setzeZurueck();
+//		setzeZurueck();
 		scan();
 		System.out.println("Vorbereitung Ende");
 	}
