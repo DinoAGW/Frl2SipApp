@@ -436,13 +436,24 @@ public class SipPacker {
 			System.err.println("Datensatz ohne contentType: " + id + ".");
 			throw new Exception();
 		}
+		//prüfe accessScheme
 		if (!obj.has("accessScheme")) {
 			System.err.println("Datensatz ohne accessScheme: " + id + ".");
 			throw new Exception();
 		}
 		String accessScheme = obj.getString("accessScheme");
 		if (!accessScheme.contentEquals("private") && !accessScheme.contentEquals("public")) {
-			System.err.println("Datensatz " + id + " ist weder private, noch public: " + accessScheme);
+			System.err.println("Datensatz " + id + " accessScheme ist weder private, noch public: " + accessScheme);
+			throw new Exception();
+		}
+		//prüfe publishScheme
+		if (!obj.has("publishScheme")) {
+			System.err.println("Datensatz ohne publishScheme: " + id + ".");
+			throw new Exception();
+		}
+		String publishScheme = obj.getString("publishScheme");
+		if (!publishScheme.contentEquals("private") && !accessScheme.contentEquals("public")) {
+			System.err.println("Datensatz " + id + " publishScheme ist weder private, noch public: " + publishScheme);
 			throw new Exception();
 		}
 		if (parent != null) {
@@ -489,6 +500,7 @@ public class SipPacker {
 			}
 			return;
 		}
+		//TODO: publishScheme private Abbruch?
 
 		if (obj.has("hasPart")) {
 			if (obj.getString("contentType").contentEquals("file")) {
