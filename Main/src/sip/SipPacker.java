@@ -493,6 +493,7 @@ public class SipPacker {
 		// Füge json-Datei hinzu
 		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs).concat(pfad));
 
+		//tue nichts weiter, wenn gelöscht
 		if (obj.has("notification")) {
 			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
 				throw new Exception(
@@ -500,7 +501,10 @@ public class SipPacker {
 			}
 			return;
 		}
-		//TODO: publishScheme private Abbruch?
+		//tue nichts weiter falls publishScheme=private
+		if (publishScheme.contentEquals("private")) {
+			return;
+		}
 
 		if (obj.has("hasPart")) {
 			if (obj.getString("contentType").contentEquals("file")) {
