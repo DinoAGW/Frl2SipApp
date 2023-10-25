@@ -63,7 +63,7 @@ public class PrivateScanner {
 				if (!parent.startsWith("frl:")) {
 					throw new Exception("parentPid startet nicht mit \"frl:\": " + file2.getName());
 				}
-				file2 = new File(Drive.apiAntwortPfad + fs + parent.substring(4) + ".json");
+				file2 = new File(Drive.apiAntwort(parent.substring(4)));
 				obj2 = new JSONObject(Drive.loadFileToString(file2));
 			}
 			if (obj2.has("embargoTime")) {
