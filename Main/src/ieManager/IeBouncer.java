@@ -210,8 +210,8 @@ public class IeBouncer {
 			}
 			
 			String id = file.getName();
-			if (!id.endsWith(".json")) {
-				throw new Exception("Datei sollte eine .json sein, ist aber = " + id);
+			if (!id.endsWith(".jsonld")) {
+				throw new Exception("Datei sollte eine .jsonld sein, ist aber = " + id);
 			}
 			id = id.substring(0, id.length()-5);
 			SqlManager.INSTANCE.executeUpdate("INSERT INTO ieTable (id, status) VALUES ('" + id + "', " + IeTable.status.get("Gefunden") + ");");

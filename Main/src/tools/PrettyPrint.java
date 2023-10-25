@@ -32,8 +32,8 @@ public class PrettyPrint {
 				ApiManager.saveId2File(file.getName().substring(0, file.getName().indexOf('.')));
 			}
 			String id = ApiManager.json2id(apiAntwortJson);
-			if (!file.getName().contentEquals(id + ".json")) {
-				System.err.println("Unterschied entdeckt: " + file.getName() + " und " + id + ".json");
+			if (!file.getName().contentEquals(id + ".jsonld")) {
+				System.err.println("Unterschied entdeckt: " + file.getName() + " und " + id + ".jsonld");
 				throw new Exception();
 			}
 			if (!apiAntwortJson.contentEquals(obj.toString(2) + newline)) {

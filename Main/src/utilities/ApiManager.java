@@ -44,7 +44,8 @@ public class ApiManager {
 		String user = prop.readStringFromProperty("user");
 		String passwort = prop.readStringFromProperty("passwort");
 		
-		String command = "curl -u " + user + ":" + passwort + " https://frl.publisso.de/resource/frl:" + id + "/data --output " + file;
+		String command = "curl -u " + user + ":" + passwort + " --ssl-no-revoke https://frl.publisso.de/resource/frl:" + id + "/data --output " + file;
+//		System.out.println("curl command = " + command);
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
 		Process process = processBuilder.start();
 		int size = 0;

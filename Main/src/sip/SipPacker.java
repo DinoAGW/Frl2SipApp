@@ -490,7 +490,7 @@ public class SipPacker {
 			pfad = "";
 		}
 
-		// Füge json-Datei hinzu
+		// Füge jsonld-Datei hinzu
 		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs).concat(pfad));
 
 		//tue nichts weiter, wenn gelöscht
@@ -538,9 +538,9 @@ public class SipPacker {
 			if ((pfad.length() == 0) && Dateiname.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Datei und dem gleichnamigem Ordner: " + id + ".");
 			}
-			// reporte json Dateien
-			if (Dateiname.endsWith(".json") || Dateiname.endsWith(".json2")) {
-				FileWriter fr = new FileWriter(new File("bin" + fs + "JSONs.txt"), true);
+			// reporte jsonld Dateien
+			if (Dateiname.endsWith(".jsonld")) {
+				FileWriter fr = new FileWriter(new File("bin" + fs + "JSONLDs.txt"), true);
 				fr.append(id + "\n");
 				fr.close();
 			}
@@ -683,9 +683,10 @@ public class SipPacker {
 //		generateOneSip("6410749");
 //		generateOneSip("6424992");
 //		generateOneSip("6423454");
+		generateOneSip("6405440");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
-		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
+//		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
 		System.out.println("SipPacker Ende");
 	}
 

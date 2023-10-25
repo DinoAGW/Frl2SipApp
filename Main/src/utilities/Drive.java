@@ -21,7 +21,7 @@ public class Drive {
 		if (id.startsWith("frl:")) {
 			throw new Exception("Es wird die ID ohne das Präfix \"frl:\" erwartet");
 		}
-		return apiAntwortPfad.concat(fs).concat(id).concat(".json");
+		return apiAntwortPfad.concat(fs).concat(id).concat(".jsonld");
 	}
 
 	public static void saveStringToFile(String str, String datei) throws FileNotFoundException {
