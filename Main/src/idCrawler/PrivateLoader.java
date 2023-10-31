@@ -14,7 +14,7 @@ public class PrivateLoader {
 		PropertiesManager prop = new PropertiesManager(Drive.propertyDateiPfad);
 		String user = prop.readStringFromProperty("user");
 		String passwort = prop.readStringFromProperty("passwort");
-		String command = "curl -u " + user + ":" + passwort + " https://frl.publisso.de/resource/frl:" + id + ".json2 --output " + Drive.apiAntwort(id);
+		String command = "curl -u " + user + ":" + passwort + " https://frl.publisso.de/resource/frl:" + id + ".json2 --ssl-no-revoke --output " + Drive.apiAntwort(id);
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
 		Process process = processBuilder.start();
 		int size = 0;
