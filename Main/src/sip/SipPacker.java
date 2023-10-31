@@ -19,17 +19,40 @@ import utilities.ApiManager;
 import utilities.Drive;
 
 public class SipPacker {
+	private static String inst = "DEV";
+	
 	private static final String fs = System.getProperty("file.separator");
 
 	static SIP sip1;
 	static REP rep1;
 	private static boolean everythingPublic;
 	private static int tempFileName;
+	
+	private static String getARPolicyIdForInst(String inst) throws Exception {
+		if (inst.contentEquals("DEV")) {
+			return "433120";
+		} else if (inst.contentEquals("TEST")) {
+			return "1349113";
+		}  else if (inst.contentEquals("PROD")) {
+			return "4963332";
+		} else {
+			throw new Exception("Inst " + inst + " ungültig");
+		}
+	}
+	
+	public static void setInst(String value) throws Exception {
+		if (value.contentEquals("DEV") || value.contentEquals("TEST") || value.contentEquals("PROD")) {
+			inst = value;
+		} else {
+			throw new Exception("Inst " + value + " ungültig");
+		}
+	}
 
 	public static void generateOneSip(String id) throws Exception {
 		System.out.println("Verarbeite id " + id + " ...");
-		String heute = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_"));
-		File sip = new File("bin" + fs + heute + id);
+		String heute = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd"));
+		String sipTarget = "bin" + fs + inst + "_" + heute + "_" + id;
+		File sip = new File(sipTarget);
 		File temp = new File("bin" + fs + "temp");
 		if (!temp.exists())
 			temp.mkdirs();
@@ -46,7 +69,7 @@ public class SipPacker {
 		traverseIe(id, null, null, mainObj);
 //		System.out.println("everythingPublic = " + everythingPublic);
 		addMetadata(id, mainObj);
-		sip1.deploy("bin" + fs + heute + id);
+		sip1.deploy(sipTarget);
 		FileUtils.deleteDirectory(temp);
 	}
 
@@ -567,7 +590,7 @@ public class SipPacker {
 			tempFile.addMetadata("dc:title", title);
 
 			if (accessScheme.contentEquals("private")) {
-				tempFile.setARPolicy("433120", "ZB MED_STAFF only");
+				tempFile.setARPolicy(getARPolicyIdForInst(inst), "ZB MED_STAFF only");
 				everythingPublic = false;
 				boolean istZuMappen = true;
 				JSONArray arr = mainObj.optJSONArray("note");
@@ -683,7 +706,8 @@ public class SipPacker {
 //		generateOneSip("6410749");
 //		generateOneSip("6424992");
 //		generateOneSip("6423454");
-		generateOneSip("6405440");
+//		generateOneSip("6405440");
+		generateOneSip("4589277");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
