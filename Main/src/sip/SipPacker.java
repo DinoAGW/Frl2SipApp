@@ -475,7 +475,7 @@ public class SipPacker {
 			throw new Exception();
 		}
 		String publishScheme = obj.getString("publishScheme");
-		if (!publishScheme.contentEquals("private") && !accessScheme.contentEquals("public")) {
+		if (!publishScheme.contentEquals("private") && !publishScheme.contentEquals("public")) {
 			System.err.println("Datensatz " + id + " publishScheme ist weder private, noch public: " + publishScheme);
 			throw new Exception();
 		}
