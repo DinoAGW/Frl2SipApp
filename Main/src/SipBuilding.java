@@ -13,12 +13,19 @@ import utilities.Drive;
 
 public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
+	private static final boolean trockenModus = true;
+	private static String reason; 
 
 	public static void bewerteDatenpakete(String report) throws Exception {
+		if (trockenModus) {
+			System.out.println("Trockenmodus...");
+		}
+		int count = 0;
 		ResultSet res = sql.SqlManager.INSTANCE
 				.executeQuery("SELECT * FROM ieTable WHERE status=" + IeTable.status.get("Gefunden") + ";");
-		int max = 2; // zum Testen
+		int max = 0; // zum Testen
 		File reportFile = new File(report);
+		@SuppressWarnings("resource")
 		FileWriter fr = new FileWriter(reportFile, true);
 		while (res.next()) {
 			String id = res.getString("id");
@@ -63,13 +70,23 @@ public class SipBuilding {
 				System.err.println("PMD = " + id + " ist Kinderlos");
 				continue;
 			}
+			
+			//Falls PolicyPublikationen
+			if (policyPublication(obj)) {
+				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
+						+ IeTable.status.get("PolicyPublikationen") + " WHERE id='" + id + "';");
+				System.err.println(Integer.toString(++count) + ") PMD = " + id + " ist eine PolicyPublikation. " + reason);
+				continue;
+			}
 
-			System.out.println("SIP kann gebildet werden: " + id);
 			try {
-				SipPacker.generateOneSip(id);
-				SqlManager.INSTANCE.executeUpdate(
-						"UPDATE ieTable SET status=" + IeTable.status.get("Gebuildet") + " WHERE id='" + id + "';");
-				fr.append(id + "\n");
+				if (!trockenModus) {
+					System.out.println("SIP kann gebildet werden: " + id);
+					SipPacker.generateOneSip(id);
+					SqlManager.INSTANCE.executeUpdate(
+							"UPDATE ieTable SET status=" + IeTable.status.get("Gebuildet") + " WHERE id='" + id + "';");
+					fr.append(id + "\n");
+				}
 			} catch (Exception e) {
 				System.err.println("Fehler bei SIP " + id);
 				System.err.println(e);
@@ -81,6 +98,54 @@ public class SipBuilding {
 			}
 		}
 		fr.close();
+	}
+	
+	private static boolean policyPublication(JSONObject obj) throws Exception {
+		//Falls PMD note "zurückgezogen" oder "gesperrt" enthält, ist alles gut
+		String tempStr;
+		JSONArray arr = obj.optJSONArray("note");
+		if (arr != null) {
+			for (int i = 0; i < arr.length(); ++i) {
+				tempStr = arr.optString(i);
+				if (tempStr != null && (tempStr.contains("zurückgezogen") || tempStr.contains("gesperrt"))) {
+					return false;
+				}
+			}
+		}
+		//Falls es einen File-Datensatz mit accessScheme=private gibt,
+		//die keine Nutzungsvereinbarung ist, dann böse, sonst alles gut
+		return checkPolicyPublication(obj);
+	}
+	
+	private static boolean checkPolicyPublication(JSONObject obj) throws Exception {
+		//Nur nicht-gelöschte Publikationen beachten
+		if (obj.has("notification")) {
+			return false;
+		}
+		//Hier geht es um die File-Datensätze
+		if (obj.getString("contentType").contentEquals("file")) {
+			if (obj.getString("accessScheme").contentEquals("public")) {
+				return false;
+			}
+			String title = obj.getJSONArray("title").getString(0);
+			if (title.contains("Nutzungsvereinbarung")) {
+				return false;
+			}
+			reason = obj.getString("@id") + ": " + title;
+			return true;
+		}
+		//Sonst für alle hasPart-Datensätze...
+		JSONArray jarr = obj.getJSONArray("hasPart");
+		for (int i = 0; i < jarr.length(); ++i) {
+			JSONObject innerObj = jarr.getJSONObject(i);
+			String innerId = innerObj.getString("@id").substring(4);
+			File file = new File(Drive.apiAntwort(innerId));
+			String apiAntwortJson = Drive.loadFileToString(file);
+			if (checkPolicyPublication(new JSONObject(apiAntwortJson))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void main(String[] args) throws Exception {

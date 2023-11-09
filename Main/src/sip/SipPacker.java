@@ -19,7 +19,7 @@ import utilities.ApiManager;
 import utilities.Drive;
 
 public class SipPacker {
-	private static String inst = "DEV";
+	private static String inst = "TEST";
 	
 	private static final String fs = System.getProperty("file.separator");
 
@@ -358,7 +358,7 @@ public class SipPacker {
 				}
 			}
 		} else {
-			String str = mainObj.optString("note", null);
+			String str = mainObj.optString("note", null); //Sollte niemals vorkommen
 			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
 				istZuMappen = true;
 			}
@@ -707,7 +707,8 @@ public class SipPacker {
 //		generateOneSip("6424992");
 //		generateOneSip("6423454");
 //		generateOneSip("6405440");
-		generateOneSip("4589277");
+//		generateOneSip("4589277");
+		generateOneSip("6408607");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
