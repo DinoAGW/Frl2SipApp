@@ -14,6 +14,7 @@ import utilities.Drive;
 public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
 	private static final boolean trockenModus = true;
+	private static final boolean zeigeKinderlose = false;
 	private static String reason; 
 
 	public static void bewerteDatenpakete(String report) throws Exception {
@@ -67,7 +68,9 @@ public class SipBuilding {
 			if (IeBouncer.kinderlos(obj, id)) {
 				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
 						+ IeTable.status.get("NichtArchivierungswürdig") + " WHERE id='" + id + "';");
-				System.err.println("PMD = " + id + " ist Kinderlos");
+				if (zeigeKinderlose) {
+					System.err.println("PMD = " + id + " ist Kinderlos");
+				}
 				continue;
 			}
 			
@@ -113,39 +116,47 @@ public class SipBuilding {
 			}
 		}
 		//Falls es einen File-Datensatz mit accessScheme=private gibt,
-		//die keine Nutzungsvereinbarung ist, dann böse, sonst alles gut
-		return checkPolicyPublication(obj);
+		//aber keine Nutzungsvereinbarung, dann böse, sonst alles gut
+		return (checkPolicyPublication(obj) == 1);
 	}
 	
-	private static boolean checkPolicyPublication(JSONObject obj) throws Exception {
+	/*
+	 * unterscheidet drei Fälle:
+	 * Ausgabe = 0, wenn keine private Datei zu finden ist
+	 * Ausgabe = 1, wenn mindestens eine Datei privat aber keine Nutzungsvereinbarung
+	 * Ausgabe = 2, wenn mindestens eine Nutzungsvereinbarung dabei ist
+	 */
+	private static int checkPolicyPublication(JSONObject obj) throws Exception {
 		//Nur nicht-gelöschte Publikationen beachten
 		if (obj.has("notification")) {
-			return false;
+			return 0;
 		}
 		//Hier geht es um die File-Datensätze
 		if (obj.getString("contentType").contentEquals("file")) {
 			if (obj.getString("accessScheme").contentEquals("public")) {
-				return false;
+				return 0;
 			}
 			String title = obj.getJSONArray("title").getString(0);
 			if (title.contains("Nutzungsvereinbarung")) {
-				return false;
+				return 2;
 			}
 			reason = obj.getString("@id") + ": " + title;
-			return true;
+			return 1;
 		}
 		//Sonst für alle hasPart-Datensätze...
 		JSONArray jarr = obj.getJSONArray("hasPart");
+		int ret = 0;
 		for (int i = 0; i < jarr.length(); ++i) {
 			JSONObject innerObj = jarr.getJSONObject(i);
 			String innerId = innerObj.getString("@id").substring(4);
 			File file = new File(Drive.apiAntwort(innerId));
 			String apiAntwortJson = Drive.loadFileToString(file);
-			if (checkPolicyPublication(new JSONObject(apiAntwortJson))) {
-				return true;
+			int retHasPart = checkPolicyPublication(new JSONObject(apiAntwortJson)); 
+			if (retHasPart > ret) {
+				ret = retHasPart;
 			}
 		}
-		return false;
+		return ret;
 	}
 
 	public static void main(String[] args) throws Exception {
