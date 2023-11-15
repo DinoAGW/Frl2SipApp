@@ -24,10 +24,11 @@ public class SipBuilding {
 		int count = 0;
 		ResultSet res = sql.SqlManager.INSTANCE
 				.executeQuery("SELECT * FROM ieTable WHERE status=" + IeTable.status.get("Gefunden") + ";");
-		int max = 0; // zum Testen
+		int max = 10; // zum Testen
 		File reportFile = new File(report);
 		@SuppressWarnings("resource")
 		FileWriter fr = new FileWriter(reportFile, true);
+		File abort = new File("bin" + fs + "abort");
 		while (res.next()) {
 			String id = res.getString("id");
 			String apiAntwortJson = null;
@@ -84,19 +85,25 @@ public class SipBuilding {
 
 			try {
 				if (!trockenModus) {
-					System.out.println("SIP wird gebildet: " + id);
+//					System.out.println("SIP wird gebildet: " + id);
 					SipPacker.generateOneSip(id);
 					SqlManager.INSTANCE.executeUpdate(
 							"UPDATE ieTable SET status=" + IeTable.status.get("Gebuildet") + " WHERE id='" + id + "';");
 					fr.append(id + "\n");
+					fr.flush();
 				}
 			} catch (Exception e) {
-				System.err.println("Fehler bei SIP " + id);
+				System.err.println("Fehler bei SIP frl:" + id);
 				System.err.println(e);
 			}
 
 			--max;
 			if (max == 0) {
+				System.out.println("Maximum erreicht. Beende mich.");
+				break;
+			}
+			if (abort.exists()) {
+				System.out.println("Abort-Datei entdeckt. Beende mich.");
 				break;
 			}
 		}
