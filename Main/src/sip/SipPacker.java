@@ -19,7 +19,7 @@ import utilities.ApiManager;
 import utilities.Drive;
 
 public class SipPacker {
-	private static String inst = "TEST";
+	private static String inst = "PROD";
 	
 	private static final String fs = System.getProperty("file.separator");
 

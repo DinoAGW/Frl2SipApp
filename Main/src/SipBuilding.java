@@ -13,8 +13,8 @@ import utilities.Drive;
 
 public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
-	private static final boolean trockenModus = true;
-	private static final boolean zeigeKinderlose = false;
+	private static final boolean trockenModus = false;
+	private static final boolean zeigeKinderlose = true;
 	private static String reason; 
 
 	public static void bewerteDatenpakete(String report) throws Exception {
@@ -84,7 +84,7 @@ public class SipBuilding {
 
 			try {
 				if (!trockenModus) {
-					System.out.println("SIP kann gebildet werden: " + id);
+					System.out.println("SIP wird gebildet: " + id);
 					SipPacker.generateOneSip(id);
 					SqlManager.INSTANCE.executeUpdate(
 							"UPDATE ieTable SET status=" + IeTable.status.get("Gebuildet") + " WHERE id='" + id + "';");
@@ -161,7 +161,7 @@ public class SipBuilding {
 
 	public static void main(String[] args) throws Exception {
 //		IeBouncer.rebuildDatabase();
-		IeBouncer.clearStatus();
+//		IeBouncer.clearStatus();
 		bewerteDatenpakete("bin" + fs + "Report1.txt");
 		System.out.println("SipBuilding Ende");
 	}
