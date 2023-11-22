@@ -14,7 +14,7 @@ import utilities.Drive;
 public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
 	private static final boolean trockenModus = false;
-	private static final boolean zeigeKinderlose = true;
+	private static final boolean zeigeKinderlose = false;
 	private static String reason; 
 
 	public static void bewerteDatenpakete(String report) throws Exception {

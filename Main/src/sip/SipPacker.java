@@ -454,6 +454,15 @@ public class SipPacker {
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
 		JSONObject obj = new JSONObject(apiAntwortJson);
+		
+		boolean geloescht = false;
+		if (obj.has("notification")) {
+			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
+				throw new Exception(
+						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
+			}
+			geloescht = true;
+		}
 
 		// Ein paar Erwartungsprüfungen
 		if (!obj.has("contentType")) {
@@ -480,7 +489,7 @@ public class SipPacker {
 			System.err.println("Datensatz " + id + " publishScheme ist weder private, noch public: " + publishScheme);
 			throw new Exception();
 		}
-		if (parent != null) {
+		if (parent != null && !geloescht) {
 			if (!obj.has("parentPid")) {
 				System.err.println("Kind hat keine Eltern: " + id + ".");
 				throw new Exception();
@@ -518,11 +527,7 @@ public class SipPacker {
 		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs).concat(pfad));
 
 		//tue nichts weiter, wenn gelöscht
-		if (obj.has("notification")) {
-			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
-				throw new Exception(
-						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
-			}
+		if (geloescht) {
 			return;
 		}
 		//tue nichts weiter falls publishScheme=private
