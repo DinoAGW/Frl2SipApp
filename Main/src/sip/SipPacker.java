@@ -260,6 +260,7 @@ public class SipPacker {
 		tempStr = getString(tempObj, "note");
 		addMetadata("dc:rights", tempStr, false, true, id);
 
+		//Zeile 35.1
 		ArrayList<JSONObject> lv_isPartOf = getObject(objList, "lv:isPartOf");
 		for (JSONObject obj : lv_isPartOf) {
 			ArrayList<JSONObject> lv_isPartOfElement = new ArrayList<>();
@@ -285,7 +286,7 @@ public class SipPacker {
 				}
 			}
 			if (TeilA == null) {
-				throw new Exception("PMD (" + id + ") hat keinen Kandidaten für TeilA in lv:isPartOf");
+				continue;
 			}
 
 			// ermittle TeilB

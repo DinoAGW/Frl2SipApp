@@ -24,7 +24,7 @@ public class SipBuilding {
 		int count = 0;
 		ResultSet res = sql.SqlManager.INSTANCE
 				.executeQuery("SELECT * FROM ieTable WHERE status=" + IeTable.status.get("Gefunden") + ";");
-		int max = 10; // zum Testen
+		int max = 0; // zum Testen
 		File reportFile = new File(report);
 		@SuppressWarnings("resource")
 		FileWriter fr = new FileWriter(reportFile, true);
