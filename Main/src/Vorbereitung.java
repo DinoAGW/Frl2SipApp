@@ -96,6 +96,8 @@ public class Vorbereitung {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
 			id = id.substring(4);
+			//lade resource der PMD
+			//neue URL, zum String laden, Parsen und innerObj überschreiben
 			try {
 				ladeBaum(innerObj, id);
 			} catch (Exception e) {
