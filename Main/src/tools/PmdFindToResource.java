@@ -21,6 +21,7 @@ public class PmdFindToResource {
 					|| obj.getString("contentType").contentEquals("part")) {
 				continue;
 			}
+			System.out.println("Bearbeite Datei: " + file.getName());
 			String id = obj.optString("@id");
 			if (!id.startsWith("frl:")) {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
