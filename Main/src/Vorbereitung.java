@@ -97,7 +97,12 @@ public class Vorbereitung {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
 			id = id.substring(4);
-			ApiManager.saveId2File(id);
+			try {
+				ApiManager.saveId2File(id);
+			} catch (Exception e) {
+				System.err.println("Fehler bei API-Antwort (PMD) #" + i + " für dateMask " + dateMask + ":");
+				throw e;
+			}
 			Thread.sleep(1000);
 			try {
 				ladeBaum(innerObj, id);
@@ -130,8 +135,8 @@ public class Vorbereitung {
 					if (!hasPartId.startsWith("frl:")) {
 						throw new Exception("@id beginnt nicht mit 'frl:': '" + hasPartId + "'");
 					}
-					String url = "https://frl.publisso.de/resource/".concat(hasPartId).concat(".json2");
 					hasPartId = hasPartId.substring(4);
+					String url = "https://frl.publisso.de/resource/frl:".concat(hasPartId).concat(".json2");
 					String datensatz = Url.getText(url);
 					Thread.sleep(1000);
 					JSONObject child = null;

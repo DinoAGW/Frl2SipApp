@@ -1,9 +1,12 @@
 package utilities;
 
+import java.io.File;
 import java.io.InputStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import idCrawler.PrivateLoader;
 
 public class ApiManager {
 	public static final String fs = System.getProperty("file.separator");
@@ -36,9 +39,17 @@ public class ApiManager {
 			stringApiAntwortJson = Url.getText(url);
 		} catch (Exception e) {
 			System.err.println("Fehler beim Laden der URL '" + url + "'");
-			throw new Exception();
+			throw e;
 		}
-		JSONObject innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
+		JSONObject innerApiAntwortJson;
+		try {
+			innerApiAntwortJson = new JSONObject(stringApiAntwortJson);
+		} catch (Exception e) {
+			System.err.println("Fehler beim Verarbeiten des Datensatzes '" + id
+					+ "'. Versuche API Account");
+			PrivateLoader.privateMetadataLoader(id);
+			innerApiAntwortJson = new JSONObject(Drive.loadFileToString(new File(Drive.apiAntwort(id))));
+		}
 		Drive.saveStringToFile(innerApiAntwortJson.toString(2), Drive.apiAntwort(id));
 	}
 	

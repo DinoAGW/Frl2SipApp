@@ -13,6 +13,7 @@ public class PmdFindToResource {
 
 	public static void convertFindToResource() throws Exception {
 		int count = 0;
+		boolean gefunden = false;
 		for (File file : apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
 				continue;
@@ -28,12 +29,29 @@ public class PmdFindToResource {
 			if (!id.startsWith("frl:")) {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
-			ApiManager.saveId2File(id.substring(4));
+			if (id.contentEquals("frl:5957918"))
+			{
+				if (!gefunden) {
+					System.out.println("Mache weiter mit count = " + count);
+				}
+				gefunden = true;
+			}
+			if (!gefunden) {
+				++count;
+				continue;
+			}
+			try {
+				ApiManager.saveId2File(id.substring(4));
+			} catch (Exception e) {
+				System.err.println(count + " Fehler beim Verarbeiten der id " + id);
+				throw e;
+			}
 			Thread.sleep(1000);
 			if (++count % 100 == 0) {
 				System.out.println(count + " Dateien verarbeitet... (" + file.getName() + ")");
 			}
 		}
+		System.out.println("Insgesamt " + count + " PMDs");
 	}
 
 	public static void main(String[] args) throws Exception {
