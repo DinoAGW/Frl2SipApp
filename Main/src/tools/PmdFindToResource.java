@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.json.JSONObject;
 
+import utilities.ApiManager;
 import utilities.Drive;
 import utilities.Url;
 
@@ -11,6 +12,7 @@ public class PmdFindToResource {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 
 	public static void convertFindToResource() throws Exception {
+		int count = 0;
 		for (File file : apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
 				continue;
@@ -21,22 +23,16 @@ public class PmdFindToResource {
 					|| obj.getString("contentType").contentEquals("part")) {
 				continue;
 			}
-			System.out.println("Bearbeite Datei: " + file.getName());
+//			System.out.println("Bearbeite Datei: " + file.getName());
 			String id = obj.optString("@id");
 			if (!id.startsWith("frl:")) {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
-			String url = "https://frl.publisso.de/resource/".concat(id).concat(".json2");
-			String stringApiAntwortJson = Url.getText(url);// versucht sich den Datensatz herunter zu laden
+			ApiManager.saveId2File(id.substring(4));
 			Thread.sleep(1000);
-			try {// speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz
-					// private ist.
-				obj = new JSONObject(stringApiAntwortJson);
-			} catch (Exception e) {
-				System.err.println("Fehler beim Verarbeiten von id '" + id + "'. Antwort wird nicht gespeichert.");
-				continue;
+			if (++count % 100 == 0) {
+				System.out.println(count + " Dateien verarbeitet... (" + file.getName() + ")");
 			}
-			Drive.saveStringToFile(obj.toString(2), Drive.apiAntwort(id.substring(4)));
 		}
 	}
 

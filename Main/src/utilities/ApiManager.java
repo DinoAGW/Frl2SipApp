@@ -27,6 +27,9 @@ public class ApiManager {
 	}
 	
 	public static void saveId2File(String id) throws Exception {
+		if (id.startsWith("frl:")) {
+			throw new Exception("ID wird ohne Prefix erwartet: " + id);
+		}
 		String url = "https://frl.publisso.de/resource/frl:".concat(id).concat(".json2");
 		String stringApiAntwortJson = null;
 		try {
