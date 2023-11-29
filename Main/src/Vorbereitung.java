@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import idCrawler.PrivateLoader;
 import sql.IeTable;
 import sql.SqlManager;
+import utilities.ApiManager;
 import utilities.Drive;
 import utilities.PropertiesManager;
 import utilities.Url;
@@ -96,8 +97,8 @@ public class Vorbereitung {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
 			id = id.substring(4);
-			//lade resource der PMD
-			//neue URL, zum String laden, Parsen und innerObj überschreiben
+			ApiManager.saveId2File(id);
+			Thread.sleep(1000);
 			try {
 				ladeBaum(innerObj, id);
 			} catch (Exception e) {
