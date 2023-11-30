@@ -9,9 +9,9 @@ import utilities.Drive;
 
 public class PmdFindToResource {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
+	private static int count = 0;
 
 	public static void convertFindToResource() throws Exception {
-		int count = 0;
 		boolean gefunden = false;
 		for (File file : apiAntwortOrdner.listFiles()) {
 			if (file.getName().startsWith(".")) {
@@ -28,7 +28,7 @@ public class PmdFindToResource {
 			if (!id.startsWith("frl:")) {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
-			if (id.contentEquals("frl:6421424"))
+			if (id.contentEquals("frl:5957918"))
 			{
 				if (!gefunden) {
 					System.out.println("Mache weiter mit count = " + count);
@@ -39,22 +39,27 @@ public class PmdFindToResource {
 				++count;
 				continue;
 			}
-			try {
-				ApiManager.saveId2File(id.substring(4));
-			} catch (Exception e) {
-				System.err.println(count + " Fehler beim Verarbeiten der id " + id);
-				throw e;
-			}
-			Thread.sleep(1000);
+			repariere(id.substring(4));
 			if (++count % 100 == 0) {
 				System.out.println(count + " Dateien verarbeitet... (" + file.getName() + ")");
 			}
 		}
 		System.out.println("Insgesamt " + count + " PMDs");
 	}
+	
+	private static void repariere(String id) throws Exception {
+		try {
+			ApiManager.saveId2File(id);
+		} catch (Exception e) {
+			System.err.println(count + " Fehler beim Verarbeiten der id " + id);
+			throw e;
+		}
+		Thread.sleep(1000);
+	}
 
 	public static void main(String[] args) throws Exception {
-		convertFindToResource();
+//		convertFindToResource();
+		repariere("5957918");
 		System.out.println("PmdFindToResource Ende");
 	}
 }
