@@ -58,8 +58,8 @@ public class PmdFindToResource {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		convertFindToResource();
-		repariere("5957918");
+//		repariere("5957918");
+		convertFindToResource();
 		System.out.println("PmdFindToResource Ende");
 	}
 }
