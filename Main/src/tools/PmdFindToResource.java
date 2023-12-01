@@ -28,7 +28,7 @@ public class PmdFindToResource {
 			if (!id.startsWith("frl:")) {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
-			if (id.contentEquals("frl:5957918"))
+			if (id.contentEquals("frl:6455396"))
 			{
 				if (!gefunden) {
 					System.out.println("Mache weiter mit count = " + count);
