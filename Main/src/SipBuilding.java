@@ -104,6 +104,7 @@ public class SipBuilding {
 			}
 			if (abort.exists()) {
 				System.out.println("Abort-Datei entdeckt. Beende mich.");
+				abort.delete();
 				break;
 			}
 		}
