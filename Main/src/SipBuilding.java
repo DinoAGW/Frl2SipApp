@@ -15,6 +15,7 @@ public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
 	private static final boolean trockenModus = false;
 	private static final boolean zeigeKinderlose = false;
+	private static final boolean zeigePolicyPublikation = false;
 	private static String reason; 
 
 	public static void bewerteDatenpakete(String report) throws Exception {
@@ -79,7 +80,9 @@ public class SipBuilding {
 			if (policyPublication(obj)) {
 				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
 						+ IeTable.status.get("PolicyPublikationen") + " WHERE id='" + id + "';");
-				System.err.println(Integer.toString(++count) + ") PMD = " + id + " ist eine PolicyPublikation. " + reason);
+				 if (zeigePolicyPublikation) {
+					 System.err.println(Integer.toString(++count) + ") PMD = " + id + " ist eine PolicyPublikation. " + reason);
+				 }
 				continue;
 			}
 
