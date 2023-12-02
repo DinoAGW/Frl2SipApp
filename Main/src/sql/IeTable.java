@@ -69,10 +69,31 @@ public class IeTable {
 		return anz;
 	}
 	
-	public static void main(String[] args) throws SQLException {
+	public static void zeigeEintrag(String id) throws Exception {
+		ResultSet res = sql.SqlManager.INSTANCE
+				.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
+		while (res.next()) {
+			int status = res.getInt("status");
+			System.out.println("ID = '" + id + "' hat Status = " + status + ".");
+		}
+	}
+	
+	public static void zaehleEintraege(int status) throws Exception {
+		int count = 0;
+		ResultSet res = sql.SqlManager.INSTANCE
+				.executeQuery("SELECT * FROM ieTable WHERE status=" + status + ";");
+		while (res.next()) {
+			++count;
+		}
+		System.out.println("Anzahl der IEs mit Status = " + status + " ist gleich " + count);
+	}
+	
+	public static void main(String[] args) throws Exception {
 //		leereTabelle();
-		makeExistent();
-		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
+//		makeExistent();
+//		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
+//		zeigeEintrag("6421567");
+		zaehleEintraege(IeTable.status.get("Gefunden"));
 		System.out.println("IeTable Ende");
 	}
 }
