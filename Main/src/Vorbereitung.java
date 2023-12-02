@@ -111,7 +111,7 @@ public class Vorbereitung {
 				throw e;
 			}
 			verwalteDBbeiAktualisierterPMD(id);
-			if ((i % 1000 == 0) && (i > 0)) {
+			if ((i % 250 == 0) && (i > 0)) {
 				System.out.println(i + " Ergebnisse abgearbeitet.");
 			}
 		}
