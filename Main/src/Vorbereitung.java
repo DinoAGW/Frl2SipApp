@@ -161,9 +161,9 @@ public class Vorbereitung {
 		if (res.first()) {
 			int status = res.getInt("status");
 			if (status < IeTable.status.get("Gebuildet")) {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("Gefunden") + ";");
+				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("Gefunden") + " WHERE id='" + id + "';");
 			} else {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("OutOfDate") + ";");
+				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("OutOfDate") + " WHERE id='" + id + "';");
 			}
 		} else {
 			SqlManager.INSTANCE.executeUpdate(

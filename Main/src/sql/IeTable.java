@@ -91,7 +91,7 @@ public class IeTable {
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 //		makeExistent();
-//		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
+		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 //		zeigeEintrag("6421567");
 		zaehleEintraege(status.get("Gefunden"));
 		System.out.println("IeTable Ende");
