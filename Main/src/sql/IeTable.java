@@ -93,7 +93,7 @@ public class IeTable {
 //		makeExistent();
 //		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 //		zeigeEintrag("6421567");
-		zaehleEintraege(IeTable.status.get("Gefunden"));
+		zaehleEintraege(status.get("Gefunden"));
 		System.out.println("IeTable Ende");
 	}
 }
