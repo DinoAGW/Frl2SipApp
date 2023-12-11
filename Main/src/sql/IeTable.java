@@ -21,7 +21,7 @@ public class IeTable {
 //		status.put("BereitZumBuilden", 30); wird nicht mehr benötigt
 		status.put("Gebuildet", 60);
 		status.put("OutOfDate", 80);
-//		status.put()
+		status.put("Temporär", 101);
 	}
 	
 	public static void makeExistent() {
