@@ -74,13 +74,13 @@ public class DatenbankReparatur {
 		System.out.println("Insgesamt: " + count);
 	}
 
-	private static void zeigeDatenbankUebersicht() throws Exception {
-		IeTable.zaehleEintraege(IeTable.status.get("Gefunden"));
-		IeTable.zaehleEintraege(IeTable.status.get("NichtArchivierungswürdig"));
-		IeTable.zaehleEintraege(IeTable.status.get("PolicyPublikationen"));
-		IeTable.zaehleEintraege(IeTable.status.get("Gebuildet"));
-		IeTable.zaehleEintraege(IeTable.status.get("OutOfDate"));
-		IeTable.zaehleEintraege(IeTable.status.get("Temporär"));
+	public static void zeigeDatenbankUebersicht() throws Exception {
+		IeTable.zaehleEintraege("Gefunden");
+		IeTable.zaehleEintraege("NichtArchivierungswürdig");
+		IeTable.zaehleEintraege("PolicyPublikationen");
+		IeTable.zaehleEintraege("Gebuildet");
+		IeTable.zaehleEintraege("OutOfDate");
+		IeTable.zaehleEintraege("Temporär");
 	}
 
 	public static void main(String[] args) throws Exception {

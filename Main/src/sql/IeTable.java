@@ -88,6 +88,16 @@ public class IeTable {
 		System.out.println("Anzahl der IEs mit Status = " + status + " ist gleich " + count);
 	}
 	
+	public static void zaehleEintraege(String aStatus) throws Exception {
+		int count = 0;
+		ResultSet res = sql.SqlManager.INSTANCE
+				.executeQuery("SELECT * FROM ieTable WHERE status=" + status.get(aStatus) + ";");
+		while (res.next()) {
+			++count;
+		}
+		System.out.println("Anzahl der IEs mit Status = " + aStatus + " ist gleich " + count);
+	}
+	
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 //		makeExistent();
