@@ -11,6 +11,9 @@ import sql.IeTable;
 import sql.SqlManager;
 import utilities.Drive;
 
+/*
+ * Dieses Programm ist dafür da, zu schauen welche SIPs gebuildet werden sollen und für diese dann einzeln den sip.SipPacker auszuführen
+ */
 public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
 	private static final boolean trockenModus = false;
@@ -18,6 +21,14 @@ public class SipBuilding {
 	private static final boolean zeigePolicyPublikation = false;
 	private static String reason; 
 
+	/*
+	 * Für alle IEs im Status Gefunden:
+	 * setze ggf Status NichtArchivierungswürdig
+	 * oder ggf Status PolicyPublikationen,
+	 * sonst builde SIP und setze Status Gebuildet.
+	 * 
+	 * Kann mittels abort-Datei abgebrochen werden (sauber nach dem Vollenden einer SIP, bevor man eine neue SIP anfängt)
+	 */
 	public static void bewerteDatenpakete(String report) throws Exception {
 		if (trockenModus) {
 			System.out.println("Trockenmodus...");

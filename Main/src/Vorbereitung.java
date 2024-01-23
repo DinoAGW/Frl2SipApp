@@ -14,6 +14,9 @@ import utilities.Drive;
 import utilities.PropertiesManager;
 import utilities.Url;
 
+/*
+ * Diese Klasse ist dafür da, den lokalen Cache auf dem neusten Stand zu bringen.
+ */
 public class Vorbereitung {
 	/*
 	 * Programm erkennt, wenn Limit zu klein ist. gibt dann Fehlermeldung aus, dass
@@ -25,6 +28,9 @@ public class Vorbereitung {
 	private static final int max = 6000;
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 
+	/*
+	 * löscht den Cache und stellt lastMakeUpToDate zurück
+	 */
 	public static void setzeZurueck() throws Exception {
 		System.out.println("Lösche API Antworten aus dem Cache...");
 		if (apiAntwortOrdner.exists()) {
@@ -36,6 +42,10 @@ public class Vorbereitung {
 		IeTable.leereTabelle();
 	}
 
+	/* 
+	 * Geht alle Tage zwischen lastMakeUpToDate (einschließlich) bis Abruftag (ausschließlich) durch
+	 * um für jeden der Tage jeweils nach Neuerungen zu suchen und speichert den Tag anschließend in lastMakeUpToDate
+	 */
 	private static void scan() throws Exception {
 		String heute = LocalDateTime.now().toString().substring(0, 10);
 		utilities.PropertiesManager prop = new utilities.PropertiesManager(Drive.propertyDateiPfad);
@@ -50,6 +60,7 @@ public class Vorbereitung {
 		int tag = Integer.parseInt(lastMakeUpToDate.substring(8));
 
 		while (!((tag == heuteTag) && (monat == heuteMonat) && (jahr == heuteJahr))) {
+			//sucht die Aktualisierungen dieses Tages
 			findModifiedPMDsForDate(lastMakeUpToDate.concat("*"));
 
 			++tag;
@@ -67,7 +78,19 @@ public class Vorbereitung {
 
 	}
 
+	/*
+	 * Ruft die FRL-Schnittstelle auf um nach aktualisierten PMDs zu suchen
+	 * und lädt zu allen dann jeweils PMD und alle darunter hängenden Datensätze herunter.
+	 * 
+	 * Aktualisiert die Datenbank entsprechend:
+	 * falls der Datensatz unbekannt war, wird sie als Gefunden vermerkt
+	 * falls der Datensatz Gefunden war, bleibt sie es
+	 * falls der Datensatz Gebuildet war, wird sie als OutOfDate vermerkt
+	 */
 	private static void findModifiedPMDsForDate(String dateMask) throws Exception {
+		/*
+		 * Die Suche muss auf ein Maximum eingeschränkt werden, da sonst standardmässig nur 10 Ergebnisse angezeigt werden (Siehe Kommentare bei der max Variable)
+		 */
 		final String url = "https://frl.publisso.de/find?q=NOT%20contentType:file%20AND%20NOT%20contentType:part%20AND%20isDescribedBy.modified:" + dateMask
 				+ "&format=json&from=0&until=" + max + "";
 		Thread.sleep(1000);
@@ -117,6 +140,9 @@ public class Vorbereitung {
 		}
 	}
 
+	/*
+	 * speichert den Datensatz im Cache ab und ruft die Funktion für alle darunter hängenden Kinder rekursiv auf
+	 */
 	private static void ladeBaum(JSONObject innerObj, String id) throws Exception {
 		if (innerObj.has("notification")) {
 			if (!innerObj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
@@ -156,6 +182,9 @@ public class Vorbereitung {
 		Drive.saveStringToFile(innerObj.toString(2), Drive.apiAntwort(id));
 	}
 
+	/*
+	 * aktualisiert die IeTable Datenbank
+	 */
 	private static void verwalteDBbeiAktualisierterPMD(String id) throws Exception {
 		ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
 		if (res.first()) {
