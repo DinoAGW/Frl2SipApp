@@ -10,6 +10,13 @@ import utilities.Drive;
 public class Setup {
 	public static final String fs = System.getProperty("file.separator");
 
+	/*
+	 * dieses Programm ist dafür da, den PC darauf vorzubereiten für das FRL benutzt zu werden,
+	 * wenn das Projekt gerade frisch von Github heruntergeladen wurde.
+	 * Im Anschluss muss noch Username und Passwort der FRL API eingetragen werden (siehe Ausgabe)
+	 * 
+	 * Ist so programmiert, dass es nichts falsch macht (falls man es später aus versehen erneut ausführt, passiert nichts)
+	 */
 	public static void main(String[] args) throws Exception {
 		System.out.println("Starte Setup...");
 		System.out.println("Kopiere FRL_Properties.txt in den HomeOrdner, falls dort noch nicht vorhanden...");
@@ -25,7 +32,6 @@ public class Setup {
 		System.out.println("Lege Datenbanken an...");
 		IeTable.makeExistent();
 		MetadataOverviewTable.makeExistent();
-		MetadatensatzTable.makeExistent();
 
 		System.out.println("Setup Ende");
 	}
