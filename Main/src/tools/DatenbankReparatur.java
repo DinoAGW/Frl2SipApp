@@ -13,6 +13,9 @@ import sql.IeTable;
 import sql.SqlManager;
 import utilities.Drive;
 
+/*
+ * Diese Klasse dient dazu die Datenbank im Notfall neu aufzubauen
+ */
 public class DatenbankReparatur {
 	private static final String fs = System.getProperty("file.separator");
 
@@ -22,6 +25,12 @@ public class DatenbankReparatur {
 		System.out.println("Es wurden " + count + " Einträge von '" + von + "' nach '" + nach + "' geändert.");
 	}
 
+	/*
+	 * Für alle PMDs der Report Dateien:
+	 * Vergleiche isDescribedBy.modified mit einem Stichtag
+	 * und setze alles ältere auf Gebuildet
+	 * und alle NeuerGleich auf OutOfDate
+	 */
 	private static void bearbeiteIEsAusReport() throws Exception {
 		int max = 0;
 		int count = 0;

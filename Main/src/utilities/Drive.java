@@ -8,6 +8,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/*
+ * diese Klasse vereint möglichst alles, was mit Dateizugriff auf der Festplatte zu tun hat (um eine Übersicht zu haben)
+ * und bietet auch ein paar Dateioperationen, die immer wieder genutzt werden
+ */
 public class Drive {
 	public static final String fs = System.getProperty("file.separator");
 	public static final String home = System.getProperty("user.home");

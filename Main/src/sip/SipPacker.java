@@ -18,6 +18,9 @@ import metsSipCreator.SIP;
 import utilities.ApiManager;
 import utilities.Drive;
 
+/*
+ * ist für das Packen einer SIP verantwortlich
+ */
 public class SipPacker {
 	private static String inst = "PROD";
 	

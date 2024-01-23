@@ -9,6 +9,9 @@ import utilities.PropertiesManager;
 
 public class PrivateLoader {
 	
+	/*
+	 * lädt Datensätze über API, inklusiver Benutzeranmeldung durch
+	 */
 	public static void privateMetadataLoader(String id) throws Exception {
 		System.out.println("Lade Metadaten zur ID " + id + " herunter.");
 		PropertiesManager prop = new PropertiesManager(Drive.propertyDateiPfad);

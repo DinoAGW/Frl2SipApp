@@ -8,6 +8,7 @@ import utilities.ApiManager;
 import utilities.Drive;
 import utilities.Url;
 
+@Deprecated
 public class InitialCrawl {
 	/*
 	 * fragt die API nach einem beliebigen Metadatensatz Nummer num, legt die

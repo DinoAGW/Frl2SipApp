@@ -11,6 +11,9 @@ import com.jayway.jsonpath.JsonPath;
 
 import utilities.Url;
 
+/* 
+ * eine kleine Hilfe um JSON Dateien ein wenig lesbarer zu machen
+ */
 public class MetadataParser {
 	
 	private static String frlUrl(String id) {
@@ -108,6 +111,9 @@ public class MetadataParser {
 //		String id = key.substring
 //	}
 	
+	/*
+	 * zeige die erste Ebene einer JSON-Datei
+	 */
 	private static void printOverview(JSONObject obj) {
 		for(String key:obj.keySet()) {
 			if (obj.get(key) instanceof String) {

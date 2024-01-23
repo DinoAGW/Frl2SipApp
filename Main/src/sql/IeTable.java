@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * Klasse zur Verwaltung der IeTable Datenbank
+ */
 public class IeTable {
 	
 	//die nächsten beiden Zeilen sind anzupassen
@@ -51,6 +54,10 @@ public class IeTable {
 		return resultSet.next();
 	}
 	
+	/*
+	 * Falls eine id bereits in der Datenbank ist, gebe false zurück,
+	 * sonst füge als Gefunden ein und gebe true zurück
+	 */
 	public static boolean insertIdIntoDatabase(String id) throws SQLException {
 		if (checkIfEntryIsInDatabase("id", id)) {
 			return false;
@@ -69,6 +76,9 @@ public class IeTable {
 		return anz;
 	}
 	
+	/*
+	 * zeigt den Status einer IE als Nummer. Übersetzung, siehe status
+	 */
 	public static void zeigeEintrag(String id) throws Exception {
 		ResultSet res = sql.SqlManager.INSTANCE
 				.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
@@ -78,6 +88,9 @@ public class IeTable {
 		}
 	}
 	
+	/*
+	 * zählt alle Einträge der Datenbank, die einen gewissen Status(als Nummernwert) haben
+	 */
 	public static void zaehleEintraege(int status) throws Exception {
 		int count = 0;
 		ResultSet res = sql.SqlManager.INSTANCE
@@ -88,6 +101,9 @@ public class IeTable {
 		System.out.println("Anzahl der IEs mit Status = " + status + " ist gleich " + count);
 	}
 	
+	/*
+	 * zählt alle Einträge der Datenbank, die einen gewissen Status(als Bezeichner) haben
+	 */
 	public static void zaehleEintraege(String aStatus) throws Exception {
 		int count = 0;
 		ResultSet res = sql.SqlManager.INSTANCE
