@@ -4,6 +4,9 @@ import java.io.File;
 
 import utilities.Drive;
 
+/*
+ * Programm benennt alle .json Dateien des Caches in .jsonld um
+ */
 public class Json2JsonldRenamer {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	

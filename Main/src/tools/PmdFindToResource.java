@@ -7,6 +7,10 @@ import org.json.JSONObject;
 import utilities.ApiManager;
 import utilities.Drive;
 
+/*
+ * geht alle PMDs durch (ggf. beginnend ab einer bestimmten)
+ * und lade sie erneut über den resource-Link herunter
+ */
 public class PmdFindToResource {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	private static int count = 0;

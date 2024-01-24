@@ -14,6 +14,9 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 
+/*
+ * gibt aus welche Werte alles in den API-Antworten zu einem gegebenem Pfad zu finden sind
+ */
 public class MetadataContentScanner {
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 

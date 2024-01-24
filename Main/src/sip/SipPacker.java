@@ -444,6 +444,10 @@ public class SipPacker {
 		}
 	}
 
+	/*
+	 * Nimmt eine Liste an Strings und speichert sie als Metadatum des im xPathKey angegebenem Schlüssels
+	 * Prüft dabei ggf je nach minOne oder maxOne ob die Erwartungen erfüllt wurden
+	 */
 	private static void addMetadata(String xPathKey, ArrayList<String> tempStr, boolean minOne, boolean maxOne,
 			String id) throws Exception {
 		if (minOne && tempStr.size() < 1) {
@@ -460,6 +464,10 @@ public class SipPacker {
 		}
 	}
 
+	/*
+	 * geht eine Liste von Objekten durch und sucht jeweils in ihnen ein Objekt zum gegebenem Schlüssel
+	 * und gibt am Ende eine Liste dieser gefundenen Objekte zurück
+	 */
 	private static ArrayList<JSONObject> getObject(ArrayList<JSONObject> objList, String key) {
 		ArrayList<JSONObject> ret = new ArrayList<>();
 		for (JSONObject obj : objList) {
@@ -480,6 +488,10 @@ public class SipPacker {
 		return ret;
 	}
 
+	/*
+	 * geht eine Liste von Objekten durch und sucht jeweils in ihnen ein String oder ein Array von Strings mit dem gegebenem Schlüssel
+	 * und gibt eine Liste dieser gefundenen Strings zurück 
+	 */
 	private static ArrayList<String> getString(ArrayList<JSONObject> objList, String key) {
 		ArrayList<String> ret = new ArrayList<>();
 		for (JSONObject obj : objList) {
@@ -502,6 +514,11 @@ public class SipPacker {
 		return ret;
 	}
 
+	/*
+	 * hangelt sich den Baum der Datensätze entlang um die Pfade zu ermitteln,
+	 * die Dateien herunter zu laden
+	 * und Metadaten zu den Dateien hinzuzufügen (bzw der Files der SIP)
+	 */
 	private static void traverseIe(String id, String letzterPfad, String parent, JSONObject mainObj) throws Exception {
 		// Lade die json-Datei zu der ID von der Festplatte
 		File file = new File(Drive.apiAntwort(id));
@@ -710,6 +727,12 @@ public class SipPacker {
 		return true;
 	}
 
+	/*
+	 * Für eine gegebene csv-Datei:
+	 * gehe Zeile für Zeile durch und wenn dort nur eine Zahl steht,
+	 * bild die SIP zu dieser ID
+	 * und speichere in die csv dahinter ab, ob Fehler oder fertig
+	 */
 	private static void generateSipsFromCsv(String csv) throws Exception {
 		File csvFile = new File(csv);
 		if (!csvFile.exists()) {
