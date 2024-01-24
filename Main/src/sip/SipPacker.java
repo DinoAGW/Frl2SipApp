@@ -23,26 +23,29 @@ import utilities.Drive;
  */
 public class SipPacker {
 	private static String inst = "PROD";
-	
+
 	private static final String fs = System.getProperty("file.separator");
 
 	static SIP sip1;
 	static REP rep1;
 	private static boolean everythingPublic;
 	private static int tempFileName;
-	
+
+	/*
+	 * Gibt für die jeweilige Instanz die ID der ZB MED Staff only AR-Policy aus
+	 */
 	private static String getARPolicyIdForInst(String inst) throws Exception {
 		if (inst.contentEquals("DEV")) {
 			return "433120";
 		} else if (inst.contentEquals("TEST")) {
 			return "1349113";
-		}  else if (inst.contentEquals("PROD")) {
+		} else if (inst.contentEquals("PROD")) {
 			return "4963332";
 		} else {
 			throw new Exception("Inst " + inst + " ungültig");
 		}
 	}
-	
+
 	public static void setInst(String value) throws Exception {
 		if (value.contentEquals("DEV") || value.contentEquals("TEST") || value.contentEquals("PROD")) {
 			inst = value;
@@ -51,6 +54,10 @@ public class SipPacker {
 		}
 	}
 
+	/*
+	 * generiert eine SIP uns speichert sie im Verzeichnis
+	 * bin/<inst>_<heute:yyyy_mm_dd>_<id>
+	 */
 	public static void generateOneSip(String id) throws Exception {
 		System.out.println("Verarbeite id " + id + " ...");
 		String heute = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd"));
@@ -76,14 +83,20 @@ public class SipPacker {
 		FileUtils.deleteDirectory(temp);
 	}
 
+	/*
+	 * ist hauptverantwortlich um Metadaten zu der SIP hinzuzufügen. Ausnahmen sind
+	 * die Metadaten, die File-Datensatz als Quelle haben oder File-Metadaten sind
+	 */
 	private static void addMetadata(String id, JSONObject mainObj) throws Exception {
 		ArrayList<JSONObject> objList = new ArrayList<>();
 		objList.add(mainObj);
 		ArrayList<JSONObject> tempObj;
 		ArrayList<String> tempStr;
 
+		// Zeile 2.0
 		sip1.setUserDefined("A", "FRL_" + id);
 
+		// Zeile 3.0
 		tempObj = getObject(objList, "isDescribedBy");
 		tempStr = getString(tempObj, "modified");
 		if (tempStr.size() != 1) {
@@ -94,31 +107,39 @@ public class SipPacker {
 			sip1.setUserDefined("B", str);
 		}
 
+		// Zeile 4.0
 		tempStr = getString(objList, "@id");
 		addMetadata("dc:identifier", tempStr, true, true, id);
 
+		// Zeile 5.0
 		tempStr = getString(objList, "alternative");
 		addMetadata("dcterms:alternative", tempStr, false, false, id);
 
+		// Zeile 6.0
 		tempStr = getString(objList, "bibliographicCitation");
 		addMetadata("dcterms:bibliographicCitation", tempStr, false, true, id);
 
+		// Zeile 7.0
 		tempObj = getObject(objList, "containedIn");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dcterms:isPartOf", tempStr, false, false, id);
 
+		// Zeile 8.0
 		tempObj = getObject(objList, "collectionTwo");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dcterms:isPartOf", tempStr, false, false, id);
 
+		// Zeile 9.0
 		tempObj = getObject(objList, "natureOfContent");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:type", tempStr, false, false, id);
 
+		// Zeile 10.0
 		tempObj = getObject(objList, "rdftype");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:type", tempStr, true, false, id);
 
+		// Zeile 11.0
 		boolean existAutorin = false;
 		ArrayList<JSONObject> contribution = getObject(objList, "contribution");
 		for (JSONObject obj : contribution) {
@@ -133,7 +154,7 @@ public class SipPacker {
 			}
 			String xPathKey = tempStr.get(0).contentEquals("Autor/in") ? "dc:creator" : "dc:contributor";
 			if (tempStr.get(0).contentEquals("Autor/in")) {
-				existAutorin = true;
+				existAutorin = true;// wird später benötigt
 			}
 
 			tempObj = getObject(contributionElement, "agent");
@@ -141,16 +162,19 @@ public class SipPacker {
 			addMetadata(xPathKey, tempStr, true, true, id);
 		}
 
+		// Zeile 12.0
 		tempObj = getObject(objList, "contributor");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:contributor", tempStr, false, false, id);
 
+		// Zeile 13.0
 		if (!existAutorin) {
 			tempObj = getObject(objList, "creator");
 			tempStr = getString(tempObj, "prefLabel");
 			addMetadata("dc:creator", tempStr, false, false, id);
 		}
 
+		// Zeile 14.0
 		tempObj = getObject(objList, "ddc");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:subject", tempStr, false, false, id);
@@ -205,65 +229,81 @@ public class SipPacker {
 			throw new Exception("bei PMD ist keine DOI gefunden worden: " + id);
 		}
 
+		// Zeile 19.0
 		tempObj = getObject(objList, "editor");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:contributor", tempStr, false, false, id);
 
+		// Zeile 20.0
 		tempStr = getString(objList, "embargoTime");
 		addMetadata("dcterms:available", tempStr, false, true, id);
 
+		// Zeile 21.0
 		tempObj = getObject(objList, "exampleOfWork");
 		tempStr = getString(tempObj, "variantNameForTheWork");
 		addMetadata("dcterms:alternative", tempStr, false, true, id);
 
+		// Zeile 22.0
 		tempStr = getString(objList, "extent");
 		addMetadata("dcterms:extent", tempStr, false, true, id);
 
+		// Zeile 23.0
 		tempObj = getObject(objList, "hasVersion");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:identifier", tempStr, false, true, id);
 
+		// Zeile 24.0
 		tempStr = getString(objList, "hbzId");
 		addMetadata("dc:identifier", tempStr, false, true, id);
 
+		// Zeile 25.0
 		tempObj = getObject(objList, "institution");
 		tempStr = getString(tempObj, "@id");
 		addMetadata("dcterms:isPartOf", tempStr, false, false, id);
 
+		// Zeile 26.0
 		tempStr = getString(objList, "Isbn");
 		addMetadata("dc:identifier", tempStr, false, false, id);
 
+		// Zeile 27.0
 		tempObj = getObject(objList, "isDescribedBy");
 		tempStr = getString(tempObj, "created");
 		addMetadata("dcterms:created", tempStr, true, true, id);
 
+		// Zeile 28.0
 		tempObj = getObject(objList, "isDescribedBy");
 		tempStr = getString(tempObj, "modified");
 		addMetadata("dcterms:modified", tempStr, true, true, id);
 
+		// Zeile 29.0
 		tempStr = getString(objList, "issued");
 		addMetadata("dcterms:issued", tempStr, false, true, id);
 
+		// Zeile 30.0
 		tempStr = getString(objList, "publicationYear");
 		addMetadata("dcterms:issued", tempStr, false, true, id);
 
+		// Zeile 31.0
 		tempObj = getObject(objList, "publication");
 		tempStr = getString(tempObj, "publishedBy");
 		addMetadata("dc:publisher", tempStr, false, false, id);
 
+		// Zeile 32.0
 		tempObj = getObject(objList, "language");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:language", tempStr, false, false, id);
 
+		// Zeile 33.0
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "@id");
 		addMetadata("dcterms:accessRights", tempStr, false, false, id);
 
+		// Zeile 34.0
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "note");
 		addMetadata("dc:rights", tempStr, false, true, id);
 
-		//Zeile 35.1
+		// Zeile 35.1
 		ArrayList<JSONObject> lv_isPartOf = getObject(objList, "lv:isPartOf");
 		for (JSONObject obj : lv_isPartOf) {
 			ArrayList<JSONObject> lv_isPartOfElement = new ArrayList<>();
@@ -307,13 +347,16 @@ public class SipPacker {
 			}
 		}
 
+		// Zeile 36.0
 		tempObj = getObject(objList, "medium");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:format", tempStr, false, false, id);
 
+		// Zeile 37.0
 		tempStr = getString(objList, "P60489");
 		addMetadata("dc:publisher", tempStr, false, true, id);
 
+		// Zeile 38
 		tempObj = getObject(objList, "subject");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:subject", tempStr, false, false, id);
@@ -325,6 +368,7 @@ public class SipPacker {
 			sip1.addMetadata("dc:subject", "ddc:" + str);
 		}
 
+		// Zeile 39.0
 		tempStr = getString(objList, "title");
 		if (tempStr.size() != 1) {
 			throw new Exception("PMD (" + id + ") hat ungleich 1 title");
@@ -339,19 +383,23 @@ public class SipPacker {
 		}
 		sip1.addMetadata("dc:title", title);
 
+		// Zeile 40.0
 		tempStr = getString(objList, "urn");
 		addMetadata("dc:identifier", tempStr, false, false, id);
 
+		// Zeile 41.0
 		tempStr = getString(objList, "yearOfCopyright");
 		addMetadata("dcterms:dateCopyrighted", tempStr, false, true, id);
 
-		// 41b.0
+		// Zeile 41b.0
 		tempObj = getObject(objList, "fundingId");
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:contributor", tempStr, false, false, id);
 
+		// Zeile 42.0
 		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
 
+		// Zeile 45.1
 		boolean istZuMappen = false;
 		JSONArray arr = mainObj.optJSONArray("note");
 		if (arr != null) {
@@ -362,7 +410,7 @@ public class SipPacker {
 				}
 			}
 		} else {
-			String str = mainObj.optString("note", null); //Sollte niemals vorkommen
+			String str = mainObj.optString("note", null); // Sollte niemals vorkommen
 			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
 				istZuMappen = true;
 			}
@@ -371,6 +419,7 @@ public class SipPacker {
 			sip1.addMetadata("dcterms:accessRights", "Retraction");
 		}
 
+		// Zeile 46.0
 		istZuMappen = everythingPublic;
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "@id");
@@ -386,6 +435,7 @@ public class SipPacker {
 							+ " exhibit, perform, distribute or otherwise use the document in public.");
 		}
 
+		// Zeile 50.0 und 51.0
 		tempStr = getString(objList, "hbzId");
 		if (tempStr.size() > 1) {
 			throw new Exception("PMD (" + id + ") hat zu viele hbzIds");
@@ -457,7 +507,7 @@ public class SipPacker {
 		File file = new File(Drive.apiAntwort(id));
 		String apiAntwortJson = Drive.loadFileToString(file);
 		JSONObject obj = new JSONObject(apiAntwortJson);
-		
+
 		boolean geloescht = false;
 		if (obj.has("notification")) {
 			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
@@ -472,7 +522,7 @@ public class SipPacker {
 			System.err.println("Datensatz ohne contentType: " + id + ".");
 			throw new Exception();
 		}
-		//prüfe accessScheme
+		// prüfe accessScheme
 		if (!obj.has("accessScheme")) {
 			System.err.println("Datensatz ohne accessScheme: " + id + ".");
 			throw new Exception();
@@ -482,7 +532,7 @@ public class SipPacker {
 			System.err.println("Datensatz " + id + " accessScheme ist weder private, noch public: " + accessScheme);
 			throw new Exception();
 		}
-		//prüfe publishScheme
+		// prüfe publishScheme
 		if (!obj.has("publishScheme")) {
 			System.err.println("Datensatz ohne publishScheme: " + id + ".");
 			throw new Exception();
@@ -529,11 +579,11 @@ public class SipPacker {
 		// Füge jsonld-Datei hinzu
 		rep1.newFile(Drive.apiAntwort(id), "SourceMD".concat(fs).concat(pfad));
 
-		//tue nichts weiter, wenn gelöscht
+		// tue nichts weiter, wenn gelöscht
 		if (geloescht) {
 			return;
 		}
-		//tue nichts weiter falls publishScheme=private
+		// tue nichts weiter falls publishScheme=private
 		if (publishScheme.contentEquals("private")) {
 			return;
 		}
@@ -582,12 +632,14 @@ public class SipPacker {
 					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
 			++tempFileName;
 
+			// Zeile 47.0 der Mappingtabelle
 			String atId = obj.optString("@id");
 			if (atId == null) {
 				throw new Exception("Datei " + id + " hat keine @id");
 			}
 			tempFile.addMetadata("dc:identifier", atId);
 
+			// Zeile 48.0 der Mappingtabelle
 			JSONArray jarr = obj.optJSONArray("title");
 			if (jarr == null) {
 				throw new Exception("Datei " + id + " hat kein title Array");
@@ -599,8 +651,10 @@ public class SipPacker {
 			tempFile.addMetadata("dc:title", title);
 
 			if (accessScheme.contentEquals("private")) {
+				// Zeile 49.0 der Mappingtabelle
 				tempFile.setARPolicy(getARPolicyIdForInst(inst), "ZB MED_STAFF only");
 				everythingPublic = false;
+				// Zeile 43.1 der Mappingtabelle
 				boolean istZuMappen = true;
 				JSONArray arr = mainObj.optJSONArray("note");
 				if (arr != null) {
@@ -620,6 +674,7 @@ public class SipPacker {
 					sip1.addMetadata("dc:rights", "Datei_Rechtsgrundlage für die Veröffentlichung " + id);
 				}
 
+				// Zeile 44.1 der Nutzungsvereinbarung
 				istZuMappen = true;
 				arr = obj.optJSONArray("title");
 				if (arr != null) {
