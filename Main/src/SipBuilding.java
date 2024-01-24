@@ -16,6 +16,7 @@ import utilities.Drive;
  */
 public class SipBuilding {
 	private static final String fs = System.getProperty("file.separator");
+	// im trockenmodus werden die SIPs nicht gebuildet sondern nur bewertet
 	private static final boolean trockenModus = false;
 	private static final boolean zeigeKinderlose = false;
 	private static final boolean zeigePolicyPublikation = false;
@@ -77,7 +78,8 @@ public class SipBuilding {
 				continue;
 			}
 
-			// Falls Kinderlos
+			// Falls irgendwo unter der PMD kein (ungelöschter) File-Datensatz existiert,
+			// merke sich die IE als NichtArchivierungswürdig
 			if (IeBouncer.kinderlos(obj, id)) {
 				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
 						+ IeTable.status.get("NichtArchivierungswürdig") + " WHERE id='" + id + "';");
@@ -149,7 +151,7 @@ public class SipBuilding {
 	 * Ausgabe = 2, wenn mindestens eine Nutzungsvereinbarung dabei ist
 	 */
 	private static int checkPolicyPublication(JSONObject obj) throws Exception {
-		//Nur nicht-gelöschte Publikationen beachten
+		//Nur nicht-gelöschte Datensätze beachten
 		if (obj.has("notification")) {
 			return 0;
 		}

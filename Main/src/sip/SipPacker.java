@@ -55,7 +55,7 @@ public class SipPacker {
 	}
 
 	/*
-	 * generiert eine SIP uns speichert sie im Verzeichnis
+	 * generiert eine SIP und speichert sie im Verzeichnis
 	 * bin/<inst>_<heute:yyyy_mm_dd>_<id>
 	 */
 	public static void generateOneSip(String id) throws Exception {
@@ -637,7 +637,7 @@ public class SipPacker {
 			if ((pfad.length() == 0) && Dateiname.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Datei und dem gleichnamigem Ordner: " + id + ".");
 			}
-			// reporte jsonld Dateien
+			// reporte jsonld Dateien, weil wir jsonld-Fortmaterkennungsfehler in Rosetta ignorieren
 			if (Dateiname.endsWith(".jsonld")) {
 				FileWriter fr = new FileWriter(new File("bin" + fs + "JSONLDs.txt"), true);
 				fr.append(id + "\n");
@@ -691,7 +691,7 @@ public class SipPacker {
 					sip1.addMetadata("dc:rights", "Datei_Rechtsgrundlage für die Veröffentlichung " + id);
 				}
 
-				// Zeile 44.1 der Nutzungsvereinbarung
+				// Zeile 44.1 der Mappingtabelle (bzgl. Nutzungsvereinbarung)
 				istZuMappen = true;
 				arr = obj.optJSONArray("title");
 				if (arr != null) {
