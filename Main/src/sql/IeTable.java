@@ -119,7 +119,7 @@ public class IeTable {
 //		makeExistent();
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 //		zeigeEintrag("6421567");
-		zaehleEintraege(status.get("Gefunden"));
+		zaehleEintraege("Gefunden");
 		System.out.println("IeTable Ende");
 	}
 }

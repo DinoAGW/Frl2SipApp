@@ -166,8 +166,8 @@ public class Vorbereitung {
 					String datensatz = Url.getText(url);
 					Thread.sleep(1000);
 					JSONObject child = null;
-					try {// speichert das aber nur ab, wenn es eine gültige Json ist. z.B. weil Datensatz
-							// private ist.
+					try {// speichert das aber nur ab, wenn es eine gültige Json ist.
+						// private Datensätze geben nämlich eine html Meldung aus, die keine gültige JSON ist
 						child = new JSONObject(datensatz);
 					} catch (Exception e) {
 						System.err.println("Fehler beim Verarbeiten des hasPart Datensatzes '" + hasPartId

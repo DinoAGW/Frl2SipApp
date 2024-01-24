@@ -29,6 +29,11 @@ public class ApiManager {
 		return id;
 	}
 	
+	/*
+	 * ruft den Datensatz zu einer bestimmten ID über resource ab
+	 * (das nötigenfalls auch mit Zugangsdaten ApiAccount)
+	 * und speichert diese im Cache
+	 */
 	public static void saveId2File(String id) throws Exception {
 		if (id.startsWith("frl:")) {
 			throw new Exception("ID wird ohne Prefix erwartet: " + id);
