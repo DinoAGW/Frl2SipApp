@@ -29,7 +29,7 @@ public class Setup {
 		System.out.println("Lege Unterordner workspace\\Frl2SipApp\\apiAntworten\\ im HomePfad an...");
 		File apiAntworten = new File(Drive.apiAntwortPfad);
 		apiAntworten.mkdirs();
-		System.out.println("Lege Datenbanken an...");
+		System.out.println("Lege Datenbank an...");
 		IeTable.makeExistent();
 		MetadataOverviewTable.makeExistent();
 
