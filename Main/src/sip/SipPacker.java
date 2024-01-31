@@ -410,10 +410,22 @@ public class SipPacker {
 				}
 			}
 		} else {
-			String str = mainObj.optString("note", null); // Sollte niemals vorkommen
-			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-				istZuMappen = true;
+			throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
+//			String str = mainObj.optString("note", null); // Sollte niemals vorkommen
+//			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+//				istZuMappen = true;
+//			}
+		}
+		arr = mainObj.optJSONArray("additionalNote");
+		if (arr != null) {
+			for (int i = 0; i < arr.length(); ++i) {
+				String str = arr.optString(i);
+				if (str != null && str.contains("zurückgezogen")) {
+					istZuMappen = true;
+				}
 			}
+		} else {
+			throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
 		}
 		if (istZuMappen) {
 			sip1.addMetadata("dcterms:accessRights", "Retraction");
@@ -445,8 +457,9 @@ public class SipPacker {
 	}
 
 	/*
-	 * Nimmt eine Liste an Strings und speichert sie als Metadatum des im xPathKey angegebenem Schlüssels
-	 * Prüft dabei ggf je nach minOne oder maxOne ob die Erwartungen erfüllt wurden
+	 * Nimmt eine Liste an Strings und speichert sie als Metadatum des im xPathKey
+	 * angegebenem Schlüssels Prüft dabei ggf je nach minOne oder maxOne ob die
+	 * Erwartungen erfüllt wurden
 	 */
 	private static void addMetadata(String xPathKey, ArrayList<String> tempStr, boolean minOne, boolean maxOne,
 			String id) throws Exception {
@@ -465,8 +478,9 @@ public class SipPacker {
 	}
 
 	/*
-	 * geht eine Liste von Objekten durch und sucht jeweils in ihnen ein Objekt zum gegebenem Schlüssel
-	 * und gibt am Ende eine Liste dieser gefundenen Objekte zurück
+	 * geht eine Liste von Objekten durch und sucht jeweils in ihnen ein Objekt zum
+	 * gegebenem Schlüssel und gibt am Ende eine Liste dieser gefundenen Objekte
+	 * zurück
 	 */
 	private static ArrayList<JSONObject> getObject(ArrayList<JSONObject> objList, String key) {
 		ArrayList<JSONObject> ret = new ArrayList<>();
@@ -489,8 +503,9 @@ public class SipPacker {
 	}
 
 	/*
-	 * geht eine Liste von Objekten durch und sucht jeweils in ihnen ein String oder ein Array von Strings mit dem gegebenem Schlüssel
-	 * und gibt eine Liste dieser gefundenen Strings zurück 
+	 * geht eine Liste von Objekten durch und sucht jeweils in ihnen ein String oder
+	 * ein Array von Strings mit dem gegebenem Schlüssel und gibt eine Liste dieser
+	 * gefundenen Strings zurück
 	 */
 	private static ArrayList<String> getString(ArrayList<JSONObject> objList, String key) {
 		ArrayList<String> ret = new ArrayList<>();
@@ -515,9 +530,9 @@ public class SipPacker {
 	}
 
 	/*
-	 * hangelt sich den Baum der Datensätze entlang um die Pfade zu ermitteln,
-	 * die Dateien herunter zu laden
-	 * und Metadaten zu den Dateien hinzuzufügen (bzw der Files der SIP)
+	 * hangelt sich den Baum der Datensätze entlang um die Pfade zu ermitteln, die
+	 * Dateien herunter zu laden und Metadaten zu den Dateien hinzuzufügen (bzw der
+	 * Files der SIP)
 	 */
 	private static void traverseIe(String id, String letzterPfad, String parent, JSONObject mainObj) throws Exception {
 		// Lade die json-Datei zu der ID von der Festplatte
@@ -637,7 +652,8 @@ public class SipPacker {
 			if ((pfad.length() == 0) && Dateiname.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Datei und dem gleichnamigem Ordner: " + id + ".");
 			}
-			// reporte jsonld Dateien, weil wir jsonld-Fortmaterkennungsfehler in Rosetta ignorieren
+			// reporte jsonld Dateien, weil wir jsonld-Fortmaterkennungsfehler in Rosetta
+			// ignorieren
 			if (Dateiname.endsWith(".jsonld")) {
 				FileWriter fr = new FileWriter(new File("bin" + fs + "JSONLDs.txt"), true);
 				fr.append(id + "\n");
@@ -671,8 +687,10 @@ public class SipPacker {
 				// Zeile 49.0 der Mappingtabelle
 				tempFile.setARPolicy(getARPolicyIdForInst(inst), "ZB MED_STAFF only");
 				everythingPublic = false;
-				// Zeile 43.1 der Mappingtabelle
+
+				// Zeile 43.2 der Mappingtabelle
 				boolean istZuMappen = true;
+				// test der note
 				JSONArray arr = mainObj.optJSONArray("note");
 				if (arr != null) {
 					for (int i = 0; i < arr.length(); ++i) {
@@ -682,10 +700,27 @@ public class SipPacker {
 						}
 					}
 				} else {
-					String str = mainObj.optString("note", null);
-					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-						istZuMappen = false;
+					throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
+//					String str = mainObj.optString("note", null);
+//					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+//						istZuMappen = false;
+//					}
+				}
+				// test der additionalNote
+				arr = mainObj.optJSONArray("additionalNote");
+				if (arr != null) {
+					for (int i = 0; i < arr.length(); ++i) {
+						String str = arr.optString(i);
+						if (str != null && str.contains("zurückgezogen")) {
+							istZuMappen = false;
+						}
 					}
+				} else {
+					throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
+//					String str = mainObj.optString("additionalNote", null);
+//					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+//						istZuMappen = false;
+//					}
 				}
 				if (istZuMappen) {
 					sip1.addMetadata("dc:rights", "Datei_Rechtsgrundlage für die Veröffentlichung " + id);
@@ -728,10 +763,9 @@ public class SipPacker {
 	}
 
 	/*
-	 * Für eine gegebene csv-Datei:
-	 * gehe Zeile für Zeile durch und wenn dort nur eine Zahl steht,
-	 * bild die SIP zu dieser ID
-	 * und speichere in die csv dahinter ab, ob Fehler oder fertig
+	 * Für eine gegebene csv-Datei: gehe Zeile für Zeile durch und wenn dort nur
+	 * eine Zahl steht, bild die SIP zu dieser ID und speichere in die csv dahinter
+	 * ab, ob Fehler oder fertig
 	 */
 	private static void generateSipsFromCsv(String csv) throws Exception {
 		File csvFile = new File(csv);
