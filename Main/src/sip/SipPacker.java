@@ -410,11 +410,13 @@ public class SipPacker {
 				}
 			}
 		} else {
-			throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
-//			String str = mainObj.optString("note", null); // Sollte niemals vorkommen
-//			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-//				istZuMappen = true;
-//			}
+			String str = mainObj.optString("note", null); // Sollte niemals vorkommen
+			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+				istZuMappen = true;
+			}
+			if (str != null) {
+				throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
+			}
 		}
 		arr = mainObj.optJSONArray("additionalNote");
 		if (arr != null) {
@@ -425,7 +427,13 @@ public class SipPacker {
 				}
 			}
 		} else {
-			throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
+			String str = mainObj.optString("additionalNote", null); // Sollte niemals vorkommen
+			if (str != null && str.contains("zurückgezogen")) {
+				istZuMappen = true;
+			}
+			if (str != null) {
+				throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
+			}
 		}
 		if (istZuMappen) {
 			sip1.addMetadata("dcterms:accessRights", "Retraction");
@@ -700,11 +708,13 @@ public class SipPacker {
 						}
 					}
 				} else {
-					throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
-//					String str = mainObj.optString("note", null);
-//					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-//						istZuMappen = false;
-//					}
+					String str = mainObj.optString("note", null);
+					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+						istZuMappen = false;
+					}
+					if (str != null) {
+						throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
+					}
 				}
 				// test der additionalNote
 				arr = mainObj.optJSONArray("additionalNote");
@@ -716,11 +726,13 @@ public class SipPacker {
 						}
 					}
 				} else {
-					throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
-//					String str = mainObj.optString("additionalNote", null);
-//					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-//						istZuMappen = false;
-//					}
+					String str = mainObj.optString("additionalNote", null);
+					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
+						istZuMappen = false;
+					}
+					if (str != null) {
+						throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
+					}
 				}
 				if (istZuMappen) {
 					sip1.addMetadata("dc:rights", "Datei_Rechtsgrundlage für die Veröffentlichung " + id);
