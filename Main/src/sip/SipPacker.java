@@ -418,7 +418,7 @@ public class SipPacker {
 				throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
 			}
 		}
-		arr = mainObj.optJSONArray("additionalNote");
+		arr = mainObj.optJSONArray("additionalNotes");
 		if (arr != null) {
 			for (int i = 0; i < arr.length(); ++i) {
 				String str = arr.optString(i);
@@ -427,12 +427,12 @@ public class SipPacker {
 				}
 			}
 		} else {
-			String str = mainObj.optString("additionalNote", null); // Sollte niemals vorkommen
+			String str = mainObj.optString("additionalNotes", null); // Sollte niemals vorkommen
 			if (str != null && str.contains("zurückgezogen")) {
 				istZuMappen = true;
 			}
 			if (str != null) {
-				throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
+				throw new Exception("Keine Nicht-Array-additionalNotes erwartet. id = " + id);
 			}
 		}
 		if (istZuMappen) {
@@ -716,8 +716,8 @@ public class SipPacker {
 						throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
 					}
 				}
-				// test der additionalNote
-				arr = mainObj.optJSONArray("additionalNote");
+				// test der additionalNotes
+				arr = mainObj.optJSONArray("additionalNotes");
 				if (arr != null) {
 					for (int i = 0; i < arr.length(); ++i) {
 						String str = arr.optString(i);
@@ -726,12 +726,12 @@ public class SipPacker {
 						}
 					}
 				} else {
-					String str = mainObj.optString("additionalNote", null);
+					String str = mainObj.optString("additionalNotes", null);
 					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
 						istZuMappen = false;
 					}
 					if (str != null) {
-						throw new Exception("Keine Nicht-Array-additionalNote erwartet. id = " + id);
+						throw new Exception("Keine Nicht-Array-additionalNotes erwartet. id = " + id);
 					}
 				}
 				if (istZuMappen) {
