@@ -225,7 +225,7 @@ public class SipPacker {
 			}
 		}
 
-		if (count == 0) {
+		if ((count == 0) && (!isInExceptionList(id))) {
 			throw new Exception("bei PMD ist keine DOI gefunden worden: " + id);
 		}
 
@@ -819,6 +819,20 @@ public class SipPacker {
 			lines.set(index, line);
 		}
 		Files.write(csvFile.toPath(), lines);
+	}
+
+	private static boolean isInExceptionList(String id) {
+		if (id.contentEquals("6402620"))
+			return true;
+		if (id.contentEquals("6408553"))
+			return true;
+		if (id.contentEquals("6402311"))
+			return true;
+		if (id.contentEquals("6441265"))
+			return true;
+		if (id.contentEquals("6441267"))
+			return true;
+		return false;
 	}
 
 	public static void main(String[] args) throws Exception {
