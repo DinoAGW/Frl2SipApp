@@ -252,6 +252,14 @@ public class SipPacker {
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:identifier", tempStr, false, true, id);
 
+		// Zeile 23b.0
+		tempStr = getString(objList, "nextVersion");
+		addMetadata("dcterms:hasVersion", tempStr, false, true, id);
+
+		// Zeile 23c.0
+		tempStr = getString(objList, "previousVersion");
+		addMetadata("dcterms:isVersionOf", tempStr, false, true, id);
+
 		// Zeile 24.0
 		tempStr = getString(objList, "hbzId");
 		addMetadata("dc:identifier", tempStr, false, true, id);
@@ -855,7 +863,8 @@ public class SipPacker {
 //		generateOneSip("6423454");
 //		generateOneSip("6405440");
 //		generateOneSip("4589277");
-		generateOneSip("6408607");
+//		generateOneSip("6408607");
+		generateOneSip("6453422");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
