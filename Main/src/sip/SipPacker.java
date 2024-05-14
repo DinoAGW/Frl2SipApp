@@ -405,7 +405,7 @@ public class SipPacker {
 		addMetadata("dc:contributor", tempStr, false, false, id);
 
 		// Zeile 42.0
-		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
+		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v2_Verträge_oder_Lizenz_oder_Policy_ab_03.05.2024");
 
 		// Zeile 45.1
 		boolean istZuMappen = false;
