@@ -404,8 +404,17 @@ public class SipPacker {
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:contributor", tempStr, false, false, id);
 
-		// Zeile 42.0
-		sip1.addMetadata("dcterms:license", "ZBMED_FRL_v2_Verträge_oder_Lizenz_oder_Policy_ab_03.05.2024");
+		// Zeile 42.2
+		tempObj = getObject(objList, "isDescribedBy");
+		tempStr = getString(tempObj, "created");
+		String created = new String(tempStr.get(0));
+		int test = 10000 * Integer.parseInt(created.substring(0, 4)) + 100 * Integer.parseInt(created.substring(5, 7))
+				+ Integer.parseInt(created.substring(8, 10));
+		if (test < 20240503) {
+			sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
+		} else {
+			sip1.addMetadata("dcterms:license", "ZBMED_FRL_v2_Verträge_oder_Lizenz_oder_Policy_ab_03.05.2024");
+		}
 
 		// Zeile 45.1
 		boolean istZuMappen = false;
@@ -864,7 +873,8 @@ public class SipPacker {
 //		generateOneSip("6405440");
 //		generateOneSip("4589277");
 //		generateOneSip("6408607");
-		generateOneSip("6453422");
+//		generateOneSip("6453422");
+		generateOneSip("6474716");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
