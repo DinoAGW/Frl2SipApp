@@ -295,6 +295,10 @@ public class SipPacker {
 		tempObj = getObject(objList, "publication");
 		tempStr = getString(tempObj, "publishedBy");
 		addMetadata("dc:publisher", tempStr, false, false, id);
+		
+		// Zeile 31b.0
+		tempStr = getString(objList, "regal:publishedBy");
+		addMetadata("dc:publisher", tempStr, false, false, id);
 
 		// Zeile 32.0
 		tempObj = getObject(objList, "language");
@@ -874,7 +878,8 @@ public class SipPacker {
 //		generateOneSip("4589277");
 //		generateOneSip("6408607");
 //		generateOneSip("6453422");
-		generateOneSip("6474716");
+//		generateOneSip("6474716");
+		generateOneSip("6480733");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
