@@ -27,6 +27,7 @@ public class Vorbereitung {
 	 */
 	private static final int max = 6000;
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
+	private static String setzeFortNach = null;
 
 	/*
 	 * löscht den Cache und stellt lastMakeUpToDate zurück
@@ -42,9 +43,10 @@ public class Vorbereitung {
 		IeTable.leereTabelle();
 	}
 
-	/* 
-	 * Geht alle Tage zwischen lastMakeUpToDate (einschließlich) bis Abruftag (ausschließlich) durch
-	 * um für jeden der Tage jeweils nach Neuerungen zu suchen und speichert den Tag anschließend in lastMakeUpToDate
+	/*
+	 * Geht alle Tage zwischen lastMakeUpToDate (einschließlich) bis Abruftag
+	 * (ausschließlich) durch um für jeden der Tage jeweils nach Neuerungen zu
+	 * suchen und speichert den Tag anschließend in lastMakeUpToDate
 	 */
 	private static void scan() throws Exception {
 		String heute = LocalDateTime.now().toString().substring(0, 10);
@@ -60,7 +62,7 @@ public class Vorbereitung {
 		int tag = Integer.parseInt(lastMakeUpToDate.substring(8));
 
 		while (!((tag == heuteTag) && (monat == heuteMonat) && (jahr == heuteJahr))) {
-			//sucht die Aktualisierungen dieses Tages
+			// sucht die Aktualisierungen dieses Tages
 			findModifiedPMDsForDate(lastMakeUpToDate.concat("*"));
 
 			++tag;
@@ -79,20 +81,20 @@ public class Vorbereitung {
 	}
 
 	/*
-	 * Ruft die FRL-Schnittstelle auf um nach aktualisierten PMDs zu suchen
-	 * und lädt zu allen dann jeweils PMD und alle darunter hängenden Datensätze herunter.
+	 * Ruft die FRL-Schnittstelle auf um nach aktualisierten PMDs zu suchen und lädt
+	 * zu allen dann jeweils PMD und alle darunter hängenden Datensätze herunter.
 	 * 
-	 * Aktualisiert die Datenbank entsprechend:
-	 * falls der Datensatz unbekannt war, wird sie als Gefunden vermerkt
-	 * falls der Datensatz Gefunden war, bleibt sie es
-	 * falls der Datensatz Gebuildet war, wird sie als OutOfDate vermerkt
+	 * Aktualisiert die Datenbank entsprechend: falls der Datensatz unbekannt war,
+	 * wird sie als Gefunden vermerkt falls der Datensatz Gefunden war, bleibt sie
+	 * es falls der Datensatz Gebuildet war, wird sie als OutOfDate vermerkt
 	 */
 	private static void findModifiedPMDsForDate(String dateMask) throws Exception {
 		/*
-		 * Die Suche muss auf ein Maximum eingeschränkt werden, da sonst standardmässig nur 10 Ergebnisse angezeigt werden (Siehe Kommentare bei der max Variable)
+		 * Die Suche muss auf ein Maximum eingeschränkt werden, da sonst standardmässig
+		 * nur 10 Ergebnisse angezeigt werden (Siehe Kommentare bei der max Variable)
 		 */
-		final String url = "https://frl.publisso.de/find?q=NOT%20contentType:file%20AND%20NOT%20contentType:part%20AND%20isDescribedBy.modified:" + dateMask
-				+ "&format=json&from=0&until=" + max + "";
+		final String url = "https://frl.publisso.de/find?q=NOT%20contentType:file%20AND%20NOT%20contentType:part%20AND%20isDescribedBy.modified:"
+				+ dateMask + "&format=json&from=0&until=" + max + "";
 		Thread.sleep(1000);
 		String apiAntwortJson = Url.getText(url);
 		if (apiAntwortJson.length() == 2) {
@@ -109,6 +111,9 @@ public class Vorbereitung {
 			System.out
 					.println("Die Suchanfrage zur dateMask = '" + dateMask + "' ergab " + arr.length() + " Ergebnisse");
 		}
+		if (setzeFortNach != null) {
+			System.out.println("Skippe alle Publikationen bis inklusive " + setzeFortNach + " ...");
+		}
 		for (int i = 0; i < arr.length(); ++i) {
 			JSONObject innerObj = arr.getJSONObject(i);
 			if (innerObj.getString("contentType").contentEquals("file")
@@ -120,6 +125,16 @@ public class Vorbereitung {
 				throw new Exception("@id beginnt nicht mit 'frl:': '" + id + "'");
 			}
 			id = id.substring(4);
+			if (setzeFortNach != null) {
+				if (id.contentEquals(setzeFortNach)) {
+					setzeFortNach = null;
+					System.out.println("Publikation " + id + " gefunden");
+					continue;
+				} else {
+//					System.out.println("Überspringe: " + id);
+					continue;
+				}
+			}
 			try {
 				ApiManager.saveId2File(id);
 			} catch (Exception e) {
@@ -130,7 +145,7 @@ public class Vorbereitung {
 			try {
 				ladeBaum(innerObj, id);
 			} catch (Exception e) {
-				System.err.println("Fehler bei API-Antwort #" + i + " für dateMask " + dateMask + ":");
+				System.err.println("Fehler bei API-Antwort #" + i + " mit id " + id + " für dateMask " + dateMask + ":");
 				throw e;
 			}
 			verwalteDBbeiAktualisierterPMD(id);
@@ -138,10 +153,14 @@ public class Vorbereitung {
 				System.out.println(i + " Ergebnisse abgearbeitet.");
 			}
 		}
+		if (setzeFortNach != null) {
+			throw new Exception("ID " + setzeFortNach + " konnte nicht gefunden werden");
+		}
 	}
 
 	/*
-	 * speichert den Datensatz im Cache ab und ruft die Funktion für alle darunter hängenden Kinder rekursiv auf
+	 * speichert den Datensatz im Cache ab und ruft die Funktion für alle darunter
+	 * hängenden Kinder rekursiv auf
 	 */
 	private static void ladeBaum(JSONObject innerObj, String id) throws Exception {
 		if (innerObj.has("notification")) {
@@ -167,7 +186,8 @@ public class Vorbereitung {
 					Thread.sleep(1000);
 					JSONObject child = null;
 					try {// speichert das aber nur ab, wenn es eine gültige Json ist.
-						// private Datensätze geben nämlich eine html Meldung aus, die keine gültige JSON ist
+							// private Datensätze geben nämlich eine html Meldung aus, die keine gültige
+							// JSON ist
 						child = new JSONObject(datensatz);
 					} catch (Exception e) {
 						System.err.println("Fehler beim Verarbeiten des hasPart Datensatzes '" + hasPartId
@@ -175,7 +195,7 @@ public class Vorbereitung {
 						PrivateLoader.privateMetadataLoader(hasPartId);
 						child = new JSONObject(Drive.loadFileToString(new File(Drive.apiAntwort(hasPartId))));
 					}
-					ladeBaum(child, hasPartId);
+					ladeBaum(child, hasPartId);//child wird in ladeBaum(...) auf Festplatte gespeichert
 				}
 			}
 		}
@@ -190,9 +210,11 @@ public class Vorbereitung {
 		if (res.first()) {
 			int status = res.getInt("status");
 			if (status < IeTable.status.get("Gebuildet")) {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("Gefunden") + " WHERE id='" + id + "';");
+				SqlManager.INSTANCE.executeUpdate(
+						"UPDATE ieTable SET status=" + IeTable.status.get("Gefunden") + " WHERE id='" + id + "';");
 			} else {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("OutOfDate") + " WHERE id='" + id + "';");
+				SqlManager.INSTANCE.executeUpdate(
+						"UPDATE ieTable SET status=" + IeTable.status.get("OutOfDate") + " WHERE id='" + id + "';");
 			}
 		} else {
 			SqlManager.INSTANCE.executeUpdate(

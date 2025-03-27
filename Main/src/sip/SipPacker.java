@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import metsSipCreator.FILE;
 import metsSipCreator.REP;
 import metsSipCreator.SIP;
+import sql.IeTable;
 import utilities.ApiManager;
 import utilities.Drive;
 
@@ -28,6 +29,7 @@ public class SipPacker {
 
 	static SIP sip1;
 	static REP rep1;
+	private static boolean externeFD = false;
 	private static boolean everythingPublic;
 	private static int tempFileName;
 
@@ -62,6 +64,9 @@ public class SipPacker {
 		System.out.println("Verarbeite id " + id + " ...");
 		String heute = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd"));
 		String sipTarget = "bin" + fs + inst + "_" + heute + "_" + id;
+		if (externeFD) {
+			sipTarget = "/app/FrlAnreicherung/" + fs + inst + "_" + heute + "_" + id;
+		}
 		File sip = new File(sipTarget);
 		File temp = new File("bin" + fs + "temp");
 		if (!temp.exists())
@@ -295,7 +300,7 @@ public class SipPacker {
 		tempObj = getObject(objList, "publication");
 		tempStr = getString(tempObj, "publishedBy");
 		addMetadata("dc:publisher", tempStr, false, false, id);
-		
+
 		// Zeile 31b.0
 		tempStr = getString(objList, "regal:publishedBy");
 		addMetadata("dc:publisher", tempStr, false, false, id);
@@ -668,10 +673,7 @@ public class SipPacker {
 
 				traverseIe(innerId.substring(4), pfad, id, mainObj);
 			}
-		} else {
-			if (!obj.has("hasData")) {
-				throw new Exception("File ohne hasData: " + id + ".");
-			}
+		} else if (obj.has("hasData")) {
 //			System.out.println("File: " + letzterPfad + obj.getJSONObject("hasData").getString("fileLabel"));
 //			System.out.println(pfad);
 			ApiManager.saveDataOfId2File(id,
@@ -688,10 +690,19 @@ public class SipPacker {
 				fr.append(id + "\n");
 				fr.close();
 			}
+			String md5sum = null;
+			try {
+				md5sum = obj.getJSONObject("hasData").getJSONObject("checksum").getString("checksumValue");
+			} catch (Exception e) {
+				throw new Exception("md5-Summe konnte nicht ermittelt werden bei " + id);
+			}
+			if (md5sum == null)
+				throw new Exception("md5-Summe fehlt bei " + id);
 			FILE tempFile = rep1
 					.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
 							pfad.concat(Dateiname))
-					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
+					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")))
+					.setMd5sum(md5sum);
 			++tempFileName;
 
 			// Zeile 47.0 der Mappingtabelle
@@ -778,6 +789,18 @@ public class SipPacker {
 				if (istZuMappen) {
 					sip1.addMetadata("dc:rights", "Datei_Nutzungsvereinbarung " + id);
 				}
+			}
+		} else {
+			String Dateiname = "/app/FrlAnreicherung/" + id + "/Data.zip";
+			FILE tempFile = rep1
+					.newFile(Dateiname,
+							pfad.concat("/Data.zip"))
+					.setLabel(id.concat("_Data.zip")).setMoveMode(true);
+			++tempFileName;
+			if (new File(Dateiname).exists()) {
+				System.err.println("Externe Forschungsdaten? " + id + ".");
+			} else {
+				throw new Exception("Kein hasPart, kein hasData, aber auch keine externen Forschungsdaten -> das darf nicht sein");
 			}
 		}
 	}
@@ -879,7 +902,9 @@ public class SipPacker {
 //		generateOneSip("6408607");
 //		generateOneSip("6453422");
 //		generateOneSip("6474716");
-		generateOneSip("6480733");
+		externeFD = true;
+		generateOneSip("6424451");
+		IeTable.zeigeEintrag("6424451");
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");

@@ -90,8 +90,49 @@ public class ApiManager {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		saveId2File("6407998");
-		saveDataOfId2File("6408009", "bin" + fs + "HK_image.jpg");
+//		saveId2File("4369687");
+//		saveId2File("6472794");
+//		saveId2File("6453491");
+//		saveId2File("6453498");
+//		saveId2File("6453493");
+//		saveId2File("6472795");
+//		saveId2File("6453492");
+//		saveId2File("6453495");
+//		saveId2File("6472793");
+//		saveId2File("6472801");
+//		saveId2File("6472798");
+//		saveId2File("6453494");
+//		saveId2File("6472792");
+//		saveId2File("6472797");
+//		saveId2File("6453499");
+//		saveId2File("6472800");
+//		saveId2File("6484054");
+//		saveId2File("6483996");
+//		saveId2File("6483864");
+//		saveId2File("6488518");
+//		saveId2File("6488501");
+//		saveId2File("6488513");
+//		saveId2File("6488498");
+//		saveId2File("6488520");
+//		saveId2File("6488506");
+//		saveId2File("6488510");
+//		saveId2File("6488503");
+//		saveId2File("6488515");
+//		saveId2File("6488499");
+//		saveId2File("6488519");
+//		saveId2File("6488507");
+//		saveId2File("6488502");
+//		saveId2File("6488505");
+//		saveId2File("6488517");
+//		saveId2File("6488512");
+//		saveId2File("6488500");
+//		saveId2File("6488516");
+//		saveId2File("6488511");
+//		saveId2File("6488509");
+//		saveId2File("6472545");
+//		saveId2File("6472545");
+//		saveDataOfId2File("6408009", "bin" + fs + "HK_image.jpg");
+//		saveId2File("6488405");
 		System.out.println("ApiManager Ende");
 	}
 

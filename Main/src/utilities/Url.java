@@ -7,20 +7,31 @@ import java.net.URLConnection;
 
 public class Url {
 	public static String getText(String url) throws Exception {
-        URL website = new URL(url);
-        URLConnection connection = website.openConnection();
-        BufferedReader in = new BufferedReader(
-                                new InputStreamReader(
-                                    connection.getInputStream()));
+		StringBuilder response = new StringBuilder();
 
-        StringBuilder response = new StringBuilder();
-        String inputLine;
+		int versuche = 0;
+		while (true) {
+			try {
+				URL website = new URL(url);
+				URLConnection connection = website.openConnection();
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String inputLine;
 
-        while ((inputLine = in.readLine()) != null) 
-            response.append(inputLine);
+				while ((inputLine = in.readLine()) != null)
+					response.append(inputLine);
 
-        in.close();
-
-        return response.toString();
-    }
+				in.close();
+				break;
+			} catch (Exception e) {
+				++versuche;
+				if (versuche < 10) {
+					System.err.println("Url.getText(" + url + ") nicht geklappt. Versuche erneut...");
+					Thread.sleep(1000);
+				} else {
+					throw e;
+				}
+			}
+		}
+		return response.toString();
+	}
 }

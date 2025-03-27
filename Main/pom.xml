@@ -19,13 +19,14 @@
 		</plugins>
 	</build>
 	<dependencies>
- 		<dependency> 
- 			<groupId>de.zbmed</groupId> 
- 			<artifactId>MetsSipCreator</artifactId> 
- 			<version>0.2.8</version> 
-<!-- 			<scope>system</scope> -->
-<!-- 			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.6-SNAPSHOT.jar</systemPath> -->
- 		</dependency> 
+		<dependency>
+			<groupId>de.zbmed</groupId>
+			<artifactId>MetsSipCreator</artifactId>
+			<version>0.2.8</version>
+			<!-- 			<scope>system</scope> -->
+			<!--
+			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.6-SNAPSHOT.jar</systemPath> -->
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -67,5 +68,16 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.11.0</version>
 		</dependency>
+		<!-- für GUI -->
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
+		<!-- nicht nötig, weil java8
+			<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx</artifactId>
+			<version>25-ea+6</version>
+			<type>pom</type>
+		</dependency>
+		-->
+
 	</dependencies>
 </project>
