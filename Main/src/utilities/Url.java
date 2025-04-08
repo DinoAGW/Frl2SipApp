@@ -1,9 +1,13 @@
 package utilities;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class Url {
 	public static String getText(String url) throws Exception {
@@ -33,5 +37,19 @@ public class Url {
 			}
 		}
 		return response.toString();
+	}
+	
+	/*
+	 * Lade URL in ein jsoup Document
+	 */
+	public static Document getWebsite(String URL) {
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(URL).get();
+		} catch (IOException e) {
+			System.out.println("Jsoup connect failed");
+			e.printStackTrace();
+		}
+		return doc;
 	}
 }

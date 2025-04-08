@@ -16,8 +16,9 @@ public class Drive {
 	public static final String fs = System.getProperty("file.separator");
 	public static final String home = System.getProperty("user.home");
 	public static final String dbPath = home.concat(fs).concat(".databases").concat(fs).concat("Frl2SipApp");
-	public static final String apiAntwortPfad = home.concat(fs).concat("workspace").concat(fs).concat("Frl2SipApp")
-			.concat(fs).concat("apiAntworten");
+	public static final String frl2SipAppWorkspace = home.concat(fs).concat("workspace").concat(fs).concat("Frl2SipApp");
+	public static final String apiAntwortPfad = frl2SipAppWorkspace.concat(fs).concat("apiAntworten");
+	public static final String crawlPfad = frl2SipAppWorkspace.concat(fs).concat("crawls");
 	public static final String propertyDateiPfad = home.concat(fs).concat("FRL_Properties.txt");
 
 	
@@ -26,6 +27,14 @@ public class Drive {
 			throw new Exception("Es wird die ID ohne das Präfix \"frl:\" erwartet");
 		}
 		return apiAntwortPfad.concat(fs).concat(id).concat(".jsonld");
+	}
+
+	
+	public static String crawl(String id) throws Exception {
+		if (id.startsWith("frl:")) {
+			throw new Exception("Es wird die ID ohne das Präfix \"frl:\" erwartet");
+		}
+		return crawlPfad.concat(fs).concat(id).concat(fs);
 	}
 
 	public static void saveStringToFile(String str, String datei) throws FileNotFoundException {
