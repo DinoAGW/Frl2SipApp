@@ -1,15 +1,38 @@
 import java.io.File;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import utilities.Drive;
+import utilities.Misc;
 import utilities.Url;
 
 public class ExterneFDCrawler {
 	public static final String fs = System.getProperty("file.separator");
+	
+	static void downloadPseudoFile(String linkString, String dateiPfad) throws Exception {
+		File datei = new File(dateiPfad);
+		try {
+			datei.createNewFile();
+		} catch (Exception e) {
+			throw new Exception("Fehler beim erstellen der Datei " + datei);
+		}
+		PrintWriter writer = new PrintWriter(datei, "UTF-8");
+		writer.println(linkString);
+		writer.close();
+	}
+	
+	static void downloadFile(String linkString, String dateiPfad) throws Exception {
+		InputStream in = new URL(linkString).openStream();
+		Files.copy(in, Paths.get(dateiPfad), StandardCopyOption.REPLACE_EXISTING);
+	}
 
 	static void recursiveCrawl(String url, String pfad, String hauptPfad, PrintWriter md5sums) throws Exception {
 		Document doc = Url.getWebsite(url);
@@ -25,17 +48,10 @@ public class ExterneFDCrawler {
 				new File(pfad).mkdir();
 				recursiveCrawl(linkString, pfad, hauptPfad, md5sums);
 			} else {
-				File datei = new File(pfad.concat(href));
-				try {
-					datei.createNewFile();
-				} catch (Exception e) {
-					throw new Exception("Fehler beim erstellen der Datei " + datei);
-				}
-				PrintWriter writer = new PrintWriter(datei, "UTF-8");
-				writer.println(linkString);
-				writer.close();
-				md5sums.println(datei.toString().substring(hauptPfad.length()));
-				System.out.println("Datei: " + linkString + " -> " + datei);
+				String dateiPfad = pfad.concat(href);
+				downloadPseudoFile(linkString, dateiPfad);
+				md5sums.println(Misc.md5sumOfFile(dateiPfad) + "  " + pfad.substring(hauptPfad.length()).concat(href));
+				System.out.println("Datei: " + linkString + " -> " + dateiPfad);
 			}
 		}
 	}
