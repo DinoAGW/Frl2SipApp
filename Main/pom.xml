@@ -88,5 +88,11 @@
 		    <artifactId>commons-codec</artifactId>
 		    <version>1.18.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+<dependency>
+    <groupId>com.opencsv</groupId>
+    <artifactId>opencsv</artifactId>
+    <version>5.10</version>
+</dependency>
 	</dependencies>
 </project>

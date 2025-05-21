@@ -20,7 +20,7 @@ public class SipBuilding {
 	// im trockenmodus werden die SIPs nicht gebuildet sondern nur bewertet
 	private static final boolean trockenModus = false;
 	private static final boolean zeigeKinderlose = false;
-	private static final boolean zeigePolicyPublikation = false;
+	private static final boolean zeigePolicyPublikation = true;
 	private static String reason;
 
 	/*
@@ -224,8 +224,8 @@ public class SipBuilding {
 	public static void main(String[] args) throws Exception {
 //		IeBouncer.rebuildDatabase();
 //		IeBouncer.clearStatus();
-//		bewerteDatenpakete("bin" + fs + "Report1.txt");
-		scan();
+		bewerteDatenpakete("bin" + fs + "Report1.txt");
+//		scan();
 		System.out.println("SipBuilding Ende");
 	}
 }

@@ -15,7 +15,6 @@ import org.json.JSONObject;
 import metsSipCreator.FILE;
 import metsSipCreator.REP;
 import metsSipCreator.SIP;
-import sql.IeTable;
 import utilities.ApiManager;
 import utilities.Drive;
 
@@ -30,6 +29,7 @@ public class SipPacker {
 	static SIP sip1;
 	static REP rep1;
 	private static boolean externeFD = false;
+	private static boolean ignoreMissingMD5 = false;
 	private static boolean everythingPublic;
 	private static int tempFileName;
 
@@ -425,7 +425,7 @@ public class SipPacker {
 			sip1.addMetadata("dcterms:license", "ZBMED_FRL_v2_Verträge_oder_Lizenz_oder_Policy_ab_03.05.2024");
 		}
 
-		// Zeile 45.1
+		// Zeile 45.2
 		boolean istZuMappen = false;
 		JSONArray arr = mainObj.optJSONArray("note");
 		if (arr != null) {
@@ -448,13 +448,13 @@ public class SipPacker {
 		if (arr != null) {
 			for (int i = 0; i < arr.length(); ++i) {
 				String str = arr.optString(i);
-				if (str != null && str.contains("zurückgezogen")) {
+				if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
 					istZuMappen = true;
 				}
 			}
 		} else {
 			String str = mainObj.optString("additionalNotes", null); // Sollte niemals vorkommen
-			if (str != null && str.contains("zurückgezogen")) {
+			if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
 				istZuMappen = true;
 			}
 			if (str != null) {
@@ -696,13 +696,19 @@ public class SipPacker {
 			} catch (Exception e) {
 				throw new Exception("md5-Summe konnte nicht ermittelt werden bei " + id);
 			}
-			if (md5sum == null)
-				throw new Exception("md5-Summe fehlt bei " + id);
 			FILE tempFile = rep1
 					.newFile("bin".concat(fs).concat("temp").concat(fs).concat(Integer.toString(tempFileName)),
 							pfad.concat(Dateiname))
-					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")))
-					.setMd5sum(md5sum);
+					.setLabel(id.concat("_").concat(obj.getJSONObject("hasData").getString("fileLabel")));
+			if (md5sum == null || md5sum.length() < 32) {
+				if (ignoreMissingMD5) {
+					System.err.println("md5-Summe fehlt bei " + id);
+				} else {
+					throw new Exception("md5-Summe fehlt bei " + id);
+				}
+			} else {
+				tempFile.setMd5sum(md5sum);
+			}
 			++tempFileName;
 
 			// Zeile 47.0 der Mappingtabelle
@@ -728,47 +734,8 @@ public class SipPacker {
 				tempFile.setARPolicy(getARPolicyIdForInst(inst), "ZB MED_STAFF only");
 				everythingPublic = false;
 
-				// Zeile 43.2 der Mappingtabelle
-				boolean istZuMappen = true;
-				// test der note
-				JSONArray arr = mainObj.optJSONArray("note");
-				if (arr != null) {
-					for (int i = 0; i < arr.length(); ++i) {
-						String str = arr.optString(i);
-						if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-							istZuMappen = false;
-						}
-					}
-				} else {
-					String str = mainObj.optString("note", null);
-					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-						istZuMappen = false;
-					}
-					if (str != null) {
-						throw new Exception("Keine Nicht-Array-note erwartet. id = " + id);
-					}
-				}
-				// test der additionalNotes
-				arr = mainObj.optJSONArray("additionalNotes");
-				if (arr != null) {
-					for (int i = 0; i < arr.length(); ++i) {
-						String str = arr.optString(i);
-						if (str != null && str.contains("zurückgezogen")) {
-							istZuMappen = false;
-						}
-					}
-				} else {
-					String str = mainObj.optString("additionalNotes", null);
-					if (str != null && (str.contains("zurückgezogen") || str.contains("gesperrt"))) {
-						istZuMappen = false;
-					}
-					if (str != null) {
-						throw new Exception("Keine Nicht-Array-additionalNotes erwartet. id = " + id);
-					}
-				}
-				if (istZuMappen) {
-					sip1.addMetadata("dc:rights", "Datei_Rechtsgrundlage für die Veröffentlichung " + id);
-				}
+				boolean istZuMappen;
+				JSONArray arr;
 
 				// Zeile 44.1 der Mappingtabelle (bzgl. Nutzungsvereinbarung)
 				istZuMappen = true;
@@ -792,15 +759,14 @@ public class SipPacker {
 			}
 		} else {
 			String Dateiname = "/app/FrlAnreicherung/" + id + "/Data.zip";
-			FILE tempFile = rep1
-					.newFile(Dateiname,
-							pfad.concat("/Data.zip"))
-					.setLabel(id.concat("_Data.zip")).setMoveMode(true);
+			FILE tempFile = rep1.newFile(Dateiname, pfad.concat("/Data.zip")).setLabel(id.concat("_Data.zip"))
+					.setMoveMode(true);
 			++tempFileName;
 			if (new File(Dateiname).exists()) {
 				System.err.println("Externe Forschungsdaten? " + id + ".");
 			} else {
-				throw new Exception("Kein hasPart, kein hasData, aber auch keine externen Forschungsdaten -> das darf nicht sein");
+				throw new Exception(
+						"Kein hasPart, kein hasData, aber auch keine externen Forschungsdaten -> das darf nicht sein");
 			}
 		}
 	}
@@ -879,6 +845,19 @@ public class SipPacker {
 		return false;
 	}
 
+	private static void generateListOfSIPs(String csvFile) throws Exception {
+		File list = new File(csvFile);
+		if (!list.exists() && !list.isFile())
+			throw new Exception("Datei " + list + " existiert nicht oder ist keine Datei");
+
+		String[] data = Drive.readCsvFileEinspaltig(list);
+
+		for (int i = 0; i < data.length; ++i) {
+//			System.out.println("Builde: " + data[i]);
+			generateOneSip(data[i]);
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
 //		generateOneSip("6407998");
 //		generateOneSip("5670012");
@@ -902,9 +881,15 @@ public class SipPacker {
 //		generateOneSip("6408607");
 //		generateOneSip("6453422");
 //		generateOneSip("6474716");
-		externeFD = true;
-		generateOneSip("6424451");
-		IeTable.zeigeEintrag("6424451");
+
+//		externeFD = true;
+//		String sipId = "6425518";
+//		generateOneSip(sipId);
+//		IeTable.zeigeEintrag(sipId);
+
+//		ignoreMissingMD5 = true;
+//		generateListOfSIPs(Drive.home + fs + "workspace" + fs + "Testdaten_Ingest_Policy-Embargo-Publikationen.csv");
+
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-10-17.csv");
