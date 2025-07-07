@@ -30,6 +30,8 @@ public class SipPacker {
 	static REP rep1;
 	private static boolean externeFD = false;
 	private static boolean ignoreMissingMD5 = false;
+	private static boolean logMissingMD5 = false;
+	private static boolean ignoreUnerlaubteZeichenInDateinamen = true;
 	private static boolean everythingPublic;
 	private static int tempFileName;
 
@@ -465,12 +467,13 @@ public class SipPacker {
 			sip1.addMetadata("dcterms:accessRights", "Retraction");
 		}
 
-		// Zeile 46.0
-		istZuMappen = everythingPublic;
+		// Zeile 46.2
+		istZuMappen = true;
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "@id");
-		if (tempStr.size() > 0) {
-			istZuMappen = false;
+		for (String str : tempStr) {
+			if (str.contains("creativecommons"))
+				istZuMappen = false;
 		}
 		if (istZuMappen) {
 			sip1.addMetadata("dc:rights",
@@ -628,6 +631,13 @@ public class SipPacker {
 				throw new Exception();
 			}
 			String title = obj.getJSONArray("title").getString(0);
+			if (Drive.checkUnerlaubteZeichen(title)) {
+				if (ignoreUnerlaubteZeichenInDateinamen) {
+					System.err.println("Ordnername '" + title + "' hat unerlaubte Zeichen");
+				} else {
+					throw new Exception("Ordnername '" + title + "' hat unerlaubte Zeichen");
+				}
+			}
 			if ((letzterPfad.length() == 0) && title.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Part und dem gleichnamigem Ordner: " + id + ".");
 			}
@@ -683,6 +693,13 @@ public class SipPacker {
 			if ((pfad.length() == 0) && Dateiname.contentEquals("SourceMD")) {
 				throw new Exception("Konflikt mit einer \"SourceMD\" Datei und dem gleichnamigem Ordner: " + id + ".");
 			}
+			if (Drive.checkUnerlaubteZeichen(Dateiname)) {
+				if (ignoreUnerlaubteZeichenInDateinamen) {
+					System.err.println("Dateiname '" + Dateiname + "' hat unerlaubte Zeichen");
+				} else {
+					throw new Exception("Dateiname '" + Dateiname + "' hat unerlaubte Zeichen");
+				}
+			}
 			// reporte jsonld Dateien, weil wir jsonld-Fortmaterkennungsfehler in Rosetta
 			// ignorieren
 			if (Dateiname.endsWith(".jsonld")) {
@@ -704,6 +721,11 @@ public class SipPacker {
 				if (ignoreMissingMD5) {
 					System.err.println("md5-Summe fehlt bei " + id);
 				} else {
+					if (logMissingMD5) {
+						FileWriter fr = new FileWriter(new File("bin" + fs + "MissingMD5s.txt"), true);
+						fr.append(id + "\n");
+						fr.close();
+					}
 					throw new Exception("md5-Summe fehlt bei " + id);
 				}
 			} else {
@@ -859,28 +881,9 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		generateOneSip("6407998");
-//		generateOneSip("5670012");
-//		generateOneSip("6422475");
-//		generateOneSip("6413012");
-//		generateOneSip("6421582");
-//		generateOneSip("6405195");
-//		generateOneSip("6415350");
-//		generateOneSip("6428346");
-//		generateOneSip("6400295");
-//		generateOneSip("6401771");
-//		generateOneSip("3222678");
-//		generateOneSip("6434372");//Embargo
-//		generateOneSip("5085526");//zurückgezogen
-//		generateOneSip("6422445");//bibo:doi
-//		generateOneSip("6410749");
-//		generateOneSip("6424992");
-//		generateOneSip("6423454");
-//		generateOneSip("6405440");
-//		generateOneSip("4589277");
-//		generateOneSip("6408607");
-//		generateOneSip("6453422");
-//		generateOneSip("6474716");
+		String sipId = "6402743";
+		ApiManager.saveId2FileRecursively(sipId);
+		generateOneSip(sipId);
 
 //		externeFD = true;
 //		String sipId = "6425518";
@@ -889,6 +892,13 @@ public class SipPacker {
 
 //		ignoreMissingMD5 = true;
 //		generateListOfSIPs(Drive.home + fs + "workspace" + fs + "Testdaten_Ingest_Policy-Embargo-Publikationen.csv");
+
+//		inst = "TEST";
+//		generateOneSip("6415606");
+//		generateOneSip("6415609");
+//		generateOneSip("6415621");
+//		generateOneSip("6415612");
+//		generateOneSip("6511274");
 
 //		clearCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");
 //		generateSipsFromCsv("bin" + fs + "Test-Datensaetze_2023-06-25.csv");

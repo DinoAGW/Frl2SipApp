@@ -3,6 +3,7 @@ package utilities;
 import java.io.File;
 import java.io.InputStream;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,7 +86,49 @@ public class ApiManager {
 		process.waitFor();
 		int exitCode;
 		if ((exitCode = process.exitValue())!=0) {
-			throw new Exception("CURL endete mit exitCode = " + exitCode);
+			throw new Exception("CURL endete mit exitCode = " + exitCode + " bei id = " + id + " und file = " + file);
+		}
+	}
+	
+	public static String getPmdOfDatensatz(String id) throws Exception {
+		String apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
+		JSONObject obj = new JSONObject(apiAntwortJson);
+		if(!obj.has("parentPid")) {
+			return id;
+		} else {
+			String parent = obj.getString("parentPid");
+			if (!parent.startsWith("frl:")) {
+				throw new Exception("Das sollte nicht sein");
+			}
+			return getPmdOfDatensatz(parent.substring(4));
+		}
+	}
+	
+	public static void saveId2FileRecursively(String id) throws Exception {
+		saveId2File(id);
+		String apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
+		JSONObject obj = new JSONObject(apiAntwortJson);
+		if (obj.has("notification")) {
+			if (!obj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
+				throw new Exception(
+						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
+			}
+		} else {
+			JSONArray jarr = obj.optJSONArray("hasPart");
+			if (jarr != null) {
+				for (int i = 0; i < jarr.length(); ++i) {
+					JSONObject hasPart = jarr.optJSONObject(i);
+					if (hasPart == null) {
+						throw new Exception("Datensatz " + id + " hat einen ungültigen hasPart Nummer " + i);
+					}
+					String hasPartId = hasPart.optString("@id");
+					if (!hasPartId.startsWith("frl:")) {
+						throw new Exception("@id beginnt nicht mit 'frl:': '" + hasPartId + "'");
+					}
+					hasPartId = hasPartId.substring(4);
+					saveId2FileRecursively(hasPartId);
+				}
+			}
 		}
 	}
 

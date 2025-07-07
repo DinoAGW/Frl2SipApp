@@ -143,7 +143,8 @@ public class Vorbereitung {
 			}
 			Thread.sleep(1000);
 			try {
-				ladeBaum(innerObj, id);
+				//ladeBaum(innerObj, id);
+				ApiManager.saveId2FileRecursively(id);
 			} catch (Exception e) {
 				System.err.println("Fehler bei API-Antwort #" + i + " mit id " + id + " für dateMask " + dateMask + ":");
 				throw e;
@@ -162,6 +163,7 @@ public class Vorbereitung {
 	 * speichert den Datensatz im Cache ab und ruft die Funktion für alle darunter
 	 * hängenden Kinder rekursiv auf
 	 */
+	@Deprecated
 	private static void ladeBaum(JSONObject innerObj, String id) throws Exception {
 		if (innerObj.has("notification")) {
 			if (!innerObj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {

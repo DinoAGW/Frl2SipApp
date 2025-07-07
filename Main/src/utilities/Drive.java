@@ -95,4 +95,78 @@ public class Drive {
 		}
 		return ret;
 	}
+	
+	public static boolean checkUnerlaubteZeichen(String dateiname) {
+		boolean unerlaubt = false;
+		if (dateiname.indexOf('/') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('\\') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf(':') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('*') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('?') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('"') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('<') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('>') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('|') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('„') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('&') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('#') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('@') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('$') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('[') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf(']') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('%') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('~') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('{') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('}') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.indexOf('\n') != -1) {
+			unerlaubt = true;
+		}
+		if (dateiname.startsWith(" ")) {
+			unerlaubt = true;
+		}
+		if (dateiname.endsWith(" ")) {
+			unerlaubt = true;
+		}
+		return unerlaubt;
+	}
 }
