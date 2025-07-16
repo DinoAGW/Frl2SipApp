@@ -3,7 +3,6 @@ package utilities;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -125,21 +124,6 @@ public class Drive {
 		if (dateiname.indexOf('|') != -1) {
 			unerlaubt = true;
 		}
-		if (dateiname.indexOf('„') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('&') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('#') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('@') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('$') != -1) {
-			unerlaubt = true;
-		}
 		if (dateiname.indexOf('[') != -1) {
 			unerlaubt = true;
 		}
@@ -147,15 +131,6 @@ public class Drive {
 			unerlaubt = true;
 		}
 		if (dateiname.indexOf('%') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('~') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('{') != -1) {
-			unerlaubt = true;
-		}
-		if (dateiname.indexOf('}') != -1) {
 			unerlaubt = true;
 		}
 		if (dateiname.indexOf('\n') != -1) {

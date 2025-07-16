@@ -31,7 +31,7 @@ public class SipPacker {
 	private static boolean externeFD = false;
 	private static boolean ignoreMissingMD5 = false;
 	private static boolean logMissingMD5 = false;
-	private static boolean ignoreUnerlaubteZeichenInDateinamen = true;
+	private static boolean ignoreUnerlaubteZeichenInDateinamen = false;
 	private static boolean everythingPublic;
 	private static int tempFileName;
 

@@ -129,7 +129,7 @@ public class IeTable {
 //		zeigeEintrag("6369570");
 //		zeigeEintrag("6433321");
 //		zeigeEintrag("6480733");
-		zeigeEintrag("6502900");
+//		zeigeEintrag("6502900");
 //		zeigeEintrag("4369687");
 //		set("4369687", "OutOfDate");
 //		set("4369687", "Gefunden");
@@ -138,6 +138,7 @@ public class IeTable {
 //		zeigeEintrag("4369687");
 //		zaehleEintraege("NichtArchivierungswürdig");
 //		zaehleEintraege("Gefunden");
+		zaehleEintraege("Gebuildet");
 		System.out.println("IeTable Ende");
 	}
 }

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import idCrawler.PrivateLoader;
 import sql.IeTable;
 import sql.SqlManager;
+import sql.VorbereitungFehlerfaelle;
 import utilities.ApiManager;
 import utilities.Drive;
 import utilities.PropertiesManager;
@@ -77,7 +78,6 @@ public class Vorbereitung {
 			lastMakeUpToDate = String.format("%04d-%02d-%02d", jahr, monat, tag);
 			prop.saveStringToProperty("lastMakeUpToDate", lastMakeUpToDate);
 		}
-
 	}
 
 	/*
@@ -136,20 +136,11 @@ public class Vorbereitung {
 				}
 			}
 			try {
-				ApiManager.saveId2File(id);
+				bearbeiteId(id);
 			} catch (Exception e) {
-				System.err.println("Fehler bei API-Antwort (PMD) #" + i + " für dateMask " + dateMask + ":");
-				throw e;
+				System.err.println(e.getMessage());
+				VorbereitungFehlerfaelle.insertIdIntoDatabase(id);
 			}
-			Thread.sleep(1000);
-			try {
-				//ladeBaum(innerObj, id);
-				ApiManager.saveId2FileRecursively(id);
-			} catch (Exception e) {
-				System.err.println("Fehler bei API-Antwort #" + i + " mit id " + id + " für dateMask " + dateMask + ":");
-				throw e;
-			}
-			verwalteDBbeiAktualisierterPMD(id);
 			if ((i % 250 == 0) && (i > 0)) {
 				System.out.println(i + " Ergebnisse abgearbeitet.");
 			}
@@ -157,6 +148,36 @@ public class Vorbereitung {
 		if (setzeFortNach != null) {
 			throw new Exception("ID " + setzeFortNach + " konnte nicht gefunden werden");
 		}
+	}
+	
+	private static void rescanFehlerfaelle() throws Exception {
+		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM fehlerFaelle;");
+		while (resultSet.next()) {
+			String id = resultSet.getString("id");
+			try {
+				bearbeiteId(id);
+				VorbereitungFehlerfaelle.removeIdFromDatabase(id);
+				System.out.println("ID " + id + " ist nun erfolgreich durchgelaufen");
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+		}
+	}
+	
+	private static void bearbeiteId(String id) throws Exception {
+		try {
+			ApiManager.saveId2File(id);
+		} catch (Exception e) {
+			throw new Exception("Fehler bei API-Antwort (PMD) " + id);
+		}
+		Thread.sleep(1000);
+		try {
+			//ladeBaum(innerObj, id);
+			ApiManager.saveId2FileRecursively(id);
+		} catch (Exception e) {
+			throw new Exception("Fehler bei API-Antwort " + id);
+		}
+		verwalteDBbeiAktualisierterPMD(id);
 	}
 
 	/*
@@ -226,7 +247,10 @@ public class Vorbereitung {
 
 	public static void main(String[] args) throws Exception {
 //		setzeZurueck();
-		scan();
+//		scan();
+		rescanFehlerfaelle();
+		System.out.println("Scan Ende. Fehlerfaelle:");
+		VorbereitungFehlerfaelle.printEntries();
 		System.out.println("Vorbereitung Ende");
 	}
 }
