@@ -139,6 +139,7 @@ public class IeTable {
 //		zaehleEintraege("NichtArchivierungswürdig");
 //		zaehleEintraege("Gefunden");
 		zaehleEintraege("Gebuildet");
+		zaehleEintraege("OutOfDate");
 		System.out.println("IeTable Ende");
 	}
 }

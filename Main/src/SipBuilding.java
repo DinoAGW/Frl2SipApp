@@ -20,7 +20,7 @@ public class SipBuilding {
 	// im trockenmodus werden die SIPs nicht gebuildet sondern nur bewertet
 	private static final boolean trockenModus = false;
 	private static final boolean zeigeKinderlose = false;
-	private static final boolean zeigePolicyPublikation = true;
+	private static final boolean zeigePolicyPublikation = false;
 	private static String reason;
 
 	/*
@@ -65,7 +65,7 @@ public class SipBuilding {
 			if (!tempStr.contentEquals("public")) {
 				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
 						+ IeTable.status.get("NichtArchivierungswürdig") + " WHERE id='" + id + "';");
-				System.err.println("PMD = " + id + " ist eine NichtPubPubPmd");
+				//System.err.println("PMD = " + id + " ist eine NichtPubPubPmd");
 				continue;
 			}
 			tempStr = obj.optString("publishScheme");

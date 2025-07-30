@@ -136,12 +136,6 @@ public class Drive {
 		if (dateiname.indexOf('\n') != -1) {
 			unerlaubt = true;
 		}
-		if (dateiname.startsWith(" ")) {
-			unerlaubt = true;
-		}
-		if (dateiname.endsWith(" ")) {
-			unerlaubt = true;
-		}
 		return unerlaubt;
 	}
 }

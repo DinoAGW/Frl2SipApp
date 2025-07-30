@@ -415,7 +415,7 @@ public class SipPacker {
 		tempStr = getString(tempObj, "prefLabel");
 		addMetadata("dc:contributor", tempStr, false, false, id);
 
-		// Zeile 42.2
+		// Zeile 42.3
 		tempObj = getObject(objList, "isDescribedBy");
 		tempStr = getString(tempObj, "created");
 		String created = new String(tempStr.get(0));
@@ -423,8 +423,10 @@ public class SipPacker {
 				+ Integer.parseInt(created.substring(8, 10));
 		if (test < 20240503) {
 			sip1.addMetadata("dcterms:license", "ZBMED_FRL_v1_Verträge_oder_Lizenz_oder_Policy_ab_31.01.2007");
-		} else {
+		} else if (test < 20250722) {
 			sip1.addMetadata("dcterms:license", "ZBMED_FRL_v2_Verträge_oder_Lizenz_oder_Policy_ab_03.05.2024");
+		} else {
+			sip1.addMetadata("dcterms:license", "ZBMED_FRL_v3_Verträge_oder_Lizenz_oder_Policy_ab_22.07.2025");
 		}
 
 		// Zeile 45.2
@@ -467,7 +469,7 @@ public class SipPacker {
 			sip1.addMetadata("dcterms:accessRights", "Retraction");
 		}
 
-		// Zeile 46.2
+		// Zeile 46.3
 		istZuMappen = true;
 		tempObj = getObject(objList, "license");
 		tempStr = getString(tempObj, "@id");
@@ -477,11 +479,14 @@ public class SipPacker {
 		}
 		if (istZuMappen) {
 			sip1.addMetadata("dc:rights",
-					"Dieses Dokument darf zu eigenen wissenschaftlichen Zwecken und zum Privatgebrauch gespeichert und kopiert werden."
-							+ " Sie dürfen dieses Dokument nicht für öffentliche oder kommerzielle Zwecke vervielfältigen,"
-							+ " öffentlich ausstellen, aufführen, vertreiben oder anderweitig nutzen. // This document may be saved"
-							+ " and copied for your personal and scholarly purposes. You may not copy it for public or commercial purposes,"
-							+ " exhibit, perform, distribute or otherwise use the document in public.");
+					"ZB MED hat für dieses Dokument das einmalige Zweitveröffentlichungsrecht erworben."
+							+ " Sie dürfen es zu eigenen wissenschaftlichen Zwecken und zum Privatgebrauch speichern und kopieren."
+							+ " Dieses Dokument darf nicht für öffentliche oder kommerzielle Zwecke vervielfältigt,"
+							+ " im Internet verbreitet, öffentlich ausgestellt, aufgeführt, vertrieben oder anderweitig genutzt werden. //"
+							+ " ZB MED has obtained the right for a single re-distribution of this document."
+							+ " You may save and copy it for your own scientific purposes and for private use."
+							+ " This document may not be reproduced for public or commercial purposes,"
+							+ " distributed on the Internet, publicly displayed, performed, republished or used in any other way.");
 		}
 
 		// Zeile 50.0 und 51.0
@@ -881,7 +886,7 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String sipId = "6402743";
+		String sipId = "6421678";
 		ApiManager.saveId2FileRecursively(sipId);
 		generateOneSip(sipId);
 

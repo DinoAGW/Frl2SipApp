@@ -61,8 +61,8 @@ public class Vorbereitung {
 		int jahr = Integer.parseInt(lastMakeUpToDate.substring(0, 4));
 		int monat = Integer.parseInt(lastMakeUpToDate.substring(5, 7));
 		int tag = Integer.parseInt(lastMakeUpToDate.substring(8));
-
-		while (!((tag == heuteTag) && (monat == heuteMonat) && (jahr == heuteJahr))) {
+		
+		while (!(tag == heuteTag && monat == heuteMonat && jahr == heuteJahr)) {
 			// sucht die Aktualisierungen dieses Tages
 			findModifiedPMDsForDate(lastMakeUpToDate.concat("*"));
 
@@ -181,51 +181,6 @@ public class Vorbereitung {
 	}
 
 	/*
-	 * speichert den Datensatz im Cache ab und ruft die Funktion für alle darunter
-	 * hängenden Kinder rekursiv auf
-	 */
-	@Deprecated
-	private static void ladeBaum(JSONObject innerObj, String id) throws Exception {
-		if (innerObj.has("notification")) {
-			if (!innerObj.getString("notification").contentEquals("Dieses Objekt wurde gelöscht")) {
-				throw new Exception(
-						"Ungewöhnliche Notification : " + innerObj.getString("notification") + " bei id " + id + ".");
-			}
-		} else {
-			JSONArray jarr = innerObj.optJSONArray("hasPart");
-			if (jarr != null) {
-				for (int i = 0; i < jarr.length(); ++i) {
-					JSONObject hasPart = jarr.optJSONObject(i);
-					if (hasPart == null) {
-						throw new Exception("Datensatz " + id + " hat einen ungültigen hasPart Nummer " + i);
-					}
-					String hasPartId = hasPart.optString("@id");
-					if (!hasPartId.startsWith("frl:")) {
-						throw new Exception("@id beginnt nicht mit 'frl:': '" + hasPartId + "'");
-					}
-					hasPartId = hasPartId.substring(4);
-					String url = "https://frl.publisso.de/resource/frl:".concat(hasPartId).concat(".json2");
-					String datensatz = Url.getText(url);
-					Thread.sleep(1000);
-					JSONObject child = null;
-					try {// speichert das aber nur ab, wenn es eine gültige Json ist.
-							// private Datensätze geben nämlich eine html Meldung aus, die keine gültige
-							// JSON ist
-						child = new JSONObject(datensatz);
-					} catch (Exception e) {
-						System.err.println("Fehler beim Verarbeiten des hasPart Datensatzes '" + hasPartId
-								+ "'. Versuche API Account");
-						PrivateLoader.privateMetadataLoader(hasPartId);
-						child = new JSONObject(Drive.loadFileToString(new File(Drive.apiAntwort(hasPartId))));
-					}
-					ladeBaum(child, hasPartId);//child wird in ladeBaum(...) auf Festplatte gespeichert
-				}
-			}
-		}
-		Drive.saveStringToFile(innerObj.toString(2), Drive.apiAntwort(id));
-	}
-
-	/*
 	 * aktualisiert die IeTable Datenbank
 	 */
 	private static void verwalteDBbeiAktualisierterPMD(String id) throws Exception {
@@ -247,9 +202,11 @@ public class Vorbereitung {
 
 	public static void main(String[] args) throws Exception {
 //		setzeZurueck();
-//		scan();
+		System.out.println("Rescan der Fehlerfälle...");
 		rescanFehlerfaelle();
-		System.out.println("Scan Ende. Fehlerfaelle:");
+		System.out.println("Rescan Ende. Scan weiter...");
+		scan();
+		System.out.println("Scan Ende. Fehlerfaelle nun:");
 		VorbereitungFehlerfaelle.printEntries();
 		System.out.println("Vorbereitung Ende");
 	}
