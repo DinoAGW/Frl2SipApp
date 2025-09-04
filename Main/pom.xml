@@ -23,8 +23,10 @@
 			<groupId>de.zbmed</groupId>
 			<artifactId>MetsSipCreator</artifactId>
 			<version>0.2.8</version>
-<!--			<scope>system</scope> deaktiviert -->
-<!--			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.6-SNAPSHOT.jar</systemPath> deaktiviert -->
+			<!--			<scope>system</scope> deaktiviert -->
+			<!--
+			<systemPath>${project.basedir}/lib/MetsSipCreator-0.2.6-SNAPSHOT.jar</systemPath>
+			deaktiviert -->
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -83,15 +85,21 @@
 			<version>1.15.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>commons-codec</groupId>
-		    <artifactId>commons-codec</artifactId>
-		    <version>1.18.0</version>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.18.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
-<dependency>
-    <groupId>com.opencsv</groupId>
-    <artifactId>opencsv</artifactId>
-    <version>5.10</version>
-</dependency>
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.mwiede/jsch -->
+		<dependency>
+			<groupId>com.github.mwiede</groupId>
+			<artifactId>jsch</artifactId>
+			<version>2.27.2</version>
+		</dependency>
 	</dependencies>
 </project>

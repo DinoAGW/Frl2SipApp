@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import idCrawler.PrivateLoader;
 import sql.IeTable;
 import sql.SqlManager;
 import sql.VorbereitungFehlerfaelle;
@@ -61,7 +60,7 @@ public class Vorbereitung {
 		int jahr = Integer.parseInt(lastMakeUpToDate.substring(0, 4));
 		int monat = Integer.parseInt(lastMakeUpToDate.substring(5, 7));
 		int tag = Integer.parseInt(lastMakeUpToDate.substring(8));
-		
+
 		while (!(tag == heuteTag && monat == heuteMonat && jahr == heuteJahr)) {
 			// sucht die Aktualisierungen dieses Tages
 			findModifiedPMDsForDate(lastMakeUpToDate.concat("*"));
@@ -149,7 +148,7 @@ public class Vorbereitung {
 			throw new Exception("ID " + setzeFortNach + " konnte nicht gefunden werden");
 		}
 	}
-	
+
 	private static void rescanFehlerfaelle() throws Exception {
 		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM fehlerFaelle;");
 		while (resultSet.next()) {
@@ -163,7 +162,7 @@ public class Vorbereitung {
 			}
 		}
 	}
-	
+
 	private static void bearbeiteId(String id) throws Exception {
 		try {
 			ApiManager.saveId2File(id);
@@ -172,7 +171,7 @@ public class Vorbereitung {
 		}
 		Thread.sleep(1000);
 		try {
-			//ladeBaum(innerObj, id);
+			// ladeBaum(innerObj, id);
 			ApiManager.saveId2FileRecursively(id);
 		} catch (Exception e) {
 			throw new Exception("Fehler bei API-Antwort " + id);

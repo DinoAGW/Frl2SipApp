@@ -93,7 +93,7 @@ public class VorbereitungFehlerfaelle {
 
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
-//		makeExistent();
+		makeExistent();
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 		printEntries();
 		System.out.println("VorbereitungFehlerfaelle Ende");
