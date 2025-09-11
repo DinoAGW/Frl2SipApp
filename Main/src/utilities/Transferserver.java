@@ -3,6 +3,8 @@ package utilities;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import com.jcraft.jsch.Channel;
@@ -38,7 +40,7 @@ public class Transferserver {
 		sftpChannel = (ChannelSftp) channel;
 	}
 
-	public void diconnect() {
+	public void disconnect() {
 		if (sftpChannel != null && sftpChannel.isConnected()) {
 			sftpChannel.disconnect();
 		}
@@ -51,15 +53,17 @@ public class Transferserver {
 		sftpChannel.put(localFilePath, remoteFilePath);
 	}
 
-	public void ls(String remoteFilePath) throws Exception {
+	public List<String> ls(String remoteFilePath) throws Exception {
+		List<String> ret = new ArrayList<>();
 		Vector<LsEntry> lses = sftpChannel.ls(remoteFilePath);
 		for (LsEntry lse : lses) {
 			if (lse.getAttrs().isDir()) {
-				System.out.println(lse.getFilename() + "/");
+				ret.add(lse.getFilename() + "/");
 			} else {
-				System.out.println(lse.getFilename());
+				ret.add(lse.getFilename());
 			}
 		}
+		return ret;
 	}
 
 	public void getFile(String remoteFilePath, String localFilePath) throws Exception {
@@ -71,13 +75,35 @@ public class Transferserver {
 		sftpChannel.rm(remoteFilePath);
 	}
 
+	public void removeFolder(String remoteFolderPath) throws Exception {
+		if (!remoteFolderPath.endsWith("/")) {
+			throw new Exception("Ordner muss mit / enden");
+		}
+//		System.out.println("Aufgabe: lösche '" + remoteFolderPath + "'");
+		Vector<LsEntry> lses = sftpChannel.ls(remoteFolderPath);
+		for (LsEntry lse : lses) {
+			if (lse.getFilename().startsWith(".")) {
+				continue;
+			}
+			if (lse.getAttrs().isDir()) {
+				removeFolder(remoteFolderPath + lse.getFilename() + "/");
+			} else {
+//				System.out.println("Lösche '" + remoteFolderPath + lse.getFilename() + "'");
+				sftpChannel.rm(remoteFolderPath + lse.getFilename());
+			}
+		}
+//		System.out.println("Lösche '" + remoteFolderPath + "'");
+		sftpChannel.rmdir(remoteFolderPath);
+	}
+
 	public static void main(String[] args) throws Exception {
 		Transferserver ts = new Transferserver();
 		try {
 //		ts.uploadFile("test.txt", "/exchange/lza/lza-zbmed/dev/gms/test.txt");
-			ts.ls("/exchange/lza/lza-zbmed/dev/gms/");
+//			ts.ls("/exchange/lza/lza-zbmed/dev/gms/");
+//			ts.removeFolder("/exchange/lza/lza-zbmed/test/frl/PROD_2025_07_28_6523540/");
 		} finally {
-			ts.diconnect();
+			ts.disconnect();
 		}
 	}
 }

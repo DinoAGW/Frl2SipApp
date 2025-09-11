@@ -21,8 +21,8 @@ public class Drive {
 	public static final String osName = System.getProperty("os.name");
 	public static final String home = System.getProperty("user.home");
 	public static final String dbPath = home.concat(fs).concat(".databases").concat(fs).concat("Frl2SipApp");
-	public static final String frl2SipAppWorkspace = home.concat(fs).concat("workspace").concat(fs)
-			.concat("Frl2SipApp");
+	public static final String workspace = home.concat(fs).concat("workspace");
+	public static final String frl2SipAppWorkspace = workspace.concat(fs).concat("Frl2SipApp");
 	public static final String apiAntwortPfad = frl2SipAppWorkspace.concat(fs).concat("apiAntworten");
 	public static final String crawlPfad = osName.contentEquals("Linux") ? "/app/FrlAnreicherung/"
 			: frl2SipAppWorkspace.concat(fs).concat("crawls").concat(fs);
@@ -94,7 +94,7 @@ public class Drive {
 		}
 		return ret;
 	}
-	
+
 	public static boolean checkUnerlaubteZeichen(String dateiname) {
 		boolean unerlaubt = false;
 		if (dateiname.indexOf('/') != -1) {

@@ -165,13 +165,6 @@ public class Vorbereitung {
 
 	private static void bearbeiteId(String id) throws Exception {
 		try {
-			ApiManager.saveId2File(id);
-		} catch (Exception e) {
-			throw new Exception("Fehler bei API-Antwort (PMD) " + id);
-		}
-		Thread.sleep(1000);
-		try {
-			// ladeBaum(innerObj, id);
 			ApiManager.saveId2FileRecursively(id);
 		} catch (Exception e) {
 			throw new Exception("Fehler bei API-Antwort " + id);
@@ -201,6 +194,7 @@ public class Vorbereitung {
 
 	public static void main(String[] args) throws Exception {
 //		setzeZurueck();
+//		bearbeiteId("6478755");
 		System.out.println("Rescan der Fehlerfälle...");
 		rescanFehlerfaelle();
 		System.out.println("Rescan Ende. Scan weiter...");

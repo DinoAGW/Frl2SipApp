@@ -91,11 +91,24 @@ public class VorbereitungFehlerfaelle {
 		return anz;
 	}
 
+	public static int printForGitlab() throws Exception {
+		int anz = 0;
+		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM " + tabelle + ";");
+		while (resultSet.next()) {
+			String id = resultSet.getString("id");
+			++anz;
+			System.out.println("- [ ] " + id);
+		}
+		return anz;
+	}
+
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 		makeExistent();
+//		removeIdFromDatabase("6501228");
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
-		printEntries();
+//		printEntries();
+		printForGitlab();
 		System.out.println("VorbereitungFehlerfaelle Ende");
 	}
 }

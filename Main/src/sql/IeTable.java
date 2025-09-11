@@ -20,7 +20,7 @@ public class IeTable {
 		status.put("Gefunden", 10);
 		status.put("NichtArchivierungswürdig", 12);
 //		status.put("Embargo", 14);
-		status.put("PolicyPublikationen", 15);
+//		status.put("PolicyPublikationen", 15); wird nicht mehr benötigt
 //		status.put("BereitZumBuilden", 30); wird nicht mehr benötigt
 		status.put("Gebuildet", 60);
 		status.put("OutOfDate", 80);
@@ -131,16 +131,22 @@ public class IeTable {
 //		zeigeEintrag("6480733");
 //		zeigeEintrag("6502900");
 //		zeigeEintrag("4369687");
-		zeigeEintrag("6421678");
+//		zeigeEintrag("6421678");
 //		set("4369687", "OutOfDate");
 //		set("4369687", "Gefunden");
 //		set("6433321", "Gefunden");
 //		zeigeEintrag("6433321");
 //		zeigeEintrag("4369687");
-//		zaehleEintraege("NichtArchivierungswürdig");
-//		zaehleEintraege("Gefunden");
+//		zeigeEintrag("6478755");
+		zaehleEintraege("Gefunden");
+		zaehleEintraege("NichtArchivierungswürdig");
+//		zaehleEintraege("PolicyPublikationen");
 		zaehleEintraege("Gebuildet");
 		zaehleEintraege("OutOfDate");
+		zaehleEintraege("Temporär");
+//		SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get("Gefunden")
+//				+ " WHERE status=" + IeTable.status.get("PolicyPublikationen") + ";");
+//		zaehleEintraege("Gefunden");
 		System.out.println("IeTable Ende");
 	}
 }

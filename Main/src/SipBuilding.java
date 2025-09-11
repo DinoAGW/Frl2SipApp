@@ -65,7 +65,7 @@ public class SipBuilding {
 			if (!tempStr.contentEquals("public")) {
 				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
 						+ IeTable.status.get("NichtArchivierungswürdig") + " WHERE id='" + id + "';");
-				//System.err.println("PMD = " + id + " ist eine NichtPubPubPmd");
+				// System.err.println("PMD = " + id + " ist eine NichtPubPubPmd");
 				continue;
 			}
 			tempStr = obj.optString("publishScheme");
@@ -91,15 +91,15 @@ public class SipBuilding {
 			}
 
 			// Falls PolicyPublikationen
-			if (policyPublication(obj)) {
-				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
-						+ IeTable.status.get("PolicyPublikationen") + " WHERE id='" + id + "';");
-				if (zeigePolicyPublikation) {
-					System.err.println(
-							Integer.toString(++count) + ") PMD = " + id + " ist eine PolicyPublikation. " + reason);
-				}
-				continue;
-			}
+//			if (policyPublication(obj)) {
+//				SqlManager.INSTANCE.executeUpdate("UPDATE ieTable SET status="
+//						+ IeTable.status.get("PolicyPublikationen") + " WHERE id='" + id + "';");
+//				if (zeigePolicyPublikation) {
+//					System.err.println(
+//							Integer.toString(++count) + ") PMD = " + id + " ist eine PolicyPublikation. " + reason);
+//				}
+//				continue;
+//			}
 
 			try {
 				if (!trockenModus) {
