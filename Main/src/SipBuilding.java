@@ -9,6 +9,7 @@ import ieManager.IeBouncer;
 import sip.SipPacker;
 import sql.IeTable;
 import sql.SqlManager;
+import utilities.ApiManager;
 import utilities.Drive;
 
 /*
@@ -45,6 +46,7 @@ public class SipBuilding {
 		File abort = new File("bin" + fs + "abort");
 		while (res.next()) {
 			String id = res.getString("id");
+			ApiManager.saveId2FileRecursively(id, 0);
 			String apiAntwortJson = null;
 			try {
 				apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));

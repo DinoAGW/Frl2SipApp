@@ -103,7 +103,10 @@ public class ApiManager {
 		}
 	}
 
-	public static void saveId2FileRecursively(String id) throws Exception {
+	public static void saveId2FileRecursively(String id, int parentDate) throws Exception {
+		if (id.startsWith("frl:") || Integer.parseInt(id) >= 10000000) {
+			throw new Exception("Als ID wird nur die Zahl erwartet. " + id);
+		}
 		saveId2File(id);
 		Thread.sleep(1000);
 		String apiAntwortJson = utilities.Drive.loadFileToString(new File(Drive.apiAntwort(id)));
@@ -114,6 +117,14 @@ public class ApiManager {
 						"Ungewöhnliche Notification : " + obj.getString("notification") + " bei id " + id + ".");
 			}
 		} else {
+			int ownDate = modifiedDate(obj);
+			if (parentDate > 0) {
+				// Prüfe ob nichtgelöschter Datensatz auch älter/gleich Vater ist, falls es ein
+				// Vater hat
+				if (ownDate > parentDate) {
+					throw new Exception("Kind (" + id + ") ist älter als Eltern: " + ownDate + ">" + parentDate);
+				}
+			}
 			JSONArray jarr = obj.optJSONArray("hasPart");
 			if (jarr != null) {
 				for (int i = 0; i < jarr.length(); ++i) {
@@ -126,10 +137,24 @@ public class ApiManager {
 						throw new Exception("@id beginnt nicht mit 'frl:': '" + hasPartId + "'");
 					}
 					hasPartId = hasPartId.substring(4);
-					saveId2FileRecursively(hasPartId);
+					saveId2FileRecursively(hasPartId, ownDate);
 				}
 			}
 		}
+	}
+
+	public static int modifiedDate(JSONObject obj) throws Exception {
+		JSONObject idb = obj.getJSONObject("isDescribedBy");
+		String modified = idb.getString("modified");
+		if (!modified.matches("^20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+0200$")) {
+			throw new Exception("modified Datum hat ein falsches Format: " + modified);
+		}
+//		System.out.println(modified);
+		int jahr = Integer.parseInt(modified.substring(0, 4));
+		int monat = Integer.parseInt(modified.substring(6, 7));
+		int tag = Integer.parseInt(modified.substring(8, 10));
+//		System.out.println(10000 * jahr + 100 * monat + tag);
+		return 10000 * jahr + 100 * monat + tag;
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -176,7 +201,8 @@ public class ApiManager {
 //		saveId2File("6472545");
 //		saveDataOfId2File("6408009", "bin" + fs + "HK_image.jpg");
 //		saveId2File("6488405");
-		saveId2FileRecursively("6475396");
+//		saveId2FileRecursively("6475396", 0);
+		saveId2FileRecursively("6490217", 0);
 		System.out.println("ApiManager Ende");
 	}
 

@@ -1,7 +1,6 @@
 package tools;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class MissingMD5s {
 		int anz = 0;
 		for (String line : lines) {
 			String pmd = ApiManager.getPmdOfDatensatz(line);
-			ApiManager.saveId2FileRecursively(pmd);
+			ApiManager.saveId2FileRecursively(pmd, 0);
 			if (!all.contains(pmd))
 				continue;
 			System.out.println((++anz) + ") " + line + " -> " + pmd);

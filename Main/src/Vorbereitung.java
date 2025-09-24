@@ -165,7 +165,7 @@ public class Vorbereitung {
 
 	private static void bearbeiteId(String id) throws Exception {
 		try {
-			ApiManager.saveId2FileRecursively(id);
+			ApiManager.saveId2FileRecursively(id, 0);
 		} catch (Exception e) {
 			throw new Exception("Fehler bei API-Antwort " + id);
 		}
