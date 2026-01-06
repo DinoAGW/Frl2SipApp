@@ -121,6 +121,19 @@ public class IeTable {
 				.executeUpdate("UPDATE ieTable SET status=" + IeTable.status.get(aStatus) + " WHERE id='" + id + "';");
 	}
 
+	/*
+	 * Falls eine id nicht in der Datenbank ist, gebe false zurück, sonst entferne
+	 * und gebe true zurück
+	 */
+	public static boolean removeIdFromDatabase(String id) throws Exception {
+		if (!checkIfEntryIsInDatabase("id", id)) {
+			return false;
+		} else {
+			SqlManager.INSTANCE.executeUpdate("DELETE FROM " + tabelle + " WHERE id = '" + id + "';");
+			return true;
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 //		makeExistent();

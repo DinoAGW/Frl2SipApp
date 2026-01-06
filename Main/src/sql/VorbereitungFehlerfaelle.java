@@ -102,13 +102,34 @@ public class VorbereitungFehlerfaelle {
 		return anz;
 	}
 
+	public static int loescheGefundeneFehlerfaelle() throws Exception {
+		int anz = 0;
+		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM " + tabelle + ";");
+		while (resultSet.next()) {
+			String id = resultSet.getString("id");
+			ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
+			if (res.next()) {
+				int status = res.getInt("status");
+				if (status == IeTable.status.get("Gefunden")) {
+					if (IeTable.removeIdFromDatabase(id)) {
+						System.out.println((++anz) + ") " + id + " aus der Datenbank gelöscht");
+					} else {
+						throw new Exception("Fehler beim Löschen der id " + id);
+					}
+				}
+			}
+		}
+		return anz;
+	}
+
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 		makeExistent();
 //		removeIdFromDatabase("6501228");
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
-//		printEntries();
-		printForGitlab();
+		printEntries();
+//		printForGitlab();
+		loescheGefundeneFehlerfaelle();
 		System.out.println("VorbereitungFehlerfaelle Ende");
 	}
 }

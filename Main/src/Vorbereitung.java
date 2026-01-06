@@ -22,10 +22,11 @@ public class Vorbereitung {
 	 * Programm erkennt, wenn Limit zu klein ist. gibt dann Fehlermeldung aus, dass
 	 * das Limit überschritten wurde Programm erkennt auch, wenn das Limit zu groß
 	 * ist gibt dann eine Fehlermeldung aus, dass Server eine 500 HTTP response
-	 * zurück gab 5000 hat sehr lange keine Probleme gemacht, war nur am 12.12.2023
-	 * zu klein probiere mal 6000
+	 * zurück gab 5000 hat sehr lange keine Probleme gemacht am 12.12.2023 zu klein,
+	 * probiere mal 6000 am 27.09.2025 zu klein, probiere mal 7000 immer noch zu
+	 * klein, probiere mal 8000
 	 */
-	private static final int max = 6000;
+	private static final int max = 8000;
 	static File apiAntwortOrdner = new File(Drive.apiAntwortPfad);
 	private static String setzeFortNach = null;
 
@@ -200,6 +201,7 @@ public class Vorbereitung {
 		System.out.println("Rescan Ende. Scan weiter...");
 		scan();
 		System.out.println("Scan Ende. Fehlerfaelle nun:");
+		VorbereitungFehlerfaelle.loescheGefundeneFehlerfaelle();
 		VorbereitungFehlerfaelle.printEntries();
 		System.out.println("Vorbereitung Ende");
 	}

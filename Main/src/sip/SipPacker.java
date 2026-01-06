@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import metsSipCreator.FILE;
 import metsSipCreator.REP;
 import metsSipCreator.SIP;
+import sql.IeTable;
 import utilities.ApiManager;
 import utilities.Drive;
 
@@ -669,7 +670,18 @@ public class SipPacker {
 			return;
 		}
 
-		if (obj.has("hasPart")) {
+		if (externeFD) {
+			String Dateiname = "/app/FrlAnreicherung/" + id + "/Data.zip";
+			FILE tempFile = rep1.newFile(Dateiname, pfad.concat("/Data.zip")).setLabel(id.concat("_Data.zip"))
+					.setMoveMode(true);
+			++tempFileName;
+			if (new File(Dateiname).exists()) {
+				System.err.println("Externe Forschungsdaten? " + id + ".");
+			} else {
+				throw new Exception(
+						"Kein hasPart, kein hasData, aber auch keine externen Forschungsdaten -> das darf nicht sein");
+			}
+		} else if (obj.has("hasPart")) {
 			if (obj.getString("contentType").contentEquals("file")) {
 				throw new Exception("File-Datensatz sollte kein Part haben: " + id + ".");
 			}
@@ -785,16 +797,8 @@ public class SipPacker {
 				}
 			}
 		} else {
-			String Dateiname = "/app/FrlAnreicherung/" + id + "/Data.zip";
-			FILE tempFile = rep1.newFile(Dateiname, pfad.concat("/Data.zip")).setLabel(id.concat("_Data.zip"))
-					.setMoveMode(true);
-			++tempFileName;
-			if (new File(Dateiname).exists()) {
-				System.err.println("Externe Forschungsdaten? " + id + ".");
-			} else {
-				throw new Exception(
-						"Kein hasPart, kein hasData, aber auch keine externen Forschungsdaten -> das darf nicht sein");
-			}
+			throw new Exception(
+					"Was weder hasDate, noch hasPart hat, sollte externe Forschungsdaten sein oder nicht aufgerufen werden");
 		}
 	}
 
@@ -886,14 +890,14 @@ public class SipPacker {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String sipId = "6421678";
-		ApiManager.saveId2FileRecursively(sipId, 0);
-		generateOneSip(sipId);
-
-//		externeFD = true;
-//		String sipId = "6425518";
+//		String sipId = "6421678";
+//		ApiManager.saveId2FileRecursively(sipId, 0);
 //		generateOneSip(sipId);
-//		IeTable.zeigeEintrag(sipId);
+
+		externeFD = true;
+		String sipId = "6425521";
+		generateOneSip(sipId);
+		IeTable.zeigeEintrag(sipId);
 
 //		ignoreMissingMD5 = true;
 //		generateListOfSIPs(Drive.home + fs + "workspace" + fs + "Testdaten_Ingest_Policy-Embargo-Publikationen.csv");
