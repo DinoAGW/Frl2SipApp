@@ -13,7 +13,8 @@ public class DatensatzLogbuch {
 	private static final int maxLaenge = 500;
 	// die nächsten beiden Zeilen sind anzupassen
 	private static final String tabelle = "datensatzLogbuch";
-	private static final String columns = "( id VARCHAR(14), root VARCHAR(14), level VARCHAR(7), meldung VARCHAR(" + maxLaenge + "), PRIMARY KEY (id) )";
+	private static final String columns = "( id VARCHAR(14), root VARCHAR(14), level VARCHAR(7), meldung VARCHAR("
+			+ maxLaenge + "))";
 
 	public static void makeExistent() {
 		try {
@@ -49,7 +50,8 @@ public class DatensatzLogbuch {
 	 */
 	public static void insertIdIntoDatabase(String id, String level, String meldung) throws Exception {
 		String root = ApiManager.getPmdOfDatensatz(id);
-		SqlManager.INSTANCE.executeUpdate("INSERT INTO " + tabelle + " (id, root, level, meldung) VALUES ('" + id + "', '" + root + "', '" + level + "', '" + meldung + "');");
+		SqlManager.INSTANCE.executeUpdate("INSERT INTO " + tabelle + " (id, root, level, meldung) VALUES ('" + id
+				+ "', '" + root + "', '" + level + "', '" + meldung + "');");
 	}
 
 	/*
@@ -74,10 +76,11 @@ public class DatensatzLogbuch {
 		return anz;
 	}
 
-	public static int printEntries( String id_arg) throws Exception {
+	public static int printEntries(String id_arg) throws Exception {
 		String root_arg = ApiManager.getPmdOfDatensatz(id_arg);
 		int anz = 0;
-		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM " + tabelle + " WHERE 'root' = '" + root_arg + "';");
+		ResultSet resultSet = SqlManager.INSTANCE
+				.executeQuery("SELECT * FROM " + tabelle + " WHERE 'root' = '" + root_arg + "';");
 		while (resultSet.next()) {
 			String id = resultSet.getString("id");
 			String root = resultSet.getString("root");
@@ -89,11 +92,28 @@ public class DatensatzLogbuch {
 		return anz;
 	}
 
+	public static String Fehlermeldung(String id_arg) throws Exception {
+		String root_arg = ApiManager.getPmdOfDatensatz(id_arg);
+		String ret = null;
+		ResultSet resultSet = SqlManager.INSTANCE
+				.executeQuery("SELECT * FROM " + tabelle + " WHERE 'root' = '" + root_arg + "';");
+		while (resultSet.next()) {
+			String id = resultSet.getString("id");
+			String root = resultSet.getString("root");
+			String level = resultSet.getString("level");
+			String meldung = resultSet.getString("meldung");
+			if (level.contentEquals("ERROR")) {
+				ret = String.format("ID %s->%s (%7s) %s%n", root, id, level, meldung);
+			}
+		}
+		return ret;
+	}
+
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 		makeExistent();
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
-		printEntries("5542860");
-		System.out.println("VorbereitungFehlerfaelle Ende");
+		printEntries("1997529");
+		System.out.println("DatensatzLogbuch Ende");
 	}
 }

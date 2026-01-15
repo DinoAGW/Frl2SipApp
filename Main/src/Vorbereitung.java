@@ -168,6 +168,7 @@ public class Vorbereitung {
 		try {
 			ApiManager.saveId2FileRecursively(id, 0);
 		} catch (Exception e) {
+//			e.printStackTrace();
 			throw new Exception("Fehler bei API-Antwort " + id);
 		}
 		verwalteDBbeiAktualisierterPMD(id);
@@ -201,7 +202,6 @@ public class Vorbereitung {
 		System.out.println("Rescan Ende. Scan weiter...");
 		scan();
 		System.out.println("Scan Ende. Fehlerfaelle nun:");
-		VorbereitungFehlerfaelle.loescheGefundeneFehlerfaelle();
 		VorbereitungFehlerfaelle.printEntries();
 		System.out.println("Vorbereitung Ende");
 	}

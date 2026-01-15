@@ -104,7 +104,7 @@ public class ApiManager {
 	}
 
 	public static void saveId2FileRecursively(String id, int parentDate) throws Exception {
-		if (id.startsWith("frl:") || Integer.parseInt(id) >= 10000000) {
+		if (id.startsWith("frl:")) {
 			throw new Exception("Als ID wird nur die Zahl erwartet. " + id);
 		}
 		saveId2File(id);
@@ -146,7 +146,8 @@ public class ApiManager {
 	public static int modifiedDate(JSONObject obj) throws Exception {
 		JSONObject idb = obj.getJSONObject("isDescribedBy");
 		String modified = idb.getString("modified");
-		if (!modified.matches("^20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+0200$")) {
+		if (!modified.matches("^20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+0100$")
+				&& !modified.matches("^20\\d{2}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+0200$")) {
 			throw new Exception("modified Datum hat ein falsches Format: " + modified);
 		}
 //		System.out.println(modified);

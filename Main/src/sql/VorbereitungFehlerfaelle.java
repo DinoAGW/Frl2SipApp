@@ -43,12 +43,20 @@ public class VorbereitungFehlerfaelle {
 	/*
 	 * Falls eine id bereits in der Datenbank ist, gebe false zurück, sonst füge ein
 	 * und gebe true zurück
+	 * außerdem: lösche als "Gefunden", falls hier eingefügt
 	 */
 	public static boolean insertIdIntoDatabase(String id) throws Exception {
 		if (checkIfEntryIsInDatabase("id", id)) {
 			return false;
 		} else {
 			SqlManager.INSTANCE.executeUpdate("INSERT INTO " + tabelle + " (id) VALUES ('" + id + "');");
+			ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
+			if (res.next()) {
+				int status = res.getInt("status");
+				if (status == IeTable.status.get("Gefunden")) {
+					IeTable.removeIdFromDatabase(id);
+				}
+			}
 			return true;
 		}
 	}
