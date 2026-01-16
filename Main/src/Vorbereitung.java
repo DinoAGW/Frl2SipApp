@@ -169,7 +169,7 @@ public class Vorbereitung {
 			ApiManager.saveId2FileRecursively(id, 0);
 		} catch (Exception e) {
 //			e.printStackTrace();
-			throw new Exception("Fehler bei API-Antwort " + id);
+			throw new Exception("Fehler bei API-Antwort " + id + ": " + e.getMessage());
 		}
 		verwalteDBbeiAktualisierterPMD(id);
 	}

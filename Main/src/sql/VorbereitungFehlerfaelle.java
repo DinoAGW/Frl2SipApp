@@ -137,7 +137,8 @@ public class VorbereitungFehlerfaelle {
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 		printEntries();
 //		printForGitlab();
-		loescheGefundeneFehlerfaelle();
+//		loescheGefundeneFehlerfaelle();
+//		insertIdIntoDatabase("6526053");
 		System.out.println("VorbereitungFehlerfaelle Ende");
 	}
 }
