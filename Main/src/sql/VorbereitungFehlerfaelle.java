@@ -8,9 +8,10 @@ import java.sql.SQLException;
  */
 public class VorbereitungFehlerfaelle {
 
+	private static final int maxLaenge = 500;
 	// die nächsten beiden Zeilen sind anzupassen
 	private static final String tabelle = "fehlerFaelle";
-	private static final String columns = "( id VARCHAR(14), PRIMARY KEY (id) )";
+	private static final String columns = "( id VARCHAR(14), meldung VARCHAR(" + maxLaenge + "), PRIMARY KEY (id) )";
 
 	public static void makeExistent() {
 		try {
@@ -42,14 +43,16 @@ public class VorbereitungFehlerfaelle {
 
 	/*
 	 * Falls eine id bereits in der Datenbank ist, gebe false zurück, sonst füge ein
-	 * und gebe true zurück
-	 * außerdem: lösche als "Gefunden", falls hier eingefügt
+	 * und gebe true zurück außerdem: lösche als "Gefunden", falls hier eingefügt
 	 */
-	public static boolean insertIdIntoDatabase(String id) throws Exception {
+	public static boolean insertIdIntoDatabase(String id, String meldung) throws Exception {
 		if (checkIfEntryIsInDatabase("id", id)) {
+			SqlManager.INSTANCE
+					.executeUpdate("UPDATE " + tabelle + " SET meldung = '" + meldung + "' WHERE id='" + id + "';");
 			return false;
 		} else {
-			SqlManager.INSTANCE.executeUpdate("INSERT INTO " + tabelle + " (id) VALUES ('" + id + "');");
+			SqlManager.INSTANCE.executeUpdate(
+					"INSERT INTO " + tabelle + " (id, meldung) VALUES ('" + id + "', '" + meldung + "');");
 			ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
 			if (res.next()) {
 				int status = res.getInt("status");
@@ -88,12 +91,13 @@ public class VorbereitungFehlerfaelle {
 		ResultSet resultSet = SqlManager.INSTANCE.executeQuery("SELECT * FROM " + tabelle + ";");
 		while (resultSet.next()) {
 			String id = resultSet.getString("id");
+			String meldung = resultSet.getString("meldung");
 			ResultSet res = sql.SqlManager.INSTANCE.executeQuery("SELECT * FROM ieTable WHERE id='" + id + "';");
 			if (res.next()) {
 				int status = res.getInt("status");
-				System.out.println((++anz) + ") " + id + " hat Status = " + status);
+				System.out.println((++anz) + ") " + id + " (" + status + ") = " + meldung);
 			} else {
-				System.out.println((++anz) + ") " + id + " ist nicht in der Datenbank");
+				System.out.println((++anz) + ") " + id + " (--) = " + meldung);
 			}
 		}
 		return anz;
@@ -133,6 +137,7 @@ public class VorbereitungFehlerfaelle {
 	public static void main(String[] args) throws Exception {
 //		leereTabelle();
 		makeExistent();
+//		SqlManager.INSTANCE.executeUpdate("ALTER TABLE " + tabelle + " ADD COLUMN meldung VARCHAR(" + maxLaenge + ")");
 //		removeIdFromDatabase("6501228");
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 		printEntries();

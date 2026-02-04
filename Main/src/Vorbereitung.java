@@ -138,8 +138,9 @@ public class Vorbereitung {
 			try {
 				bearbeiteId(id);
 			} catch (Exception e) {
-				System.err.println(e.getMessage());
-				VorbereitungFehlerfaelle.insertIdIntoDatabase(id);
+				String meldung = e.getMessage();
+				System.err.println(meldung);
+				VorbereitungFehlerfaelle.insertIdIntoDatabase(id, meldung);
 			}
 			if ((i % 250 == 0) && (i > 0)) {
 				System.out.println(i + " Ergebnisse abgearbeitet.");
@@ -159,7 +160,9 @@ public class Vorbereitung {
 				VorbereitungFehlerfaelle.removeIdFromDatabase(id);
 				System.out.println("ID " + id + " ist nun erfolgreich durchgelaufen");
 			} catch (Exception e) {
-				System.err.println(e.getMessage());
+				String meldung = e.getMessage();
+				System.err.println(meldung);
+				VorbereitungFehlerfaelle.insertIdIntoDatabase(id, meldung);//existiert zwar bereits, wird aber dann geupdatet
 			}
 		}
 	}
