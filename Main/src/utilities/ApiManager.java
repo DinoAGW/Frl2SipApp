@@ -122,7 +122,7 @@ public class ApiManager {
 				// Prüfe ob nichtgelöschter Datensatz auch älter/gleich Vater ist, falls es ein
 				// Vater hat
 				if (ownDate > parentDate) {
-					throw new Exception("Kind (" + id + ") ist älter als Eltern: " + ownDate + ">" + parentDate);
+					throw new Exception("Kind (" + id + ") ist neuer als Eltern: " + ownDate + ">" + parentDate);
 				}
 			}
 			JSONArray jarr = obj.optJSONArray("hasPart");
@@ -152,7 +152,7 @@ public class ApiManager {
 		}
 //		System.out.println(modified);
 		int jahr = Integer.parseInt(modified.substring(0, 4));
-		int monat = Integer.parseInt(modified.substring(6, 7));
+		int monat = Integer.parseInt(modified.substring(5, 7));
 		int tag = Integer.parseInt(modified.substring(8, 10));
 //		System.out.println(10000 * jahr + 100 * monat + tag);
 		return 10000 * jahr + 100 * monat + tag;
