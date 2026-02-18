@@ -138,8 +138,8 @@ public class VorbereitungFehlerfaelle {
 //		leereTabelle();
 		makeExistent();
 //		SqlManager.INSTANCE.executeUpdate("ALTER TABLE " + tabelle + " ADD COLUMN meldung VARCHAR(" + maxLaenge + ")");
-		removeIdFromDatabase("6513404");
-		removeIdFromDatabase("6516425");
+//		removeIdFromDatabase("6513404");
+//		removeIdFromDatabase("6516425");
 		System.out.println("Die Datenbank hat " + countEntries() + " Einträge");
 		printEntries();
 //		printForGitlab();
