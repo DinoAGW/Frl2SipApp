@@ -12,5 +12,5 @@
 * [Rest muss noch auf den neusten Stand gebracht werden]
 
 ## maven
-* mvn install:install-file -Dfile=Main/lib/dps-sdk-7.3.0.jar -DgroupId=com.exlibris -DartifactId=dps-sdk -Dversion=7.3.0 -Dpackaging=jar
-* mvn install:install-file -Dfile=Main/lib/MetsSipCreator-0.2.8-jar-with-dependencies.jar -DgroupId=de.zbmed -DartifactId=MetsSipCreator -Dversion=0.2.8 -Dpackaging=jar
+* `mvn install:install-file -Dfile=Main/lib/dps-sdk-7.3.0.jar -DgroupId=com.exlibris -DartifactId=dps-sdk -Dversion=7.3.0 -Dpackaging=jar -DgeneratePom=true`
+* `mvn install:install-file -Dfile=Main/lib/MetsSipCreator-0.2.8-jar-with-dependencies.jar -DgroupId=de.zbmed -DartifactId=MetsSipCreator -Dversion=0.2.8 -Dpackaging=jar`
